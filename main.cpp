@@ -1,3 +1,4 @@
+#include "delta.h"
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <string>
@@ -35,13 +36,13 @@ int main()
 
     while (window.isOpen())
     {
-        // Calculate deltaTime
+        // Calculate frameTime
         auto currentTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> elapsedTime = currentTime - oldTime;
-        double deltaTime = elapsedTime.count();
+        double frameTime = elapsedTime.count();
         oldTime = currentTime;
-        accumulator += deltaTime;
-        frameTimeAccumulator += deltaTime;
+        accumulator += frameTime;
+        frameTimeAccumulator += frameTime;
 
         // Handle events
         sf::Event event;
@@ -58,19 +59,19 @@ int main()
         {
             frameCount++;
             accumulator -= fixedTimeStep;
-        }
 
-        // Cod pentru frame counter
-        if (frameTimeAccumulator >= 1.0)
-        {
-            frameCounter.setString("FPS: " + std::to_string(frameCount));
-            frameCount = 0;
-            frameTimeAccumulator = 0.0;
-        }
+            // Cod pentru frame counter
+            if (frameTimeAccumulator >= 1.0)
+            {
+                frameCounter.setString("FPS: " + std::to_string(frameCount));
+                frameCount = 0;
+                frameTimeAccumulator = 0.0;
+            }
 
-        // Render
-        window.clear(backgroundColor);
-        window.draw(frameCounter); // Draw frame counter
-        window.display();
+            //Render
+            window.clear(backgroundColor);
+            window.draw(frameCounter); // Draw frame counter (one frame behind but really doesn't matter)
+            window.display();
+        }
     }
 }

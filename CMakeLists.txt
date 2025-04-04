@@ -7,7 +7,7 @@ project(nume_executabil)
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
 # Add the executable
-add_executable(gravity main.cpp)
+add_executable(gravity main.cpp delta.cpp)
 
 # Link SFML libraries
 target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
