@@ -1,0 +1,121 @@
+#include "Player.h"
+#include <iostream>
+#include <iomanip>
+Player::Player()
+    : Sprite("sprite.png", 0, 0, 100, 100),
+      m_speedX(0, 0),
+      m_speedY(0, 0),
+      m_jumpForce(10),
+      m_maxSpeedX(100),
+      m_accelX(100),
+      m_decelerationX(1000),
+      mass(10)
+{;}
+Player::Player
+(
+    const std::string& texturePath,
+    float x,
+    float y, 
+    float speedX, 
+    float speedY, 
+    float mass, 
+    float jumpForce, 
+    float height, 
+    float width
+)
+  : Sprite(texturePath, x, y, height, width),
+    m_speedX(speedX, speedX),
+    m_speedY(speedY, speedY),
+    m_jumpForce(jumpForce),
+    m_maxSpeedX(1000),
+    m_accelX(3000),
+    m_decelerationX(3000),
+    mass(mass)
+{;}
+void Player::updateCalculationsX(DirectieX direction, double dt)
+{
+    int i;
+    if (direction == DirectieX::LEFT) i = -1;
+    else if (direction == DirectieX::NONE) i = 0;
+    else if (direction == DirectieX::RIGHT) i = 1;
+    else i = 2;
+    if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
+    {
+        m_speedX.setActual(0);
+    }
+    if (direction == DirectieX::RIGHT && m_speedY.getActual() == 0)
+    {
+        if (m_speedX.getActual()>0 || m_speedX.getActual() < m_maxSpeedX)
+            m_speedX.update(m_speedX.getActual()+m_accelX*dt);
+        else if (m_speedX.getActual() < 0)
+            m_speedX.update(m_speedX.getActual()+m_decelerationX*dt + m_accelX*dt);
+    }
+    else if (direction == DirectieX::LEFT && m_speedY.getActual() == 0)
+    {
+        if (m_speedX.getActual()<0 || m_speedX.getActual() > -m_maxSpeedX)
+            m_speedX.update(m_speedX.getActual()-m_accelX*dt);
+        else if (m_speedX.getActual() > 0)
+            m_speedX.update(m_speedX.getActual()-m_decelerationX*dt - m_accelX*dt);
+    }
+    else if (direction == DirectieX::NONE && m_speedY.getActual() == 0)
+    {
+        if (m_speedX.getActual() > 0)
+        {
+            if (m_speedX.getActual()-m_decelerationX*dt < 0)
+                m_speedX.update(0);
+            else
+                m_speedX.update(m_speedX.getActual()-m_decelerationX*dt);
+        }
+        else if (m_speedX.getActual() < 0)
+        {
+            if (m_speedX.getActual()+m_decelerationX*dt > 0)
+                m_speedX.update(0);
+            else
+                m_speedX.update(m_speedX.getActual()+m_decelerationX*dt);
+        }
+    }
+    if (m_speedX.getActual() > m_maxSpeedX)
+        m_speedX.setActual(m_maxSpeedX);
+    else if (m_speedX.getActual() < -m_maxSpeedX)
+        m_speedX.setActual(-m_maxSpeedX);
+    float newX = m_speedX.getActual() * dt;
+    m_pozX.setActual(m_pozX.getActual() + newX);
+    m_sprite.move(newX,0);
+    std::cout << std::fixed << std::setprecision(6) 
+          << "newX: " << newX
+          << " m_speedX: "<< m_speedX.getActual()
+          << " dt: " << dt
+          << " directie: "<< i
+          << " pozX "<< m_pozX.getActual()<< ' ' << m_sprite.getPosition().x
+          <<std::endl;
+}
+void Player::updateCalculationsY(DirectieY direction, double dt)
+{
+    const float gravityF = 981.0f * mass;
+    bool coliziuneJos = true;
+    if (m_speedY.getActual() == 0 && coliziuneJos)
+    {
+        if (direction == DirectieY::UP)
+        {
+            
+            float actualJumpForce=-m_jumpForce+gravityF;
+            m_speedY.update(actualJumpForce / mass * dt);
+        }
+    }
+    else
+    {
+        m_speedY.update(m_speedY.getActual() + 981.0f * dt);
+    }
+    float newY = m_speedY.getActual() * dt;
+    int i;
+    if (direction == DirectieY::DOWN) i = -1;
+    else if (direction == DirectieY::NONE) i = 0;
+    else if (direction == DirectieY::UP) i = 1;
+    else i = 2;
+    std::cout<<"newY: "<<newY<<"m_speedY: "<<m_speedY.getActual()
+             <<"direction: "<<i<<std::endl;
+
+    ///aici trebuie verificata coliziunea
+
+    move(0, newY);
+}
