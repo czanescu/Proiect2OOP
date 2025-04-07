@@ -73,14 +73,17 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
             else
                 m_speedX.update(m_speedX.getActual()+m_decelerationX*dt);
         }
+        if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
+        {
+            m_speedX.update(0);
+        }
     }
     if (m_speedX.getActual() > m_maxSpeedX)
         m_speedX.setActual(m_maxSpeedX);
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
-    float newX = m_speedX.getActual() * dt;
-    m_pozX.setActual(m_pozX.getActual() + newX);
-    m_sprite.move(newX,0);
+    float newX = (m_speedX.getActual()+m_speedX.getPrecedent())/2 * dt;
+    move(newX,0);
     std::cout << std::fixed << std::setprecision(6) 
           << "newX: " << newX
           << " m_speedX: "<< m_speedX.getActual()
