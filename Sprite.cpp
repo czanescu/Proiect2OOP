@@ -16,7 +16,7 @@ Sprite::Sprite
     float height,
     float width
 )
-  : m_pozX(x, y),
+  : m_pozX(x, x),
     m_pozY(y, y),
     m_hitBoxX(width),
     m_hitBoxY(height)
@@ -26,7 +26,7 @@ Sprite::Sprite
         throw std::runtime_error("Failed to load texture: " + texturePath);
     }
     m_sprite.setTexture(m_textura);
-    m_sprite.setPosition((x), (y));
+    m_sprite.setPosition(x, y);
     m_sprite.setScale
     (
         width / m_textura.getSize().x,
@@ -41,7 +41,20 @@ Sprite::Sprite(const Sprite& other)
       m_hitBoxX(other.m_hitBoxX),
       m_hitBoxY(other.m_hitBoxY),
       m_textura(other.m_textura)
-{;}
+{
+    m_sprite.setTexture(m_textura);
+    m_sprite.setScale
+    (
+        m_hitBoxX / m_textura.getSize().x,
+        m_hitBoxY / m_textura.getSize().y
+    );
+    m_sprite.setPosition(m_pozX.getActual(), m_pozY.getActual());
+}
+
+const sf::Sprite Sprite::getSprite() const
+{
+    return m_sprite;
+}
 
 void Sprite::operator=(const Sprite& other)
 {

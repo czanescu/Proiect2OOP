@@ -36,6 +36,12 @@ void calcule(double dt)
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt);
     }
+    Panel.checkPlayerCollision();
+}
+
+void sceneSetup(){
+    Sprite bloc1("box.png", 1000, 600, 100, 100);
+    Panel.addSprite(bloc1, "box.png");
 }
 
 int main()
@@ -49,6 +55,8 @@ int main()
 
     int frameCount = 0; // Frame counter
     double frameTimeAccumulator = 0.0; // Accumulator for frame time
+
+    sceneSetup();
 
     while (Panel.isOpen())
     {

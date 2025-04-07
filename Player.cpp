@@ -84,6 +84,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
         m_speedX.setActual(-m_maxSpeedX);
     float newX = (m_speedX.getActual()+m_speedX.getPrecedent())/2 * dt;
     move(newX,0);
+    m_pozX.update(m_sprite.getPosition().x);
     std::cout << std::fixed << std::setprecision(6) 
           << "newX: " << newX
           << " m_speedX: "<< m_speedX.getActual()
@@ -115,10 +116,54 @@ void Player::updateCalculationsY(DirectieY direction, double dt)
     else if (direction == DirectieY::NONE) i = 0;
     else if (direction == DirectieY::UP) i = 1;
     else i = 2;
+    m_pozY.update(m_sprite.getPosition().y);
     std::cout<<"newY: "<<newY<<"m_speedY: "<<m_speedY.getActual()
-             <<"direction: "<<i<<std::endl;
+             <<"direction: "<<i
+             <<"pozY: "<<m_pozY.getActual()<<m_sprite.getPosition().y<<std::endl;
 
     ///aici trebuie verificata coliziunea
 
     move(0, newY);
+}
+const Delta Player::getSpeedX() const
+{
+    return m_speedX;
+}
+const Delta Player::getSpeedY() const
+{
+    return m_speedY;
+}
+void Player::hitGround(float height)
+{
+    m_pozY.update(height - getHeight()); // Snap to the ground
+    m_sprite.setPosition(m_sprite.getPosition().x, height - getHeight());
+    m_speedY.update(0); // Stop vertical movement
+}
+
+void Player::hitGround(float height)
+{
+    m_pozY.update(height - getHeight()); // Snap to the ground
+    m_sprite.setPosition(m_sprite.getPosition().x, height - getHeight());
+    m_speedY.update(0); // Stop vertical movement
+}
+
+void Player::hitCeiling(float height)
+{
+    m_pozY.update(height); // Snap to the ceiling
+    m_sprite.setPosition(m_sprite.getPosition().x, height);
+    m_speedY.update(-m_speedY.getActual()); // ricochet
+}
+
+void Player::hitLeft(float width)
+{
+    m_pozX.update(width); // Snap to the left wall
+    m_sprite.setPosition(width, m_sprite.getPosition().y);
+    m_speedX.update(0); // Stop horizontal movement
+}
+
+void Player::hitRight(float width)
+{
+    m_pozX.update(width - getWidth()); // Snap to the right wall
+    m_sprite.setPosition(width - getWidth(), m_sprite.getPosition().y);
+    m_speedX.update(0); // Stop horizontal movement
 }

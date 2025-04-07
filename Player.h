@@ -22,6 +22,12 @@ public:
     );
     void updateCalculationsX(DirectieX direction, double dt);
     void updateCalculationsY(DirectieY direction, double dt);
+    const Delta getSpeedX() const;
+    const Delta getSpeedY() const;
+    void hitGround(float height);
+    void hitCeiling(float height);
+    void hitLeft(float width);
+    void hitRight(float width);
 private:
     Delta m_speedX;
     Delta m_speedY;

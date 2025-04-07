@@ -20,6 +20,22 @@ public:
     void updatePosition(Delta& deltaX, Delta& deltaY);
     void operator=(const Sprite& other);
     virtual ~Sprite() = default;
+    Delta getPosX() const
+    {
+        return m_pozX;
+    }
+    Delta getPosY() const
+    {
+        return m_pozY;
+    }
+    float getWidth() const
+    {
+        return m_hitBoxX;
+    }
+    float getHeight() const
+    {
+        return m_hitBoxY;
+    }
 
 protected:
     sf::Sprite m_sprite;

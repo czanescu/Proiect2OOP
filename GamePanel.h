@@ -21,7 +21,7 @@ public:
         const std::string& fontPath
     );
 
-    void addSprite(const Sprite& sprite);
+    void addSprite(const Sprite& sprite, const std::string& texturePath);
     void removeSprite(int index);
     void clearSprites();
     void updateSprite(int index, const Sprite& sprite);
@@ -44,6 +44,7 @@ public:
     const sf::Font& getFont() const;
     const sf::Text& getFrameCounter() const;
     const float getFrameRate() const;
+    void checkPlayerCollision();
     Player& getPlayer();
 
     ~GamePanel();

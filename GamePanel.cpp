@@ -1,6 +1,7 @@
 #include "GamePanel.h"
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -42,10 +43,12 @@ GamePanel::GamePanel
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
 }
-void GamePanel::addSprite(const Sprite& sprite)
+void GamePanel::addSprite(const Sprite& sprite, const std::string& texturePath)
 {
     m_sprites.resize(m_sprites.size() + 1);
-    m_sprites[m_sprites.size() - 1] = sprite;
+    m_sprites[m_sprites.size() - 1]=sprite;
+    m_sprites[m_sprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
+    m_sprites[m_sprites.size() - 1].updateTexture(texturePath);
 }
 void GamePanel::removeSprite(int index)
 {
@@ -162,7 +165,74 @@ const float GamePanel::getFrameRate() const
 {
     return m_frameRate;
 }
+void GamePanel::checkPlayerCollision()
+{
+    float playerLeft = m_player.getPosX().getActual();
+    float playerTop = m_player.getPosY().getActual();
+    float playerRight = playerLeft + m_player.getWidth();
+    float playerBottom = playerTop + m_player.getHeight();
 
+    for (const auto& sprite : m_sprites)
+    {
+        float spriteLeft = sprite.getPosX().getActual();
+        float spriteTop = sprite.getPosY().getActual();
+        float spriteRight = spriteLeft + sprite.getWidth();
+        float spriteBottom = spriteTop + sprite.getHeight();
+
+        // 1. Ground Collision (Player falling onto a sprite below)
+        if (m_player.getSpeedY().getActual() > 0) // Falling
+        {
+            if (playerBottom >= spriteTop &&
+                playerBottom - m_player.getSpeedY().getActual() <= spriteTop &&
+                playerRight > spriteLeft &&
+                playerLeft < spriteRight)
+            {
+                std::cout << "Ground Collision Detected!" << spriteTop << std::endl;
+                m_player.hitGround(spriteTop);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 2. Ceiling Collision (Player jumping into a sprite above)
+        if (m_player.getSpeedY().getActual() < 0) // Jumping
+        {
+            if (playerTop <= spriteBottom &&
+                playerTop + m_player.getSpeedY().getActual() >= spriteBottom &&
+                playerRight > spriteLeft &&
+                playerLeft < spriteRight)
+            {
+                m_player.hitCeiling(spriteBottom);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 3. Left Wall Collision (Player moving left into a sprite)
+        if (m_player.getSpeedX().getActual() < 0) // Moving left
+        {
+            if (playerLeft >= spriteRight &&
+                playerLeft + m_player.getSpeedX().getActual() <= spriteRight &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.hitLeft(spriteRight);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 4. Right Wall Collision (Player moving right into a sprite)
+        if (m_player.getSpeedX().getActual() > 0) // Moving right
+        {
+            if (playerRight <= spriteLeft &&
+                playerRight + m_player.getSpeedX().getActual() >= spriteLeft &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.hitRight(spriteLeft);
+                break; // Stop checking after the first collision
+            }
+        }
+    }
+}
 GamePanel::~GamePanel()
 {
     // Destructor implementation (needed)
