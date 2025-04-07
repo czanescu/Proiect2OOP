@@ -27,9 +27,9 @@ Player::Player
     m_speedX(speedX, speedX),
     m_speedY(speedY, speedY),
     m_jumpForce(jumpForce),
-    m_maxSpeedX(1000),
-    m_accelX(3000),
-    m_decelerationX(3000),
+    m_maxSpeedX(700),
+    m_accelX(1500),
+    m_decelerationX(2000),
     mass(mass)
 {;}
 void Player::updateCalculationsX(DirectieX direction, double dt)
@@ -93,11 +93,16 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
           << " pozX "<< m_pozX.getActual()<< ' ' << m_sprite.getPosition().x
           <<std::endl;
 }
-void Player::updateCalculationsY(DirectieY direction, double dt)
+void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziuneJos)
 {
     const float gravityF = 981.0f * mass;
-    bool coliziuneJos = true;
-    if (m_speedY.getActual() == 0 && coliziuneJos)
+    if (noColiziuneJos == 1)
+    {
+        m_speedY.update(m_speedY.getActual() + 981.0f * dt);
+    }
+    else
+    {
+    if (m_speedY.getActual() == 0)
     {
         if (direction == DirectieY::UP)
         {
@@ -109,6 +114,7 @@ void Player::updateCalculationsY(DirectieY direction, double dt)
     else
     {
         m_speedY.update(m_speedY.getActual() + 981.0f * dt);
+    }
     }
     float newY = m_speedY.getActual() * dt;
     int i;
@@ -133,12 +139,6 @@ const Delta Player::getSpeedY() const
 {
     return m_speedY;
 }
-void Player::hitGround(float height)
-{
-    m_pozY.update(height - getHeight()); // Snap to the ground
-    m_sprite.setPosition(m_sprite.getPosition().x, height - getHeight());
-    m_speedY.update(0); // Stop vertical movement
-}
 
 void Player::hitGround(float height)
 {
@@ -149,21 +149,27 @@ void Player::hitGround(float height)
 
 void Player::hitCeiling(float height)
 {
-    m_pozY.update(height); // Snap to the ceiling
+    m_pozY.update(height + getHeight()); // Snap to the ceiling
     m_sprite.setPosition(m_sprite.getPosition().x, height);
-    m_speedY.update(-m_speedY.getActual()); // ricochet
+    m_speedY.update(-m_speedY.getActual()/2); // ricochet
+    m_speedY.update(m_speedY.getActual());
 }
 
 void Player::hitLeft(float width)
 {
     m_pozX.update(width); // Snap to the left wall
+    m_pozX.update(width);
     m_sprite.setPosition(width, m_sprite.getPosition().y);
-    m_speedX.update(0); // Stop horizontal movement
+    m_speedX.update(-m_speedX.getActual()/4); // Stop horizontal movement
+    m_speedX.update(m_speedX.getActual());
 }
 
 void Player::hitRight(float width)
 {
-    m_pozX.update(width - getWidth()); // Snap to the right wall
+    m_pozX.update(width - getWidth());
+    m_pozX.update(width - getWidth());
+     // Snap to the right wall
     m_sprite.setPosition(width - getWidth(), m_sprite.getPosition().y);
-    m_speedX.update(0); // Stop horizontal movement
+    m_speedX.update(-m_speedX.getActual()/4); // Stop horizontal movement
+    m_speedX.update(m_speedX.getActual()); // Stop vertical movement
 }

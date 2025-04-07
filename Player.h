@@ -21,7 +21,7 @@ public:
         float width
     );
     void updateCalculationsX(DirectieX direction, double dt);
-    void updateCalculationsY(DirectieY direction, double dt);
+    void updateCalculationsY(DirectieY direction, double dt, bool noColiziuneJos = 0);
     const Delta getSpeedX() const;
     const Delta getSpeedY() const;
     void hitGround(float height);

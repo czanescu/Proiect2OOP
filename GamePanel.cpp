@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <fstream>
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -165,12 +166,14 @@ const float GamePanel::getFrameRate() const
 {
     return m_frameRate;
 }
-void GamePanel::checkPlayerCollision()
+void GamePanel::checkPlayerCollision(float dt)
 {
     float playerLeft = m_player.getPosX().getActual();
     float playerTop = m_player.getPosY().getActual();
     float playerRight = playerLeft + m_player.getWidth();
     float playerBottom = playerTop + m_player.getHeight();
+
+    bool isOnGround = false; // Flag to check if the player is on the ground
 
     for (const auto& sprite : m_sprites)
     {
@@ -179,15 +182,26 @@ void GamePanel::checkPlayerCollision()
         float spriteRight = spriteLeft + sprite.getWidth();
         float spriteBottom = spriteTop + sprite.getHeight();
 
+        // 0. Proximity Check (Player is close to a sprite below)
+        if (playerBottom <= spriteTop &&
+            playerBottom + 1 >= spriteTop &&
+            playerRight > spriteLeft &&
+            playerLeft < spriteRight)
+        {
+            std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
+            isOnGround = true; // Player is considered on the ground
+        }
+
         // 1. Ground Collision (Player falling onto a sprite below)
         if (m_player.getSpeedY().getActual() > 0) // Falling
         {
             if (playerBottom >= spriteTop &&
-                playerBottom - m_player.getSpeedY().getActual() <= spriteTop &&
+                playerBottom <= spriteTop + (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
-                std::cout << "Ground Collision Detected!" << spriteTop << std::endl;
+                isOnGround = true;
+                std::cout << "Ground Collision Detected! Sprite Top: " << spriteTop << std::endl;
                 m_player.hitGround(spriteTop);
                 break; // Stop checking after the first collision
             }
@@ -196,11 +210,12 @@ void GamePanel::checkPlayerCollision()
         // 2. Ceiling Collision (Player jumping into a sprite above)
         if (m_player.getSpeedY().getActual() < 0) // Jumping
         {
-            if (playerTop <= spriteBottom &&
-                playerTop + m_player.getSpeedY().getActual() >= spriteBottom &&
+            if (playerTop >= spriteBottom &&
+                playerTop <= spriteBottom - (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
+                
                 m_player.hitCeiling(spriteBottom);
                 break; // Stop checking after the first collision
             }
@@ -210,7 +225,7 @@ void GamePanel::checkPlayerCollision()
         if (m_player.getSpeedX().getActual() < 0) // Moving left
         {
             if (playerLeft >= spriteRight &&
-                playerLeft + m_player.getSpeedX().getActual() <= spriteRight &&
+                playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
@@ -223,7 +238,7 @@ void GamePanel::checkPlayerCollision()
         if (m_player.getSpeedX().getActual() > 0) // Moving right
         {
             if (playerRight <= spriteLeft &&
-                playerRight + m_player.getSpeedX().getActual() >= spriteLeft &&
+                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
@@ -232,6 +247,44 @@ void GamePanel::checkPlayerCollision()
             }
         }
     }
+
+    // If no sprite is directly under the player, trigger falling
+    if (!isOnGround && m_player.getSpeedY().getActual() == 0)
+    {
+        std::cout << "No sprite under the player. Triggering fall." << std::endl;
+        m_player.updateCalculationsY(DirectieY::NONE, dt, 1); // Apply gravity to make the player fall
+    }
+}
+
+void GamePanel::loadSpritesFromFile(const std::string& filePath)
+{
+    std::ifstream in(filePath);
+    if (!in.is_open())
+    {
+        throw std::runtime_error("Failed to open file: " + filePath);
+    }
+
+    std::string texturePath;
+    int startX, startY, count;
+    while (in >> texturePath >> startX >> startY >> count)
+    {
+        if (in.fail())
+        {
+            throw std::runtime_error("Invalid file format");
+        }
+
+        // Convert starting coordinates from grid to pixel positions
+        float pixelX = startX * 120.0f; // Bottom-right origin
+        float pixelY = m_window.getSize().y - (startY + 1) * 120.0f; // Bottom-right origin
+
+        for (int i = 0; i < count; ++i)
+        {
+            Sprite sprite(texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
+            addSprite(sprite, texturePath);
+        }
+    }
+
+    in.close();
 }
 GamePanel::~GamePanel()
 {

@@ -35,6 +35,7 @@ public:
     bool isOpen();
     void close();
     bool pollEvent(sf::Event& event);
+    void loadSpritesFromFile(const std::string& filePath);
     void clear();
 
     const sf::Color getBackgroundColor() const;
@@ -44,7 +45,7 @@ public:
     const sf::Font& getFont() const;
     const sf::Text& getFrameCounter() const;
     const float getFrameRate() const;
-    void checkPlayerCollision();
+    void checkPlayerCollision(float dt);
     Player& getPlayer();
 
     ~GamePanel();
