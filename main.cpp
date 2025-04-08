@@ -16,11 +16,13 @@ GamePanel Panel(player,"Sprite Gravity", 1920, 1080, sf::Color(37, 37, 164, 0.7)
 
 void calcule(double dt)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::LEFT, dt);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
+             sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::RIGHT, dt);
     }
@@ -28,7 +30,9 @@ void calcule(double dt)
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::UP, dt);
     }

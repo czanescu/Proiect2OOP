@@ -77,6 +77,8 @@ void Sprite::move(float x, float y)
 void Sprite::setPosition(float x, float y)
 {
     m_sprite.setPosition(x, y);
+    m_pozX.update(x);
+    m_pozY.update(y);
 }
 
 void Sprite::draw(sf::RenderWindow& window)

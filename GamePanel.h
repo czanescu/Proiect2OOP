@@ -58,6 +58,8 @@ private:
     sf::Font m_font;
     sf::Text m_frameCounter;
     float m_frameRate;
+    float m_verticalOffset = 0.0f;
+    float m_horizontalOffset = 0.0f;
 };
 
 #endif

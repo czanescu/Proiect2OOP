@@ -258,6 +258,60 @@ void GamePanel::checkPlayerCollision(float dt)
         std::cout << "No sprite under the player. Triggering fall." << std::endl;
         m_player.updateCalculationsY(DirectieY::NONE, dt, 1); // Apply gravity to make the player fall
     }
+    // Handle climbing above the screen
+    if (playerTop < 0)
+    {
+        std::cout << "Player climbed above the screen. Applying offset." << std::endl;
+        m_verticalOffset += m_window.getSize().y; // Increase the vertical offset
+        m_player.setPosition(playerLeft, m_window.getSize().y - m_player.getHeight()); // Reset player to bottom of the screen
+
+        // Apply the offset to all sprites
+        for (auto& sprite : m_sprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() + m_window.getSize().y);
+        }
+    }
+
+    // Handle falling below the screen
+    if (playerBottom > m_window.getSize().y)
+    {
+        std::cout << "Player fell below the screen. Removing offset." << std::endl;
+        m_verticalOffset -= m_window.getSize().y; // Decrease the vertical offset
+        m_player.setPosition(playerLeft, 0); // Reset player to the top of the screen
+
+        // Apply the offset to all sprites
+        for (auto& sprite : m_sprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() - m_window.getSize().y);
+        }
+    }
+    // Handle moving beyond the left of the screen
+    if ((playerLeft+playerRight)/2 < 0)
+    {
+        std::cout << "Player moved beyond the left side. Applying offset." << std::endl;
+        m_horizontalOffset += m_window.getSize().x; // Increase the vertical offset
+        m_player.setPosition(m_window.getSize().x-m_player.getWidth(), playerTop); // Reset player to bottom of the screen
+
+        // Apply the offset to all sprites
+        for (auto& sprite : m_sprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()+m_window.getSize().x, sprite.getPosY().getActual());
+        }
+    }
+
+    // Handle moving beyond the right of the screen
+    if ((playerLeft+playerRight)/2 > m_window.getSize().x)
+    {
+        std::cout << "Player moved beyond the right side. Removing offset." << std::endl;
+        m_horizontalOffset -= m_window.getSize().x; // Decrease the vertical offset
+        m_player.setPosition(0, playerTop); // Reset player to bottom of the screen
+
+        // Apply the offset to all sprites
+        for (auto& sprite : m_sprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()-m_window.getSize().x, sprite.getPosY().getActual());
+        }
+    }
 }
 
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
