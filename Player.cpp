@@ -1,6 +1,9 @@
 #include "Player.h"
 #include <iostream>
 #include <iomanip>
+
+const float GRAVITY = 981.0f; // Gravity constant
+
 Player::Player()
     : Sprite("sprite.png", 0, 0, 100, 100),
       m_speedX(0, 0),
@@ -95,10 +98,10 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
 }
 void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziuneJos)
 {
-    const float gravityF = 981.0f * mass;
+    const float gravityF = GRAVITY * mass;
     if (noColiziuneJos == 1)
     {
-        m_speedY.update(m_speedY.getActual() + 981.0f * dt);
+        m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     else
     {
@@ -113,7 +116,7 @@ void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziun
     }
     else
     {
-        m_speedY.update(m_speedY.getActual() + 981.0f * dt);
+        m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     }
     float newY = m_speedY.getActual() * dt;

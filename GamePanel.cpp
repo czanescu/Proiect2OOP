@@ -335,10 +335,22 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
         float pixelX = startX * 120.0f; // Bottom-right origin
         float pixelY = m_window.getSize().y - (startY + 1) * 120.0f; // Bottom-right origin
 
-        for (int i = 0; i < count; ++i)
+        if (count < 0)
         {
-            Sprite sprite(texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
-            addSprite(sprite, texturePath);
+            count *= -1;
+            for (int i = 0; i < count; ++i)
+            {
+                Sprite sprite(texturePath, pixelX, pixelY - i * 120.0f, 120.0f, 120.0f);
+                addSprite(sprite, texturePath);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < count; ++i)
+            {
+                Sprite sprite(texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
+                addSprite(sprite, texturePath);
+            }
         }
     }
 
