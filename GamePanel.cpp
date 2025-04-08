@@ -259,7 +259,7 @@ void GamePanel::checkPlayerCollision(float dt)
         m_player.updateCalculationsY(DirectieY::NONE, dt, 1); // Apply gravity to make the player fall
     }
     // Handle climbing above the screen
-    if (playerTop < 0)
+    if ((playerTop+playerBottom)/2 < 0)
     {
         std::cout << "Player climbed above the screen. Applying offset." << std::endl;
         m_verticalOffset += m_window.getSize().y; // Increase the vertical offset
@@ -273,7 +273,7 @@ void GamePanel::checkPlayerCollision(float dt)
     }
 
     // Handle falling below the screen
-    if (playerBottom > m_window.getSize().y)
+    if ((playerBottom+playerTop)/2 > m_window.getSize().y)
     {
         std::cout << "Player fell below the screen. Removing offset." << std::endl;
         m_verticalOffset -= m_window.getSize().y; // Decrease the vertical offset
@@ -290,7 +290,7 @@ void GamePanel::checkPlayerCollision(float dt)
     {
         std::cout << "Player moved beyond the left side. Applying offset." << std::endl;
         m_horizontalOffset += m_window.getSize().x; // Increase the vertical offset
-        m_player.setPosition(m_window.getSize().x-m_player.getWidth(), playerTop); // Reset player to bottom of the screen
+        m_player.setPosition(m_window.getSize().x-m_player.getWidth()/2, playerTop); // Reset player to bottom of the screen
 
         // Apply the offset to all sprites
         for (auto& sprite : m_sprites)
@@ -304,7 +304,7 @@ void GamePanel::checkPlayerCollision(float dt)
     {
         std::cout << "Player moved beyond the right side. Removing offset." << std::endl;
         m_horizontalOffset -= m_window.getSize().x; // Decrease the vertical offset
-        m_player.setPosition(0, playerTop); // Reset player to bottom of the screen
+        m_player.setPosition(0-m_player.getWidth()/2, playerTop); // Reset player to bottom of the screen
 
         // Apply the offset to all sprites
         for (auto& sprite : m_sprites)
