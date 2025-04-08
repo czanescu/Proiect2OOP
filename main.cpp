@@ -10,7 +10,7 @@
 
 const float FRAME_RATE = 60.0;
 
-Player player("sprite.png", 1000, 500, 0, 0, 10, 700000, 120, 120);
+Player player("sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
 GamePanel Panel(player,"Sprite Gravity", 1920, 1080, sf::Color(37, 37, 164, 0.7), FRAME_RATE, "arial.ttf");
 
