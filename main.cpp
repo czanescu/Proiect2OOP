@@ -59,6 +59,7 @@ int main()
 
     int frameCount = 0; // Frame counter
     double frameTimeAccumulator = 0.0; // Accumulator for frame time
+    float frameTimeForFrameRate;
 
     sceneSetup();
 
@@ -71,9 +72,9 @@ int main()
         oldTime = currentTime;
         accumulator += frameTime;
         frameTimeAccumulator += frameTime;
-        if (fixedTimeStep > accumulator && fixedTimeStep - accumulator > fixedTimeStep * 0.8)
+        if (fixedTimeStep > accumulator && fixedTimeStep - accumulator > fixedTimeStep * 0.5)
         {
-            double sleepTime = (fixedTimeStep - accumulator) * 0.95;
+            double sleepTime = (fixedTimeStep - accumulator);
             std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
             std::cout<<"Sleeping for: " << sleepTime << " seconds" << std::endl;
         }
@@ -92,6 +93,7 @@ int main()
             }
 
             frameCount++;
+            frameTimeForFrameRate = accumulator;
             accumulator -= fixedTimeStep;
 
             calcule(fixedTimeStep);
@@ -99,7 +101,7 @@ int main()
             // Cod pentru frame counter
             if (frameTimeAccumulator >= 1.0)
             {
-                Panel.setFrameCounterValue(frameCount);
+                Panel.setFrameCounterValue(1.f / frameTimeForFrameRate);
                 frameCount = 0;
                 frameTimeAccumulator = 0.0;
             }
