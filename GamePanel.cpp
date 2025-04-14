@@ -29,12 +29,17 @@ GamePanel::GamePanel
     float frameRate,
     const std::string& fontPath
 )
-    : m_window(sf::VideoMode(width, height), title),
-      m_player(player),
+    : m_player(player),
       m_backgroundColor(backgroundColor),
       m_frameRate(frameRate),
       m_sprites()
 {
+    // Create context settings
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 0; // Optional: Set antialiasing level
+
+    // Create the window with DPI scaling disabled
+    m_window.create(sf::VideoMode(width, height), title, sf::Style::Default, settings);
     if (!m_font.loadFromFile(fontPath))
     {
         throw std::runtime_error("Failed to load font");
