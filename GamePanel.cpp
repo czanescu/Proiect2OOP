@@ -514,8 +514,8 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
     sf::Vector2u windowSize = m_window.getSize();
     float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
-    m_backgroundSprite.setScale(scaleX, scaleX); // Uniform scaling
-    m_backgroundSprite.setPosition(0, windowSize.y - textureSize.y * scaleX); // Set position to top-left corner
+    m_backgroundSprite.setScale(2 * scaleX, 2 * scaleX); // Uniform scaling
+    m_backgroundSprite.setPosition(0, windowSize.y - textureSize.y * 2 * scaleX); // Set position to top-left corner
     int startX, startY, count;
     bool collision;
     while (in >> texturePath >> startX >> startY >> count >> collision)
