@@ -4,6 +4,7 @@
 #include "Player.h"
 #include <SFML/Graphics.hpp>
 #include <chrono>
+#include <thread>
 #include <string>
 #include <stdexcept>
 #include <iostream>
@@ -70,21 +71,26 @@ int main()
         oldTime = currentTime;
         accumulator += frameTime;
         frameTimeAccumulator += frameTime;
-
-        // Handle events
-        sf::Event event;
-        while (Panel.pollEvent(event))
+        if (fixedTimeStep > accumulator && fixedTimeStep - accumulator > fixedTimeStep * 0.8)
         {
-            if ((event.type == sf::Event::Closed)
-            || event.type == sf::Event::KeyPressed
-            && event.key.code == sf::Keyboard::Escape)
-                Panel.close();
+            double sleepTime = (fixedTimeStep - accumulator) * 0.95;
+            std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+            std::cout<<"Sleeping for: " << sleepTime << " seconds" << std::endl;
         }
-        /// Scene setup
 
         // Fixed update loop
         while (accumulator >= fixedTimeStep)
         {
+            // Handle events
+            sf::Event event;
+            while (Panel.pollEvent(event))
+            {
+                if ((event.type == sf::Event::Closed)
+                || event.type == sf::Event::KeyPressed
+                && event.key.code == sf::Keyboard::Escape)
+                    Panel.close();
+            }
+
             frameCount++;
             accumulator -= fixedTimeStep;
 
