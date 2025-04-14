@@ -51,6 +51,13 @@ void GamePanel::addSprite(const Sprite& sprite, const std::string& texturePath)
     m_sprites[m_sprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
     m_sprites[m_sprites.size() - 1].updateTexture(texturePath);
 }
+void GamePanel::addCollisionlessSprite(const Sprite& sprite, const std::string& texturePath)
+{
+    m_collisionlessSprites.resize(m_collisionlessSprites.size() + 1);
+    m_collisionlessSprites[m_collisionlessSprites.size() - 1]=sprite;
+    m_collisionlessSprites[m_collisionlessSprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
+    m_collisionlessSprites[m_collisionlessSprites.size() - 1].updateTexture(texturePath);
+}
 void GamePanel::removeSprite(int index)
 {
     if (index < 0 || index >= (m_sprites.size()))
@@ -59,9 +66,21 @@ void GamePanel::removeSprite(int index)
     }
     m_sprites.erase(m_sprites.begin() + index);
 }
+void GamePanel::removeCollisionlessSprite(int index)
+{
+    if (index < 0 || index >= (m_collisionlessSprites.size()))
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    m_collisionlessSprites.erase(m_collisionlessSprites.begin() + index);
+}
 void GamePanel::clearSprites()
 {
     m_sprites.clear();
+}
+void GamePanel::clearCollisionlessSprites()
+{
+    m_collisionlessSprites.clear();
 }
 void GamePanel::updateSprite(int index, const Sprite& sprite)
 {
@@ -71,9 +90,21 @@ void GamePanel::updateSprite(int index, const Sprite& sprite)
     }
     m_sprites[index] = sprite;
 }
+void GamePanel::updateCollisionlessSprite(int index, const Sprite& sprite)
+{
+    if (index < 0 || index >= (m_collisionlessSprites.size()))
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    m_collisionlessSprites[index] = sprite;
+}
 void GamePanel::setBackgroundColor(const sf::Color& color)
 {
     m_backgroundColor = color;
+}
+void GamePanel::setBackgroundTexture(const std::string& texturePath)
+{
+    m_backgroundSprite.updateTexture(texturePath);
 }
 void GamePanel::setFrameCounterValue(float value)
 {
@@ -97,6 +128,11 @@ void GamePanel::setFrameRate(float framerate)
 void GamePanel::renderFrame()
 {
     m_window.clear(m_backgroundColor);
+    m_window.draw(m_backgroundSprite.getSprite());
+    for (int i = 0; i < m_collisionlessSprites.size(); ++i)
+    {
+        m_collisionlessSprites[i].draw(m_window);
+    }
     for (int i = 0; i < m_sprites.size(); ++i)
     {
         m_sprites[i].draw(m_window);
@@ -270,6 +306,13 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() + m_window.getSize().y);
         }
+        //Apply offset to all collisionless sprites
+        for (auto& sprite : m_collisionlessSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() + m_window.getSize().y);
+        }
+        //Apply offset to the background sprite
+        m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual(), m_backgroundSprite.getPosY().getActual() + m_window.getSize().y);
     }
 
     // Handle falling below the screen
@@ -284,6 +327,13 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() - m_window.getSize().y);
         }
+        //Apply offset to all collisionless sprites
+        for (auto& sprite : m_collisionlessSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() - m_window.getSize().y);
+        }
+        //Apply offset to the background sprite
+        m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual(), m_backgroundSprite.getPosY().getActual() - m_window.getSize().y);
     }
     // Handle moving beyond the left of the screen
     if ((playerLeft+playerRight)/2 < 0)
@@ -297,6 +347,13 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual()+m_window.getSize().x, sprite.getPosY().getActual());
         }
+        //Apply offset to all collisionless sprites
+        for (auto& sprite : m_collisionlessSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()+m_window.getSize().x, sprite.getPosY().getActual());
+        }
+        //Apply offset to the background sprite
+        m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual()+m_window.getSize().x, m_backgroundSprite.getPosY().getActual());
     }
 
     // Handle moving beyond the right of the screen
@@ -311,9 +368,15 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual()-m_window.getSize().x, sprite.getPosY().getActual());
         }
+        //Apply offset to all collisionless sprites
+        for (auto& sprite : m_collisionlessSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()-m_window.getSize().x, sprite.getPosY().getActual());
+        }
+        //Apply offset to the background sprite
+        m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual()-m_window.getSize().x, m_backgroundSprite.getPosY().getActual());
     }
 }
-
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
 {
     std::ifstream in(filePath);
@@ -323,14 +386,26 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     }
 
     std::string texturePath;
+    in >> texturePath;
+    if (in.fail())
+    {
+        throw std::runtime_error("Invalid file format");
+    }
+    m_backgroundSprite.updateTexture(texturePath);
+    m_backgroundSprite.setDrawStatus(true);
+    sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
+    sf::Vector2u windowSize = m_window.getSize();
+    float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
+    m_backgroundSprite.setScale(scaleX, scaleX); // Uniform scaling
+    m_backgroundSprite.setPosition(0, windowSize.y - textureSize.y * scaleX); // Set position to top-left corner
     int startX, startY, count;
-    while (in >> texturePath >> startX >> startY >> count)
+    bool collision;
+    while (in >> texturePath >> startX >> startY >> count >> collision)
     {
         if (in.fail())
         {
             throw std::runtime_error("Invalid file format");
         }
-
         // Convert starting coordinates from grid to pixel positions
         float pixelX = startX * 120.0f; // Bottom-right origin
         float pixelY = m_window.getSize().y - (startY + 1) * 120.0f; // Bottom-right origin
@@ -341,7 +416,8 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
             for (int i = 0; i < count; ++i)
             {
                 Sprite sprite(texturePath, pixelX, pixelY - i * 120.0f, 120.0f, 120.0f);
-                addSprite(sprite, texturePath);
+                if (collision == 1) addSprite(sprite, texturePath);
+                else addCollisionlessSprite(sprite, texturePath);
             }
         }
         else
@@ -349,7 +425,8 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
             for (int i = 0; i < count; ++i)
             {
                 Sprite sprite(texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
-                addSprite(sprite, texturePath);
+                if (collision == 1) addSprite(sprite, texturePath);
+                else addCollisionlessSprite(sprite, texturePath);
             }
         }
     }

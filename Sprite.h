@@ -15,27 +15,21 @@ public:
     const sf::Sprite getSprite() const;
     void move(float x, float y);
     void setPosition(float x, float y);
+    void setScale(float x, float y);
     void draw(sf::RenderWindow& window);
     void updateTexture(const std::string& texturePath);
     void updatePosition(Delta& deltaX, Delta& deltaY);
     void operator=(const Sprite& other);
     virtual ~Sprite() = default;
-    Delta getPosX() const
-    {
-        return m_pozX;
-    }
-    Delta getPosY() const
-    {
-        return m_pozY;
-    }
-    float getWidth() const
-    {
-        return m_hitBoxX;
-    }
-    float getHeight() const
-    {
-        return m_hitBoxY;
-    }
+    Delta getPosX() const;
+    Delta getPosY() const;
+    float getWidth() const;
+    float getHeight() const;
+    sf::Texture getTexture() const;
+    bool getDrawStatus() const;
+    void setDrawStatus(bool status);
+    void changeDrawStatus();
+
 
 protected:
     sf::Sprite m_sprite;
@@ -47,6 +41,7 @@ private:
     
     float m_hitBoxX;
     float m_hitBoxY;
+    bool m_isDrawn;
 };
 
 #endif // SPRITE_H
