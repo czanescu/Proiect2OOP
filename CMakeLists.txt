@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(gravity)
 
 # Add the executable
-add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp)
+add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp)
 
 # Find and link SFML libraries
 if (WIN32)

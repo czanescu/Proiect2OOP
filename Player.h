@@ -28,14 +28,16 @@ public:
     void hitCeiling(float height);
     void hitLeft(float width);
     void hitRight(float width);
+    void setPlatformSpeed(Delta speed);
 private:
     Delta m_speedX;
     Delta m_speedY;
+    Delta m_platformSpeed;
     float m_jumpForce;
     float m_maxSpeedX;
     float m_accelX;
     float m_decelerationX;
-    float mass;
+    float m_mass;
 };
 
 #endif

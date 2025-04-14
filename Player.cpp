@@ -12,7 +12,8 @@ Player::Player()
       m_maxSpeedX(100),
       m_accelX(100),
       m_decelerationX(1000),
-      mass(10)
+      m_mass(10),
+      m_platformSpeed(0, 0)
 {;}
 Player::Player
 (
@@ -33,7 +34,8 @@ Player::Player
     m_maxSpeedX(700),
     m_accelX(1500),
     m_decelerationX(2000),
-    mass(mass)
+    m_mass(mass),
+    m_platformSpeed(0, 0)
 {;}
 void Player::updateCalculationsX(DirectieX direction, double dt)
 {
@@ -85,7 +87,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
         m_speedX.setActual(m_maxSpeedX);
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
-    float newX = (m_speedX.getActual()+m_speedX.getPrecedent())/2 * dt;
+    float newX = ((m_speedX.getActual()+m_speedX.getPrecedent())/2 + (m_platformSpeed.getActual()+m_platformSpeed.getPrecedent())/2) * dt;
     move(newX,0);
     m_pozX.update(m_sprite.getPosition().x);
     std::cout << std::fixed << std::setprecision(6) 
@@ -98,7 +100,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
 }
 void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziuneJos)
 {
-    const float gravityF = GRAVITY * mass;
+    const float gravityF = GRAVITY * m_mass;
     if (noColiziuneJos == 1)
     {
         m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
@@ -111,7 +113,7 @@ void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziun
         {
             
             float actualJumpForce=-m_jumpForce+gravityF;
-            m_speedY.update(actualJumpForce / mass * dt);
+            m_speedY.update(actualJumpForce / m_mass * dt);
         }
     }
     else
@@ -175,4 +177,9 @@ void Player::hitRight(float width)
     m_sprite.setPosition(width - getWidth(), m_sprite.getPosition().y);
     m_speedX.update(-m_speedX.getActual()/4); // Stop horizontal movement
     m_speedX.update(m_speedX.getActual()); // Stop vertical movement
+}
+
+void Player::setPlatformSpeed(Delta speed)
+{
+    m_platformSpeed = speed;
 }

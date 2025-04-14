@@ -10,6 +10,7 @@ public:
 
     float getPrecedent() const;
     float getActual() const;
+    float getAverage() const;
 
     void setPrecedent(float value);
     void setActual(float value);

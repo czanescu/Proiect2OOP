@@ -21,6 +21,11 @@ float Delta::getActual() const
     return m_actual;
 }
 
+float Delta::getAverage() const
+{
+    return (m_precedent + m_actual) / 2;
+}
+
 void Delta::setPrecedent(float value)
 {
     m_precedent = value;

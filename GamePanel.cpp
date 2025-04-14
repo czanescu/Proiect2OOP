@@ -58,6 +58,13 @@ void GamePanel::addCollisionlessSprite(const Sprite& sprite, const std::string& 
     m_collisionlessSprites[m_collisionlessSprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
     m_collisionlessSprites[m_collisionlessSprites.size() - 1].updateTexture(texturePath);
 }
+void GamePanel::addMovableSprite(const MovableSprite& sprite, const std::string& texturePath)
+{
+    m_movableSprites.resize(m_movableSprites.size() + 1);
+    m_movableSprites[m_movableSprites.size() - 1]=sprite;
+    m_movableSprites[m_movableSprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
+    m_movableSprites[m_movableSprites.size() - 1].updateTexture(texturePath);
+}
 void GamePanel::removeSprite(int index)
 {
     if (index < 0 || index >= (m_sprites.size()))
@@ -74,6 +81,14 @@ void GamePanel::removeCollisionlessSprite(int index)
     }
     m_collisionlessSprites.erase(m_collisionlessSprites.begin() + index);
 }
+void GamePanel::removeMovableSprite(int index)
+{
+    if (index < 0 || index >= (m_movableSprites.size()))
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    m_movableSprites.erase(m_movableSprites.begin() + index);
+}
 void GamePanel::clearSprites()
 {
     m_sprites.clear();
@@ -81,6 +96,16 @@ void GamePanel::clearSprites()
 void GamePanel::clearCollisionlessSprites()
 {
     m_collisionlessSprites.clear();
+}
+void GamePanel::clearMovableSprites()
+{
+    m_movableSprites.clear();
+}
+void GamePanel::clearAllSprites()
+{
+    m_sprites.clear();
+    m_collisionlessSprites.clear();
+    m_movableSprites.clear();
 }
 void GamePanel::updateSprite(int index, const Sprite& sprite)
 {
@@ -97,6 +122,14 @@ void GamePanel::updateCollisionlessSprite(int index, const Sprite& sprite)
         throw std::out_of_range("Index out of range");
     }
     m_collisionlessSprites[index] = sprite;
+}
+void GamePanel::updateMovableSprite(int index, const MovableSprite& sprite)
+{
+    if (index < 0 || index >= (m_movableSprites.size()))
+    {
+        throw std::out_of_range("Index out of range");
+    }
+    m_movableSprites[index] = sprite;
 }
 void GamePanel::setBackgroundColor(const sf::Color& color)
 {
@@ -136,6 +169,10 @@ void GamePanel::renderFrame()
     for (int i = 0; i < m_sprites.size(); ++i)
     {
         m_sprites[i].draw(m_window);
+    }
+    for (int i = 0; i < m_movableSprites.size(); ++i)
+    {
+        m_movableSprites[i].draw(m_window);
     }
     m_player.draw(m_window);
     m_window.draw(m_frameCounter);
@@ -210,7 +247,7 @@ void GamePanel::checkPlayerCollision(float dt)
     float playerBottom = playerTop + m_player.getHeight();
 
     bool isOnGround = false; // Flag to check if the player is on the ground
-
+    // Collision check for m_sprites
     for (const auto& sprite : m_sprites)
     {
         float spriteLeft = sprite.getPosX().getActual();
@@ -226,6 +263,87 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
             isOnGround = true; // Player is considered on the ground
+            Delta zero(0,0);
+            m_player.setPlatformSpeed(zero);
+        }
+
+        // 1. Ground Collision (Player falling onto a sprite below)
+        if (m_player.getSpeedY().getActual() > 0) // Falling
+        {
+            if (((playerBottom >= spriteTop &&
+                playerBottom <= spriteTop + (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||(
+                playerBottom >= spriteTop && playerBottom <= (spriteTop + spriteBottom)/2)) &&
+                playerRight > spriteLeft &&
+                playerLeft < spriteRight)
+            {
+                isOnGround = true;
+                std::cout << "Ground Collision Detected! Sprite Top: " << spriteTop << std::endl;
+                m_player.hitGround(spriteTop);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 2. Ceiling Collision (Player jumping into a sprite above)
+        if (m_player.getSpeedY().getActual() < 0) // Jumping
+        {
+            if (((playerTop >= spriteBottom &&
+                playerTop <= spriteBottom - (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||
+                (playerTop <= spriteBottom  && playerTop >= (spriteTop + spriteBottom)/2)) &&
+                playerRight > spriteLeft &&
+                playerLeft < spriteRight)
+            {
+                
+                m_player.hitCeiling(spriteBottom);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 3. Left Wall Collision (Player moving left into a sprite)
+        if (m_player.getSpeedX().getActual() < 0) // Moving left
+        {
+            if (((playerLeft >= spriteRight &&
+                playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerLeft <= spriteRight && playerLeft >= (spriteLeft + spriteRight)/2)) &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.hitLeft(spriteRight);
+                break; // Stop checking after the first collision
+            }
+        }
+
+        // 4. Right Wall Collision (Player moving right into a sprite)
+        if (m_player.getSpeedX().getActual() > 0) // Moving right
+        {
+            if (((playerRight <= spriteLeft &&
+                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerRight >= spriteLeft && playerRight <= (spriteLeft + spriteRight)/2)) &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.hitRight(spriteLeft);
+                break; // Stop checking after the first collision
+            }
+        }
+    }
+
+    // Collision check for m_movableSprites
+    for (const auto& sprite : m_movableSprites)
+    {
+        float spriteLeft = sprite.getPosX().getActual();
+        float spriteTop = sprite.getPosY().getActual();
+        float spriteRight = spriteLeft + sprite.getWidth();
+        float spriteBottom = spriteTop + sprite.getHeight();
+
+        // 0. Proximity Check (Player is close to a sprite below)
+        if (playerBottom <= spriteTop &&
+            playerBottom + 1 >= spriteTop &&
+            playerRight > spriteLeft &&
+            playerLeft < spriteRight)
+        {
+            std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
+            isOnGround = true; // Player is considered on the ground
+            m_player.setPlatformSpeed(sprite.getXSpeed());
         }
 
         // 1. Ground Collision (Player falling onto a sprite below)
@@ -433,6 +551,78 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
 
     in.close();
 }
+
+void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
+{
+    std::ifstream in(filePath);
+    if (!in.is_open())
+    {
+        throw std::runtime_error("Failed to open file: " + filePath);
+    }
+    std::string texturePath;
+    int startX, startY, endX, endY, acceleration;
+    bool collision;
+    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration >> collision)
+    {
+        if (in.fail())
+        {
+            throw std::runtime_error("Invalid file format");
+        }
+        // Convert starting coordinates from grid to pixel positions
+        float pixelX = startX * 120.0f; // Bottom-right origin
+        float pixelY = m_window.getSize().y - (startY + 1) * 120.0f; // Bottom-right origin
+
+        float pixelEndX = endX * 120.0f; // Bottom-right origin
+        float pixelEndY = m_window.getSize().y - (endY + 1) * 120.0f; // Bottom-right origin
+        MovableSprite sprite(texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, acceleration);
+        addMovableSprite(sprite, texturePath);
+    }
+}
+
+void GamePanel::moveSprites(float dt)
+{
+    for (auto& sprite : m_movableSprites)
+    {
+        if (sprite.getXSpeed().getActual() == 0 && sprite.getYSpeed().getActual() == 0)
+        {
+            if (sprite.getXStartPoz()<sprite.getXEndPoz())
+            {
+                sprite.updateXSpeed(sprite.getAcceleration()*dt);
+            }
+            else sprite.updateXSpeed(-sprite.getAcceleration()*dt);
+        }
+        else if (sprite.getXStartPoz()<sprite.getXEndPoz())
+        {
+            if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            {
+                sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getAcceleration()*dt);
+            }
+            else if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            {
+                sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getAcceleration()*dt);
+            }
+        }
+        else
+        {
+            if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            {
+                sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getAcceleration()*dt);
+            }
+            else if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            {
+                sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getAcceleration()*dt);
+            }
+        }
+        float pozX=sprite.getPosX().getActual();
+        float pozY = sprite.getPosY().getActual();
+        float newPosX = pozX + sprite.getXSpeed().getAverage() * dt;
+        float newPosY = pozY + sprite.getYSpeed().getAverage() * dt;
+        Delta newPosXDelta(pozX, newPosX);
+        Delta newPosYDelta(pozY, newPosY);
+        sprite.updatePosition(newPosXDelta, newPosYDelta);
+    }
+}
+
 GamePanel::~GamePanel()
 {
     // Destructor implementation (needed)
