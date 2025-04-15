@@ -101,3 +101,19 @@ void MovableSprite::updateYSpeed(float newYSpeed)
 {
     m_ySpeed.update(newYSpeed);
 }
+void MovableSprite::setXStartPoz(float newXStartPoz)
+{
+    m_xStartPoz = newXStartPoz;
+}
+void MovableSprite::setYStartPoz(float newYStartPoz)
+{
+    m_yStartPoz = newYStartPoz;
+}
+void MovableSprite::setXEndPoz(float newXEndPoz)
+{
+    m_xEndPoz = newXEndPoz;
+}
+void MovableSprite::setYEndPoz(float newYEndPoz)
+{
+    m_yEndPoz = newYEndPoz;
+}

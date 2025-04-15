@@ -459,6 +459,13 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() + m_window.getSize().y);
         }
+        //Apply offset to all movable sprites
+        for (auto& sprite : m_movableSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() + m_window.getSize().y);
+            sprite.setYStartPoz(sprite.getYStartPoz() + m_window.getSize().y);
+            sprite.setYEndPoz(sprite.getYEndPoz() + m_window.getSize().y);
+        }
         //Apply offset to the background sprite
         m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual(), m_backgroundSprite.getPosY().getActual() + m_window.getSize().y);
     }
@@ -480,6 +487,13 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() - m_window.getSize().y);
         }
+        //Apply offset to all movable sprites
+        for (auto& sprite : m_movableSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getPosY().getActual() - m_window.getSize().y);
+            sprite.setYStartPoz(sprite.getYStartPoz() - m_window.getSize().y);
+            sprite.setYEndPoz(sprite.getYEndPoz() - m_window.getSize().y);
+        }
         //Apply offset to the background sprite
         m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual(), m_backgroundSprite.getPosY().getActual() - m_window.getSize().y);
     }
@@ -499,6 +513,13 @@ void GamePanel::checkPlayerCollision(float dt)
         for (auto& sprite : m_collisionlessSprites)
         {
             sprite.setPosition(sprite.getPosX().getActual()+m_window.getSize().x, sprite.getPosY().getActual());
+        }
+        //Apply offset to all movable sprites
+        for (auto& sprite : m_movableSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()+m_window.getSize().x, sprite.getPosY().getActual());
+            sprite.setXStartPoz(sprite.getXStartPoz() + m_window.getSize().x);
+            sprite.setXEndPoz(sprite.getXEndPoz() + m_window.getSize().x);
         }
         //Apply offset to the background sprite
         m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual()+m_window.getSize().x, m_backgroundSprite.getPosY().getActual());
@@ -520,6 +541,13 @@ void GamePanel::checkPlayerCollision(float dt)
         for (auto& sprite : m_collisionlessSprites)
         {
             sprite.setPosition(sprite.getPosX().getActual()-m_window.getSize().x, sprite.getPosY().getActual());
+        }
+        //Apply offset to all movable sprites
+        for (auto& sprite : m_movableSprites)
+        {
+            sprite.setPosition(sprite.getPosX().getActual()-m_window.getSize().x, sprite.getPosY().getActual());
+            sprite.setXStartPoz(sprite.getXStartPoz() - m_window.getSize().x);
+            sprite.setXEndPoz(sprite.getXEndPoz() - m_window.getSize().x);
         }
         //Apply offset to the background sprite
         m_backgroundSprite.setPosition(m_backgroundSprite.getPosX().getActual()-m_window.getSize().x, m_backgroundSprite.getPosY().getActual());

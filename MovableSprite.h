@@ -25,6 +25,11 @@ class MovableSprite : public Sprite
         void updateXSpeed(float newXSpeed);
         void updateYSpeed(float newYSpeed);
 
+        void setXStartPoz(float newXStartPoz);
+        void setYStartPoz(float newYStartPoz);
+        void setXEndPoz(float newXEndPoz);
+        void setYEndPoz(float newYEndPoz);
+
         Delta getXSpeed() const;
         Delta getYSpeed() const;
         float getXStartPoz() const;
