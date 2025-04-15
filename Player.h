@@ -28,11 +28,14 @@ public:
     void hitCeiling(float height);
     void hitLeft(float width);
     void hitRight(float width);
-    void setPlatformSpeed(Delta speed);
+    void setPlatformSpeed(Delta speedX, Delta speedY);
+    const Delta getXPlatformSpeed() const;
+    const Delta getYPlatformSpeed() const;
 private:
     Delta m_speedX;
     Delta m_speedY;
-    Delta m_platformSpeed;
+    Delta m_platformXSpeed;
+    Delta m_platformYSpeed;
     float m_jumpForce;
     float m_maxSpeedX;
     float m_accelX;

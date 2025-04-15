@@ -269,7 +269,7 @@ void GamePanel::checkPlayerCollision(float dt)
             std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
             isOnGround = true; // Player is considered on the ground
             Delta zero(0,0);
-            m_player.setPlatformSpeed(zero);
+            m_player.setPlatformSpeed(zero,zero);
         }
 
         // 1. Ground Collision (Player falling onto a sprite below)
@@ -331,7 +331,6 @@ void GamePanel::checkPlayerCollision(float dt)
             }
         }
     }
-
     // Collision check for m_movableSprites
     for (const auto& sprite : m_movableSprites)
     {
@@ -348,7 +347,7 @@ void GamePanel::checkPlayerCollision(float dt)
         {
             std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
             isOnGround = true; // Player is considered on the ground
-            m_player.setPlatformSpeed(sprite.getXSpeed());
+            m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
         }
 
         // 1. Ground Collision (Player falling onto a sprite below)
@@ -382,7 +381,7 @@ void GamePanel::checkPlayerCollision(float dt)
             }
         }
 
-        // 3. Left Wall Collision (Player moving left into a sprite)
+        // 3. Left Wall Collision (Player moving left into a sprite, or sprite moving right)
         if (m_player.getSpeedX().getActual() < 0) // Moving left
         {
             if (((playerLeft >= spriteRight &&
@@ -395,8 +394,20 @@ void GamePanel::checkPlayerCollision(float dt)
                 break; // Stop checking after the first collision
             }
         }
+        if (sprite.getXSpeed().getActual() > 0)
+        {
+            if (((playerLeft >= spriteRight &&
+                playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerLeft <= spriteRight && playerLeft >= (spriteLeft + spriteRight)/2)) &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
+                break; // Stop checking after the first collision
+            }
+        }
 
-        // 4. Right Wall Collision (Player moving right into a sprite)
+        // 4. Right Wall Collision (Player moving right into a sprite, or sprite moving left)
         if (m_player.getSpeedX().getActual() > 0) // Moving right
         {
             if (((playerRight <= spriteLeft &&
@@ -409,6 +420,18 @@ void GamePanel::checkPlayerCollision(float dt)
                 break; // Stop checking after the first collision
             }
         }
+        if (sprite.getXSpeed().getActual() < 0) //Sprite moving left
+        {
+            if (((playerRight <= spriteLeft &&
+                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerRight >= spriteLeft && playerRight <= (spriteLeft + spriteRight)/2)) &&
+                playerBottom > spriteTop &&
+                playerTop < spriteBottom)
+            {
+                m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
+                break;
+            }
+        }
     }
 
     // If no sprite is directly under the player, trigger falling
@@ -416,6 +439,8 @@ void GamePanel::checkPlayerCollision(float dt)
     {
         std::cout << "No sprite under the player. Triggering fall." << std::endl;
         m_player.updateCalculationsY(DirectieY::NONE, dt, 1); // Apply gravity to make the player fall
+        Delta zero(0,0);
+        m_player.setPlatformSpeed(m_player.getXPlatformSpeed(), zero);
     }
     // Handle climbing above the screen
     if ((playerTop+playerBottom)/2 < 0)
@@ -565,9 +590,9 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
         throw std::runtime_error("Failed to open file: " + filePath);
     }
     std::string texturePath;
-    int startX, startY, endX, endY, acceleration;
+    int startX, startY, endX, endY, accelerationX, accelerationY;
     bool collision;
-    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration >> collision)
+    while (in >> texturePath >> startX >> startY >> endX >> endY >> accelerationX >> accelerationY >> collision)
     {
         if (in.fail())
         {
@@ -579,7 +604,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 
         float pixelEndX = endX * 120.0f; // Bottom-right origin
         float pixelEndY = m_window.getSize().y - (endY + 1) * 120.0f; // Bottom-right origin
-        MovableSprite sprite(texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, acceleration);
+        MovableSprite sprite(texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, accelerationX, accelerationY);
         addMovableSprite(sprite, texturePath);
     }
 }
@@ -588,40 +613,73 @@ void GamePanel::moveSprites(float dt)
 {
     for (auto& sprite : m_movableSprites)
     {
+        //calcule pentru X si Y
         if (sprite.getXSpeed().getActual() == 0 && sprite.getYSpeed().getActual() == 0)
         {
             if (sprite.getXStartPoz()<sprite.getXEndPoz())
             {
-                sprite.updateXSpeed(sprite.getAcceleration()*dt);
+                sprite.updateXSpeed(sprite.getXAcceleration()*dt);
             }
-            else sprite.updateXSpeed(-sprite.getAcceleration()*dt);
-        }
-        else if (sprite.getXStartPoz()<sprite.getXEndPoz())
-        {
-            if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            else sprite.updateXSpeed(-sprite.getXAcceleration()*dt);
+            if (sprite.getYStartPoz()<sprite.getYEndPoz()) ///DACA NU MERGE VERIFICA AICI
             {
-                sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getAcceleration()*dt);
+                sprite.updateYSpeed(sprite.getYAcceleration()*dt);
             }
-            else if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
-            {
-                sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getAcceleration()*dt);
-            }
+            else sprite.updateYSpeed(-sprite.getYAcceleration()*dt);
         }
         else
         {
-            if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            //calcule pentru X
+            if (sprite.getXStartPoz()<sprite.getXEndPoz())
             {
-                sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getAcceleration()*dt);
+                if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                {
+                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                }
+                else if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                {
+                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
+                }
             }
-            else if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+            else
             {
-                sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getAcceleration()*dt);
+                if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                {
+                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
+                }
+                else if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                {
+                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                }
+            }
+            //calcule pentru Y
+            if (sprite.getYStartPoz()<sprite.getYEndPoz())
+            {
+                if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                {
+                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                }
+                else if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                {
+                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
+                }
+            }
+            else
+            {
+                if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                {
+                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
+                }
+                else if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                {
+                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                }
             }
         }
         float pozX=sprite.getPosX().getActual();
         float pozY = sprite.getPosY().getActual();
-        float newPosX = pozX + sprite.getXSpeed().getAverage() * dt;
-        float newPosY = pozY + sprite.getYSpeed().getAverage() * dt;
+        float newPosX = pozX + sprite.getXSpeed().getActual() * dt;
+        float newPosY = pozY + sprite.getYSpeed().getActual() * dt;
         Delta newPosXDelta(pozX, newPosX);
         Delta newPosYDelta(pozY, newPosY);
         sprite.updatePosition(newPosXDelta, newPosYDelta);

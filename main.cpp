@@ -42,10 +42,12 @@ void calcule(double dt)
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt);
     }
     Panel.checkPlayerCollision(dt);
+    Panel.moveSprites(dt);
 }
 
 void sceneSetup(){
     Panel.loadSpritesFromFile("map.map");
+    Panel.loadMovableSpritesFromFile("movable.map");
 }
 
 int main()

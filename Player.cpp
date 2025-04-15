@@ -13,7 +13,8 @@ Player::Player()
       m_accelX(100),
       m_decelerationX(1000),
       m_mass(10),
-      m_platformSpeed(0, 0)
+      m_platformXSpeed(0, 0),
+      m_platformYSpeed(0, 0)
 {;}
 Player::Player
 (
@@ -35,7 +36,8 @@ Player::Player
     m_accelX(1500),
     m_decelerationX(2000),
     m_mass(mass),
-    m_platformSpeed(0, 0)
+    m_platformXSpeed(0, 0),
+    m_platformYSpeed(0, 0)
 {;}
 void Player::updateCalculationsX(DirectieX direction, double dt)
 {
@@ -87,7 +89,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
         m_speedX.setActual(m_maxSpeedX);
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
-    float newX = ((m_speedX.getActual()+m_speedX.getPrecedent())/2 + (m_platformSpeed.getActual()+m_platformSpeed.getPrecedent())/2) * dt;
+    float newX = ((m_speedX.getActual()+m_speedX.getPrecedent())/2 + (m_platformXSpeed.getActual()+m_platformXSpeed.getPrecedent())/2) * dt;
     move(newX,0);
     m_pozX.update(m_sprite.getPosition().x);
     std::cout << std::fixed << std::setprecision(6) 
@@ -113,7 +115,8 @@ void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziun
         {
             
             float actualJumpForce=-m_jumpForce+gravityF;
-            m_speedY.update(actualJumpForce / m_mass * dt);
+            m_speedY.update(actualJumpForce / m_mass * dt + m_platformYSpeed.getActual());
+            m_platformYSpeed = Delta(0, 0);
         }
     }
     else
@@ -121,7 +124,7 @@ void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziun
         m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     }
-    float newY = m_speedY.getActual() * dt;
+    float newY = (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt;
     int i;
     if (direction == DirectieY::DOWN) i = -1;
     else if (direction == DirectieY::NONE) i = 0;
@@ -129,6 +132,7 @@ void Player::updateCalculationsY(DirectieY direction, double dt, bool noColiziun
     else i = 2;
     m_pozY.update(m_sprite.getPosition().y);
     std::cout<<"newY: "<<newY<<"m_speedY: "<<m_speedY.getActual()
+             <<"m_platformYSpeed: "<<m_platformYSpeed.getActual()
              <<"direction: "<<i
              <<"pozY: "<<m_pozY.getActual()<<m_sprite.getPosition().y<<std::endl;
 
@@ -179,7 +183,17 @@ void Player::hitRight(float width)
     m_speedX.update(m_speedX.getActual()); // Stop vertical movement
 }
 
-void Player::setPlatformSpeed(Delta speed)
+void Player::setPlatformSpeed(Delta speedX, Delta speedY)
 {
-    m_platformSpeed = speed;
+    m_platformXSpeed = speedX;
+    m_platformYSpeed = speedY;
+}
+
+const Delta Player::getXPlatformSpeed() const
+{
+    return m_platformXSpeed;
+}
+const Delta Player::getYPlatformSpeed() const
+{
+    return m_platformYSpeed;
 }

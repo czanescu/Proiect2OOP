@@ -1,7 +1,15 @@
 #include "MovableSprite.h"
 
 MovableSprite::MovableSprite()
-    : Sprite(), m_xStartPoz(0), m_yStartPoz(0), m_xEndPoz(0), m_yEndPoz(0), m_xSpeed(), m_ySpeed(), m_Acceleration(0)
+  : Sprite(),
+    m_xStartPoz(0), 
+    m_yStartPoz(0), 
+    m_xEndPoz(0),
+    m_yEndPoz(0), 
+    m_xSpeed(), 
+    m_ySpeed(), 
+    m_xAcceleration(0), 
+    m_yAcceleration(0)
 {;}
 MovableSprite::MovableSprite
 (
@@ -12,7 +20,8 @@ MovableSprite::MovableSprite
     float yStartPoz,
     float xEndPoz,
     float yEndPoz,
-    float Acceleration
+    float xAcceleration,
+    float yAcceleration
 )
     : Sprite(fileName, xStartPoz, yStartPoz, height, width),
       m_xStartPoz(xStartPoz),
@@ -21,7 +30,8 @@ MovableSprite::MovableSprite
       m_yEndPoz(yEndPoz),
       m_xSpeed(0, 0),
       m_ySpeed(0, 0),
-      m_Acceleration(Acceleration)
+      m_xAcceleration(xAcceleration),
+      m_yAcceleration(yAcceleration)
 {;}
 MovableSprite::MovableSprite(const MovableSprite& other)
     : Sprite(other),
@@ -31,7 +41,8 @@ MovableSprite::MovableSprite(const MovableSprite& other)
       m_yEndPoz(other.m_yEndPoz),
       m_xSpeed(other.m_xSpeed),
       m_ySpeed(other.m_ySpeed),
-      m_Acceleration(other.m_Acceleration)
+      m_xAcceleration(other.m_xAcceleration),
+      m_yAcceleration(other.m_yAcceleration)
 {;}
 MovableSprite& MovableSprite::operator=(const MovableSprite& other)
 {
@@ -44,7 +55,8 @@ MovableSprite& MovableSprite::operator=(const MovableSprite& other)
         m_yEndPoz = other.m_yEndPoz;
         m_xSpeed = other.m_xSpeed;
         m_ySpeed = other.m_ySpeed;
-        m_Acceleration = other.m_Acceleration;
+        m_xAcceleration = other.m_xAcceleration;
+        m_yAcceleration = other.m_yAcceleration;
     }
     return *this;
 }
@@ -73,9 +85,13 @@ float MovableSprite::getYEndPoz() const
 {
     return m_yEndPoz;
 }
-float MovableSprite::getAcceleration() const
+float MovableSprite::getXAcceleration() const
 {
-    return m_Acceleration;
+    return m_xAcceleration;
+}
+float MovableSprite::getYAcceleration() const
+{
+    return m_yAcceleration;
 }
 void MovableSprite::updateXSpeed(float newXSpeed)
 {
