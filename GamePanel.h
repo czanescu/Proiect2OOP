@@ -3,6 +3,7 @@
 
 #include "Sprite.h"
 #include "MovableSprite.h"
+#include "AnimatedSprite.h"
 #include "Player.h"
 #include "Enums.h"
 #include <vector>
@@ -25,6 +26,7 @@ public:
     void addSprite(const Sprite& sprite, const std::string& texturePath);
     void addCollisionlessSprite(const Sprite& sprite, const std::string& texturePath);
     void addMovableSprite(const MovableSprite& sprite, const std::string& texturePath);
+    void addAnimatedSprite(const AnimatedSprite& sprite, const std::string& texturePath);
 
     void setBackgroundTexture(const std::string& texturePath);
 
@@ -57,6 +59,7 @@ public:
 
     void loadSpritesFromFile(const std::string& filePath);
     void loadMovableSpritesFromFile(const std::string& filePath);
+    void loadAnimatedSpritesFromFile(const std::string& filePath);
 
     Player& getPlayer();
     const sf::Color getBackgroundColor() const;
@@ -76,6 +79,7 @@ private:
     std::vector<Sprite> m_sprites;
     std::vector<Sprite> m_collisionlessSprites;
     std::vector<MovableSprite> m_movableSprites;
+    std::vector<AnimatedSprite> m_animatedSprites;
     Sprite m_backgroundSprite;
     Player m_player;
     sf::Color m_backgroundColor;

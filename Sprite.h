@@ -10,13 +10,14 @@ class Sprite
 {
 public:
     Sprite();
+    Sprite(float x, float y, float height, float width);
     Sprite(const std::string& texturePath, float x, float y, float height, float width);
     Sprite(const Sprite& other);
     const sf::Sprite getSprite() const;
     void move(float x, float y);
     void setPosition(float x, float y);
     void setScale(float x, float y);
-    void draw(sf::RenderWindow& window);
+    virtual void draw(sf::RenderWindow& window);
     void updateTexture(const std::string& texturePath);
     void updatePosition(Delta& deltaX, Delta& deltaY);
     void operator=(const Sprite& other);

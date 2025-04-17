@@ -11,6 +11,27 @@ Sprite::Sprite()
 
 Sprite::Sprite
 (
+    float x, 
+    float y,
+    float height,
+    float width
+)
+  : m_pozX(x, x),
+    m_pozY(y, y),
+    m_hitBoxX(width),
+    m_hitBoxY(height),
+    m_isDrawn(true)
+{
+    m_sprite.setPosition(x, y);
+    m_sprite.setScale
+    (
+        width / m_textura.getSize().x,
+        height / m_textura.getSize().y
+    );
+}
+
+Sprite::Sprite
+(
     const std::string& texturePath,
     float x, 
     float y,

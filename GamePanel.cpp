@@ -70,6 +70,13 @@ void GamePanel::addMovableSprite(const MovableSprite& sprite, const std::string&
     m_movableSprites[m_movableSprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
     m_movableSprites[m_movableSprites.size() - 1].updateTexture(texturePath);
 }
+void GamePanel::addAnimatedSprite(const AnimatedSprite& sprite, const std::string& texturePath)
+{
+    m_animatedSprites.resize(m_animatedSprites.size() + 1);
+    m_animatedSprites[m_animatedSprites.size() - 1]=sprite;
+    m_animatedSprites[m_animatedSprites.size() - 1].setPosition(sprite.getSprite().getPosition().x, sprite.getSprite().getPosition().y);
+    m_animatedSprites[m_animatedSprites.size() - 1].updateTextures(texturePath);
+}
 void GamePanel::removeSprite(int index)
 {
     if (index < 0 || index >= (m_sprites.size()))
@@ -638,6 +645,29 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
         float pixelEndY = m_window.getSize().y - (endY + 1) * 120.0f; // Bottom-right origin
         MovableSprite sprite(texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, accelerationX, accelerationY);
         addMovableSprite(sprite, texturePath);
+    }
+}
+
+void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
+{
+    std::ifstream in(filePath);
+    if (!in.is_open())
+    {
+        throw std::runtime_error("Failed to open file: " + filePath);
+    }
+    std::string texturePath;
+    int x, y, textureCount, frameDuration;
+    while (in >> texturePath >> x >> y >> textureCount >> frameDuration)
+    {
+        if (in.fail())
+        {
+            throw std::runtime_error("Invalid file format");
+        }
+        // Convert starting coordinates from grid to pixel positions
+        float pixelX = x * 120.0f; // Bottom-right origin
+        float pixelY = m_window.getSize().y - (y + 1) * 120.0f; // Bottom-right origin
+        AnimatedSprite sprite(texturePath, pixelX, pixelY, 120.0f, 120.0f, textureCount, frameDuration);
+        addAnimatedSprite(sprite, texturePath);
     }
 }
 
