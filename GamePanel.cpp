@@ -641,6 +641,18 @@ void GamePanel::moveSprites(float dt)
 {
     for (auto& sprite : m_movableSprites)
     {
+        bool not_movingX = false;
+        bool not_movingY = false;
+        if (sprite.getXStartPoz() == sprite.getXEndPoz())
+        {
+            sprite.setPosition(sprite.getXStartPoz(), sprite.getPosY().getActual());
+            not_movingX = true;
+        }
+        if (sprite.getYStartPoz() == sprite.getYEndPoz())
+        {
+            sprite.setPosition(sprite.getPosX().getActual(), sprite.getYStartPoz());
+            not_movingY = true;
+        }
         //calcule pentru X si Y
         if (sprite.getXSpeed().getActual() == 0 && sprite.getYSpeed().getActual() == 0)
         {
@@ -649,7 +661,7 @@ void GamePanel::moveSprites(float dt)
                 sprite.updateXSpeed(sprite.getXAcceleration()*dt);
             }
             else sprite.updateXSpeed(-sprite.getXAcceleration()*dt);
-            if (sprite.getYStartPoz()<sprite.getYEndPoz()) ///DACA NU MERGE VERIFICA AICI
+            if (sprite.getYStartPoz()<sprite.getYEndPoz())
             {
                 sprite.updateYSpeed(sprite.getYAcceleration()*dt);
             }
@@ -658,49 +670,55 @@ void GamePanel::moveSprites(float dt)
         else
         {
             //calcule pentru X
-            if (sprite.getXStartPoz()<sprite.getXEndPoz())
+            if (!not_movingX)
             {
-                if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                if (sprite.getXStartPoz()<sprite.getXEndPoz())
                 {
-                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                    if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                    {
+                        sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                    }
+                    else if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                    {
+                        sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
+                    }
                 }
-                else if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                else
                 {
-                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
-                }
-            }
-            else
-            {
-                if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
-                {
-                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
-                }
-                else if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
-                {
-                    sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                    if (sprite.getPosX().getActual() > (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                    {
+                        sprite.updateXSpeed(sprite.getXSpeed().getAverage() - sprite.getXAcceleration()*dt);
+                    }
+                    else if (sprite.getPosX().getActual() < (sprite.getXStartPoz() + sprite.getXEndPoz())/2)
+                    {
+                        sprite.updateXSpeed(sprite.getXSpeed().getAverage() + sprite.getXAcceleration()*dt);
+                    }
                 }
             }
             //calcule pentru Y
-            if (sprite.getYStartPoz()<sprite.getYEndPoz())
+            if (!not_movingY)
             {
-                if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                if (sprite.getYStartPoz()<sprite.getYEndPoz())
                 {
-                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                    if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                    {
+                        sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                    }
+                    else if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                    {
+                        sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
+                    }
                 }
-                else if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                else
                 {
-                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
-                }
-            }
-            else
-            {
-                if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
-                {
-                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
-                }
-                else if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
-                {
-                    sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                    if (sprite.getPosY().getActual() > (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                    {
+                        sprite.updateYSpeed(sprite.getYSpeed().getAverage() - sprite.getYAcceleration()*dt);
+                    }
+                    else if (sprite.getPosY().getActual() < (sprite.getYStartPoz() + sprite.getYEndPoz())/2)
+                    {
+                        sprite.updateYSpeed(sprite.getYSpeed().getAverage() + sprite.getYAcceleration()*dt);
+                    }
                 }
             }
         }
