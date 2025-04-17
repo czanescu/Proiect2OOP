@@ -169,8 +169,12 @@ void Player::hitLeft(float width)
     m_pozX.update(width); // Snap to the left wall
     m_pozX.update(width);
     m_sprite.setPosition(width, m_sprite.getPosition().y);
-    m_speedX.update(-m_speedX.getActual()/4); // Stop horizontal movement
-    m_speedX.update(m_speedX.getActual());
+    // Check is player is moving left or wall is moving right, act accordingly
+    if (m_speedX.getActual() < 0)
+    {
+        m_speedX.update(-m_speedX.getActual()/4);
+        m_speedX.update(m_speedX.getActual());
+    }
 }
 
 void Player::hitRight(float width)
@@ -179,8 +183,12 @@ void Player::hitRight(float width)
     m_pozX.update(width - getWidth());
      // Snap to the right wall
     m_sprite.setPosition(width - getWidth(), m_sprite.getPosition().y);
-    m_speedX.update(-m_speedX.getActual()/4); // Stop horizontal movement
-    m_speedX.update(m_speedX.getActual()); // Stop vertical movement
+    // Check is player is moving right or wall is moving left, act accordingly
+    if (m_speedX.getActual() > 0)
+    {
+        m_speedX.update(-m_speedX.getActual()/4);
+        m_speedX.update(m_speedX.getActual());
+    }
 }
 
 void Player::setPlatformSpeed(Delta speedX, Delta speedY)
