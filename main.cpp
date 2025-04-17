@@ -17,6 +17,7 @@ GamePanel Panel(player,"Sprite Gravity", 1920, 1080, sf::Color(37, 37, 164, 0.7)
 
 void calcule(double dt)
 {
+    Panel.moveSprites(dt);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
@@ -42,7 +43,7 @@ void calcule(double dt)
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt);
     }
     Panel.checkPlayerCollision(dt);
-    Panel.moveSprites(dt);
+    
 }
 
 void sceneSetup(){

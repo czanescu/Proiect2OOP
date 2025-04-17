@@ -343,7 +343,11 @@ void GamePanel::checkPlayerCollision(float dt)
         if (playerBottom <= spriteTop &&
             playerBottom + 1 >= spriteTop &&
             playerRight > spriteLeft &&
-            playerLeft < spriteRight)
+            playerLeft < spriteRight
+            || ( playerBottom -1 <= spriteTop &&
+            playerBottom + 1 >= spriteTop &&
+            playerRight > spriteLeft &&
+            playerLeft < spriteRight))
         {
             std::cout << "Proximity Check Passed! Player is close to sprite below. Sprite Top: " << spriteTop << ' ' << playerBottom << std::endl;
             isOnGround = true; // Player is considered on the ground
@@ -351,7 +355,7 @@ void GamePanel::checkPlayerCollision(float dt)
         }
 
         // 1. Ground Collision (Player falling onto a sprite below)
-        if (m_player.getSpeedY().getActual() > 0) // Falling
+        if (m_player.getSpeedY().getActual() > 0 || m_player.getYPlatformSpeed().getActual() != 0) // Falling
         {
             if (((playerBottom >= spriteTop &&
                 playerBottom <= spriteTop + (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||(
