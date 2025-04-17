@@ -311,7 +311,7 @@ void GamePanel::checkPlayerCollision(float dt)
         }
 
         // 3. Left Wall Collision (Player moving left into a sprite)
-        if (m_player.getSpeedX().getActual() < 0) // Moving left
+        if (m_player.getSpeedX().getActual() < 0 || m_player.getXPlatformSpeed().getActual() < 0) // Moving left
         {
             if (((playerLeft >= spriteRight &&
                 playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
@@ -325,7 +325,7 @@ void GamePanel::checkPlayerCollision(float dt)
         }
 
         // 4. Right Wall Collision (Player moving right into a sprite)
-        if (m_player.getSpeedX().getActual() > 0) // Moving right
+        if (m_player.getSpeedX().getActual() > 0 || m_player.getXPlatformSpeed().getActual() > 0) // Moving right
         {
             if (((playerRight <= spriteLeft &&
                 playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
@@ -572,13 +572,15 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
         throw std::runtime_error("Failed to open file: " + filePath);
     }
 
-    std::string texturePath;
-    in >> texturePath;
+    std::string path, texturePath;
+    in >> path >> texturePath;
+    if (path == "/") path = "";
+    std::cout << path;
     if (in.fail())
     {
         throw std::runtime_error("Invalid file format");
     }
-    m_backgroundSprite.updateTexture(texturePath);
+    m_backgroundSprite.updateTexture(path + texturePath);
     m_backgroundSprite.setDrawStatus(true);
     sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
     sf::Vector2u windowSize = m_window.getSize();
@@ -602,18 +604,18 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
             count *= -1;
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite(texturePath, pixelX, pixelY - i * 120.0f, 120.0f, 120.0f);
-                if (collision == 1) addSprite(sprite, texturePath);
-                else addCollisionlessSprite(sprite, texturePath);
+                Sprite sprite(path + texturePath, pixelX, pixelY - i * 120.0f, 120.0f, 120.0f);
+                if (collision == 1) addSprite(sprite, path + texturePath);
+                else addCollisionlessSprite(sprite, path + texturePath);
             }
         }
         else
         {
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite(texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
-                if (collision == 1) addSprite(sprite, texturePath);
-                else addCollisionlessSprite(sprite, texturePath);
+                Sprite sprite(path + texturePath, pixelX + i * 120.0f, pixelY, 120.0f, 120.0f);
+                if (collision == 1) addSprite(sprite, path + texturePath);
+                else addCollisionlessSprite(sprite, path + texturePath);
             }
         }
     }
@@ -628,7 +630,9 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     {
         throw std::runtime_error("Failed to open file: " + filePath);
     }
-    std::string texturePath;
+    std::string path, texturePath;
+    in >> path;
+    if (path == "/") path = "";
     int startX, startY, endX, endY, accelerationX, accelerationY;
     bool collision;
     while (in >> texturePath >> startX >> startY >> endX >> endY >> accelerationX >> accelerationY >> collision)
@@ -643,8 +647,8 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 
         float pixelEndX = endX * 120.0f; // Bottom-right origin
         float pixelEndY = m_window.getSize().y - (endY + 1) * 120.0f; // Bottom-right origin
-        MovableSprite sprite(texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, accelerationX, accelerationY);
-        addMovableSprite(sprite, texturePath);
+        MovableSprite sprite(path + texturePath, 120.0f, 120.0f, pixelX, pixelY, pixelEndX, pixelEndY, accelerationX, accelerationY);
+        addMovableSprite(sprite, path + texturePath);
     }
 }
 

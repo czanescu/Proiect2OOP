@@ -1,5 +1,12 @@
 #include "AnimatedSprite.h"
 
+AnimatedSprite::AnimatedSprite()
+    : m_currentTexture(0),
+      m_textureCount(0),
+      m_framesUntilNext(0),
+      m_frameDuration(0)
+{;}
+
 AnimatedSprite::AnimatedSprite
 (
     const std::string& texturePath,

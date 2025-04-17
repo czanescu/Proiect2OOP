@@ -11,9 +11,9 @@
 
 const float FRAME_RATE = 60.0;
 
-Player player("sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
+Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
-GamePanel Panel(player,"Sprite Gravity", 1920, 1080, sf::Color(37, 37, 164, 0.7), FRAME_RATE, "arial.ttf");
+GamePanel Panel(player,"Sprite Gravity", 1920, 1080, sf::Color(37, 37, 164, 0.7), FRAME_RATE, "assets/arial.ttf");
 
 void calcule(double dt)
 {
@@ -47,8 +47,9 @@ void calcule(double dt)
 }
 
 void sceneSetup(){
-    Panel.loadSpritesFromFile("map.map");
-    Panel.loadMovableSpritesFromFile("movable.map");
+    Panel.loadSpritesFromFile("assets/map1/map1.sprites");
+    Panel.loadMovableSpritesFromFile("assets/map1/map1.movable");
+    Panel.loadAnimatedSpritesFromFile("assets/map1");
 }
 
 int main()

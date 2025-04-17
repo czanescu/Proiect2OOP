@@ -7,7 +7,17 @@
 class AnimatedSprite : public Sprite
 {
 public:
-    AnimatedSprite(const std::string& texturePath, float x, float y, float height, float width, int textureCount, int frameDuration);
+    AnimatedSprite();
+    AnimatedSprite
+    (
+        const std::string& texturePath, 
+        float x, 
+        float y, 
+        float height, 
+        float width, 
+        int textureCount, 
+        int frameDuration
+    );
     void draw(sf::RenderWindow& window) override;
     void updateTextures(const std::string& texturePath);
 
