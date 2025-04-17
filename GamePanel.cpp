@@ -186,6 +186,10 @@ void GamePanel::renderFrame()
     {
         m_movableSprites[i].draw(m_window);
     }
+    for (int i = 0; i < m_animatedSprites.size(); ++i)
+    {
+        m_animatedSprites[i].draw(m_window);
+    }
     m_player.draw(m_window);
     m_window.draw(m_frameCounter);
     m_window.display();
@@ -659,7 +663,9 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
     {
         throw std::runtime_error("Failed to open file: " + filePath);
     }
-    std::string texturePath;
+    std::string path, texturePath;
+    in >> path;
+    if (path == "/") path = "";
     int x, y, textureCount, frameDuration;
     while (in >> texturePath >> x >> y >> textureCount >> frameDuration)
     {
@@ -670,8 +676,8 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
         // Convert starting coordinates from grid to pixel positions
         float pixelX = x * 120.0f; // Bottom-right origin
         float pixelY = m_window.getSize().y - (y + 1) * 120.0f; // Bottom-right origin
-        AnimatedSprite sprite(texturePath, pixelX, pixelY, 120.0f, 120.0f, textureCount, frameDuration);
-        addAnimatedSprite(sprite, texturePath);
+        AnimatedSprite sprite(path + texturePath, pixelX, pixelY, 120.0f, 120.0f, textureCount, frameDuration);
+        addAnimatedSprite(sprite, path + texturePath);
     }
 }
 

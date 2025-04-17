@@ -56,7 +56,7 @@ void calcule(double dt)
 void sceneSetup(){
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
     Panel.loadMovableSpritesFromFile("assets/map1/map1.movable");
-    Panel.loadAnimatedSpritesFromFile("assets/map1");
+    Panel.loadAnimatedSpritesFromFile("assets/map1/map1.animated");
 }
 
 int main()

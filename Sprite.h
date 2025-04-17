@@ -36,13 +36,12 @@ protected:
     sf::Sprite m_sprite;
     Delta m_pozX;
     Delta m_pozY;
+    float m_hitBoxX;
+    float m_hitBoxY;
     bool m_isDrawn;
 
 private:
     sf::Texture m_textura;
-    
-    float m_hitBoxX;
-    float m_hitBoxY;
 };
 
 #endif // SPRITE_H
