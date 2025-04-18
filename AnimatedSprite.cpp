@@ -30,9 +30,9 @@ AnimatedSprite::AnimatedSprite
     m_sprite.setPosition(x, y);
     for (int i = 0; i < textureCount; ++i)
     {
-        if(!m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".jpg"))
+        if(!m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".png"))
         {
-            throw std::runtime_error("Failed to load texture: " + texturePath + "/" + std::to_string(i) + ".jpg");
+            throw std::runtime_error("Failed to load texture: " + texturePath + "/" + std::to_string(i) + ".png");
         }
     }
     m_sprite.setScale
@@ -60,7 +60,6 @@ void AnimatedSprite::draw(sf::RenderWindow& window)
     if (m_isDrawn)
     {
         window.draw(m_sprite);
-        std::cout<<"Drawing animated sprite: " << m_currentTexture << std::endl;
     }
 }
 
@@ -68,6 +67,6 @@ void AnimatedSprite::updateTextures(const std::string& texturePath)
 {
     for (int i = 0; i < m_textureCount; ++i)
     {
-        m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".jpg");
+        m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".png");
     }
 }
