@@ -4,13 +4,19 @@ cmake_minimum_required(VERSION 3.10)
 project(gravity)
 
 # Add the executable
-add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp)
+add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp)
 
 # Find and link SFML libraries
-if (WIN32 OR CMAKE_CROSSCOMPILING)
-    # Windows-specific settings for cross-compilation
+if (WIN32)
+    # Windows-specific settings
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
-    set(SFML_DIR "/home/cristi/libraries/SFML-2.5.1/lib/cmake/SFML") # Path to SFMLConfig.cmake for Windows
+    set(SFML_DIR "C:/SFML-2.5.0/lib/cmake/SFML") # Updated path to SFMLConfig.cmake for Windows
+    find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+    target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
+elseif (CMAKE_CROSSCOMPILING)
+    # Linux cross-compilation for Windows
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
+    set(SFML_DIR "/home/cristi/libraries/SFML-2.5.1/lib/cmake/SFML") # Old path for Linux cross-compilation
     find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
     target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
 elseif (UNIX)
