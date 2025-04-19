@@ -24,9 +24,21 @@ public:
     );
 
     void addSprite(const Sprite& sprite, const std::string& texturePath);
-    void addCollisionlessSprite(const Sprite& sprite, const std::string& texturePath);
-    void addMovableSprite(const MovableSprite& sprite, const std::string& texturePath);
-    void addAnimatedSprite(const AnimatedSprite& sprite, const std::string& texturePath);
+    void addCollisionlessSprite
+    (
+        const Sprite& sprite, 
+        const std::string& texturePath
+    );
+    void addMovableSprite
+    (
+        const MovableSprite& sprite, 
+        const std::string& texturePath
+    );
+    void addAnimatedSprite
+    (
+        const AnimatedSprite& sprite, 
+        const std::string& texturePath
+    );
 
     void setBackgroundTexture(const std::string& texturePath);
 
@@ -61,6 +73,11 @@ public:
     void loadMovableSpritesFromFile(const std::string& filePath);
     void loadAnimatedSpritesFromFile(const std::string& filePath);
 
+    void moveScreenUp(float playerLeft);
+    void moveScreenDown(float playerLeft);
+    void moveScreenLeft(float playerTop);
+    void moveScreenRight(float playerTop);
+
     Player& getPlayer();
     const sf::Color getBackgroundColor() const;
     const sf::RenderWindow& getWindow() const;
@@ -77,7 +94,7 @@ public:
 
 private:
     std::vector<Sprite> m_sprites;
-    std::vector<Sprite> m_collisionlessSprites;
+    std::vector<Sprite> m_noColSprites;
     std::vector<MovableSprite> m_movableSprites;
     std::vector<AnimatedSprite> m_animatedSprites;
     Sprite m_backgroundSprite;

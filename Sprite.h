@@ -11,7 +11,14 @@ class Sprite
 public:
     Sprite();
     Sprite(float x, float y, float height, float width);
-    Sprite(const std::string& texturePath, float x, float y, float height, float width);
+    Sprite
+    (
+        const std::string& texturePath, 
+        float x, 
+        float y, 
+        float height, 
+        float width
+    );
     Sprite(const Sprite& other);
     const sf::Sprite getSprite() const;
     void move(float x, float y);
