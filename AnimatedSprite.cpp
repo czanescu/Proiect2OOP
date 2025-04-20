@@ -82,4 +82,5 @@ void AnimatedSprite::updateTextures(const std::string& texturePath)
             texturePath + "/" + std::to_string(i) + ".png"
         );
     }
+    m_sprite.setTexture(m_textures[m_currentTexture]);
 }

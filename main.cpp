@@ -66,6 +66,15 @@ void sceneSetup(){
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
     Panel.loadMovableSpritesFromFile("assets/map1/map1.movable");
     Panel.loadAnimatedSpritesFromFile("assets/map1/map1.animated");
+    Panel.renderFrame();
+    bool dontStart = true;
+    while (dontStart)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+        {
+            dontStart = false;
+        }
+    }
 }
 
 int main()
@@ -73,6 +82,9 @@ int main()
     sf::Color backgroundColor(37,37,164,0.7);
 
     // Timing variables
+
+    sceneSetup();
+
     const double fixedTimeStep = 1.0 / Panel.getFrameRate();
     double accumulator = 0.0;
     auto oldTime = std::chrono::high_resolution_clock::now();
@@ -80,8 +92,6 @@ int main()
     int frameCount = 0; // Frame counter
     double frameTimeAccumulator = 0.0; // Accumulator for frame time
     float frameTimeForFrameRate;
-
-    sceneSetup();
 
     while (Panel.isOpen())
     {

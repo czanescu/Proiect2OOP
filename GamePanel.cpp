@@ -541,7 +541,6 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     std::string path, texturePath;
     in >> path >> texturePath;
     if (path == "/") path = "";
-    std::cout << path;
     if (in.fail())
     {
         throw std::runtime_error("Invalid file format");
@@ -559,6 +558,12 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     ); // Set position to top-left corner
     int startX, startY, count;
     bool collision;
+    in >> startX >> startY; // Player initial coordinates
+    m_player.setPosition
+    (
+        startX * 120.0f, 
+        m_window.getSize().y - (startY + 1) * 120.0f
+    ); // Convert to pixel coordinates
     while (in >> texturePath >> startX >> startY >> count >> collision)
     {
         if (in.fail())
