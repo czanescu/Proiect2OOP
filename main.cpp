@@ -3,7 +3,6 @@
 #include "GamePanel.h"
 #include "Player.h"
 #include <SFML/Graphics.hpp>
-#include <windows.h>
 #include <chrono>
 #include <thread>
 #include <string>

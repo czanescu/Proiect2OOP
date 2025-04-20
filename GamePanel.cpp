@@ -324,8 +324,9 @@ void GamePanel::checkPlayerCollision(float dt)
         // 1. Ground Collision (Player falling onto a sprite below)
         if (m_player.getSpeedY().getActual() > 0) // Falling
         {
-            if (playerBottom >= spriteTop && 
-                playerBottom <= (spriteTop + spriteBottom)/2 &&
+            if (((playerBottom >= spriteTop &&
+                playerBottom <= spriteTop + (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||(
+                playerBottom >= spriteTop && playerBottom <= (spriteTop + spriteBottom)/2)) &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
@@ -340,8 +341,9 @@ void GamePanel::checkPlayerCollision(float dt)
         // 2. Ceiling Collision (Player jumping into a sprite above)
         if (m_player.getSpeedY().getActual() < 0) // Jumping
         {
-            if (playerTop <= spriteBottom &&
-                playerTop >= (spriteTop + spriteBottom)/2 &&
+            if(((playerTop >= spriteBottom &&
+                playerTop <= spriteBottom - (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||
+                (playerTop <= spriteBottom  && playerTop >= (spriteTop + spriteBottom)/2)) &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
@@ -358,8 +360,9 @@ void GamePanel::checkPlayerCollision(float dt)
             m_player.getXPlatformSpeed().getActual() < 0
         ) // Moving left
         {
-            if (playerLeft <= spriteRight && 
-                playerLeft >= (spriteLeft + spriteRight)/2 &&
+            if (((playerLeft >= spriteRight &&
+                playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerLeft <= spriteRight && playerLeft >= (spriteLeft + spriteRight)/2)) &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
@@ -375,8 +378,9 @@ void GamePanel::checkPlayerCollision(float dt)
             m_player.getXPlatformSpeed().getActual() > 0
         ) // Moving right
         {
-            if (playerRight >= spriteLeft &&
-                playerRight <= (spriteLeft + spriteRight)/2 &&
+            if (((playerRight <= spriteLeft &&
+                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
+                (playerRight >= spriteLeft && playerRight <= (spriteLeft + spriteRight)/2)) &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
