@@ -6,21 +6,26 @@ project(gravity)
 # Add the executable
 add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp)
 
-# Find and link SFML libraries
-if (WIN32)
-    # Windows-specific settings
+if (CMAKE_CROSSCOMPILING)
+    # Cross-compiling on Linux for Windows
+    # run with cmake -DCMAKE_TOOLCHAIN_FILE=mingw-toolchain.cmake ..
+    message("CROSSCOMPILING block triggered")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    set(SFML_DIR "C:/SFML-2.5.0/lib/cmake/SFML") # Updated path to SFMLConfig.cmake for Windows
+    set(SFML_DIR "/home/cristi/libraries/SFML-2.5.0-win/lib/cmake/SFML")
     find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
     target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
-elseif (CMAKE_CROSSCOMPILING)
-    # Linux cross-compilation for Windows
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++ -static")
-    set(SFML_DIR "/home/cristi/libraries/SFML-2.5.1/lib/cmake/SFML") # Old path for Linux cross-compilation
+elseif (WIN32)
+    # Native Windows build
+    # run with cmake -G "MinGW Makefiles" ..
+    message("WIN32 block triggered")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(SFML_DIR "C:/SFML-2.5.0/lib/cmake/SFML")
     find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
     target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
 elseif (UNIX)
-    # Linux-specific settings
+    # Native Linux build
+    # run with cmake ..
+    message("UNIX block triggered")
     find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
     target_link_libraries(gravity sfml-graphics sfml-window sfml-system)
 endif()
