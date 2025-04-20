@@ -63,18 +63,14 @@ void calcule(double dt)
 }
 
 void sceneSetup(){
+    std::cout << "Am inceput incarcarea sprite-urilor" << std::endl;
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
+    std::cout << "Loaded sprites from file" << std::endl;
     Panel.loadMovableSpritesFromFile("assets/map1/map1.movable");
+    std::cout << "Loaded movable sprites from file" << std::endl;
     Panel.loadAnimatedSpritesFromFile("assets/map1/map1.animated");
+    std::cout << "Loaded animated sprites from file" << std::endl;
     Panel.renderFrame();
-    bool dontStart = true;
-    while (dontStart)
-    {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
-        {
-            dontStart = false;
-        }
-    }
 }
 
 int main()
