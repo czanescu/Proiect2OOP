@@ -7,6 +7,11 @@
 #include "Player.h"
 #include "Enums.h"
 #include <vector>
+#if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#include <windows.h>
+#else
+#include <thread>
+#endif
 
 class GamePanel
 {
@@ -62,6 +67,7 @@ public:
     void setWindowTitle(const std::string& title);
     void setWindowSize(int width, int height);
     void setFrameCounterValue(float value);
+    void panelSleep (float seconds);
 
     bool isOpen();
     void close();

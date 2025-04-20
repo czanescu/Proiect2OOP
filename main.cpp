@@ -3,6 +3,7 @@
 #include "GamePanel.h"
 #include "Player.h"
 #include <SFML/Graphics.hpp>
+#include <windows.h>
 #include <chrono>
 #include <thread>
 #include <string>
@@ -99,8 +100,13 @@ int main()
         )
         {
             double sleepTime = (fixedTimeStep - accumulator);
-            std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
-            std::cout<<"Sleeping for: " << sleepTime << " seconds" << std::endl;
+            auto sleepTimeStart = std::chrono::high_resolution_clock::now();
+            ///std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+            Panel.panelSleep(sleepTime);
+            auto sleepTimeEnd = std::chrono::high_resolution_clock::now();
+            double actualSleeptime = 
+                std::chrono::duration<double>(sleepTimeEnd - sleepTimeStart).count();
+            std::cout<<"Sleeping for: " << sleepTime << " seconds" << "but actually its " << actualSleeptime << std::endl;
         }
 
         // Fixed update loop

@@ -1079,6 +1079,15 @@ void GamePanel::moveScreenRight(float playerTop)
     );
 }
 
+void GamePanel::panelSleep(float seconds)
+{
+    #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+        Sleep(0); // Sleep for the specified number of seconds
+    #else
+        std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+    #endif
+}
+
 GamePanel::~GamePanel()
 {
     // Destructor implementation (needed)
