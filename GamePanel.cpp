@@ -54,6 +54,7 @@ GamePanel::GamePanel
 }
 void GamePanel::addSprite(const Sprite& sprite, const std::string& texturePath)
 {
+    std::cout << "Sprite-ul " << m_sprites.size() << " a fost incarcat" << std::endl;
     m_sprites.resize(m_sprites.size() + 1);
 
     m_sprites[m_sprites.size() - 1]=sprite;
@@ -70,6 +71,7 @@ void GamePanel::addCollisionlessSprite
     const std::string& texturePath
 )
 {
+    std::cout << "Sprite-ul collissionless " << m_sprites.size() << " a fost incarcat" << std::endl;
     m_noColSprites.resize(m_noColSprites.size() + 1);
 
     m_noColSprites[m_noColSprites.size() - 1]=sprite;
@@ -86,6 +88,7 @@ void GamePanel::addMovableSprite
     const std::string& texturePath
 )
 {
+    std::cout << "Sprite-ul movable " << m_movableSprites.size() << " a fost incarcat" << std::endl;
     m_movableSprites.resize(m_movableSprites.size() + 1);
 
     m_movableSprites[m_movableSprites.size() - 1]=sprite;
@@ -102,6 +105,7 @@ void GamePanel::addAnimatedSprite
     const std::string& texturePath
 )
 {
+    std::cout << "Sprite-ul animated " << m_animatedSprites.size() << " a fost incarcat" << std::endl;
     m_animatedSprites.resize(m_animatedSprites.size() + 1);
 
     m_animatedSprites[m_animatedSprites.size() - 1]=sprite;
@@ -556,6 +560,7 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
         0,
         windowSize.y - textureSize.y * 2 * scaleX
     ); // Set position to top-left corner
+    std::cout << "Background incarcat" << std::endl;
     int startX, startY, count;
     bool collision;
     in >> startX >> startY; // Player initial coordinates
