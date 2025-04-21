@@ -46,10 +46,10 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
     else if (direction == DirectieX::NONE) i = 0;
     else if (direction == DirectieX::RIGHT) i = 1;
     else i = 2;
-    if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
+    /*if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
     {
         m_speedX.setActual(0);
-    }
+    }*/
     if (direction == DirectieX::RIGHT && m_speedY.getActual() == 0)
     {
         if (m_speedX.getActual()>0 || m_speedX.getActual() < m_maxSpeedX)
@@ -139,7 +139,7 @@ void Player::updateCalculationsY
             float actualJumpForce=-m_jumpForce+gravityF;
             m_speedY.update
             (
-                actualJumpForce / m_mass * dt + m_platformYSpeed.getActual()
+                (actualJumpForce / m_mass * 0.01667) + m_platformYSpeed.getActual()
             );
             m_platformYSpeed = Delta(0, 0);
         }

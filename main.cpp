@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <iostream>
 
-const float FRAME_RATE = 60.0;
+const float FRAME_RATE = 60.f;
 
 Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
@@ -63,6 +63,7 @@ void calcule(double dt)
 }
 
 void sceneSetup(){
+    
     std::cout << "Am inceput incarcarea sprite-urilor" << std::endl;
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
     std::cout << "Loaded sprites from file" << std::endl;
@@ -140,6 +141,7 @@ int main()
                 frameCount = 0;
                 frameTimeAccumulator = 0.0;
             }
+            std::cout << "Frame time: " << fixedTimeStep << std::endl;
 
             //Render
             Panel.renderFrame();
