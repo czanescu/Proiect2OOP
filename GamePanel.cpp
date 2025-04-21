@@ -654,8 +654,8 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
                     path + texturePath,
                     pixelX,
                     pixelY - i * 120.0f * spriteScaleY,
-                    120.0f * spriteScaleX,
-                    120.0f * spriteScaleY
+                    120.0f * spriteScaleY,
+                    120.0f * spriteScaleX
                 );
                 if (collision == 1)
                     addSprite(sprite, path + texturePath);
@@ -671,8 +671,8 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
                     path + texturePath,
                     pixelX + i * 120.0f * spriteScaleX,
                     pixelY,
-                    120.0f * spriteScaleX,
-                    120.0f * spriteScaleY
+                    120.0f * spriteScaleY,
+                    120.0f * spriteScaleX
                 );
                 if (collision == 1)
                     addSprite(sprite, path + texturePath);
@@ -721,8 +721,8 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
         // Create and add the movable sprite
         MovableSprite sprite(
             path + texturePath,
-            120.0f * spriteScaleX, // Width
-            120.0f * spriteScaleY, // Height
+            120.0f * spriteScaleY, // Width
+            120.0f * spriteScaleX, // Height
             pixelX,
             pixelY,
             pixelEndX,
@@ -772,8 +772,8 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
             path + texturePath,
             pixelX,
             pixelY,
-            120.0f * spriteScaleX, // Width
-            120.0f * spriteScaleY, // Height
+            120.0f * spriteScaleY, // Width
+            120.0f * spriteScaleX, // Height
             textureCount,
             frameDuration
         );
