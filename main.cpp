@@ -9,18 +9,13 @@
 #include <stdexcept>
 #include <iostream>
 
-const float FRAME_RATE = 60.f;
-
 Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
 GamePanel Panel
 (
     player,
     "Sprite Gravity", 
-    1920, 
-    1080, 
     sf::Color(37, 37, 164, 0.7),
-    FRAME_RATE, 
     "assets/arial.ttf"
 );
 
@@ -62,8 +57,8 @@ void calcule(double dt)
     
 }
 
-void sceneSetup(){
-    
+void sceneSetup()
+{
     std::cout << "Am inceput incarcarea sprite-urilor" << std::endl;
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
     std::cout << "Loaded sprites from file" << std::endl;

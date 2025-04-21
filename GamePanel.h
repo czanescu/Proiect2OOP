@@ -20,11 +20,8 @@ public:
     GamePanel
     (
         Player& player,
-        const std::string& title,
-        int width,
-        int height, 
+        const std::string& title, 
         const sf::Color& backgroundColor, 
-        float frameRate,
         const std::string& fontPath
     );
 
@@ -75,6 +72,7 @@ public:
 
     bool pollEvent(sf::Event& event);
 
+    sf::Vector2i loadConfigFromFile(const std::string& filePath);
     void loadSpritesFromFile(const std::string& filePath);
     void loadMovableSpritesFromFile(const std::string& filePath);
     void loadAnimatedSpritesFromFile(const std::string& filePath);

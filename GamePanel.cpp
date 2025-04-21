@@ -23,17 +23,14 @@ GamePanel::GamePanel
 (
     Player& player,
     const std::string& title,
-    int width,
-    int height, 
-    const sf::Color& backgroundColor, 
-    float frameRate,
+    const sf::Color& backgroundColor,
     const std::string& fontPath
 )
     : m_player(player),
       m_backgroundColor(backgroundColor),
-      m_frameRate(frameRate),
       m_sprites()
 {
+    sf::Vector2i windowSize = loadConfigFromFile(".config");
     // Create context settings
     sf::ContextSettings settings;
     settings.antialiasingLevel = 0; // Optional: Set antialiasing level
@@ -41,7 +38,7 @@ GamePanel::GamePanel
     // Create the window with DPI scaling disabled
     m_window.create
     (
-        sf::VideoMode(width, height), title, sf::Style::Default, settings
+        sf::VideoMode(windowSize.x, windowSize.y), title, sf::Style::Default, settings
     );
     if (!m_font.loadFromFile(fontPath))
     {
@@ -534,6 +531,59 @@ void GamePanel::checkPlayerCollision(float dt)
         moveScreenRight(playerTop);
     }
 }
+
+sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
+{
+    std::ifstream in(filePath);
+    if (!in.is_open())
+    {
+        throw std::runtime_error("Failed to open file: " + filePath);
+    }
+
+    std::string line;
+    sf::Vector2i windowSize; 
+    while (std::getline(in, line))
+    {
+        // Ignore empty lines or lines without '='
+        if (line.empty() || line.find('=') == std::string::npos)
+            continue;
+
+        // Split the line into key and value
+        std::istringstream lineStream(line);
+        std::string key, value;
+        if 
+        (
+            std::getline(lineStream, key, '=') && 
+            std::getline(lineStream, value)
+        )
+        {
+            // Trim whitespace from key and value
+            key.erase(key.find_last_not_of(" \t") + 1);
+            key.erase(0, key.find_first_not_of(" \t"));
+            value.erase(value.find_last_not_of(" \t") + 1);
+            value.erase(0, value.find_first_not_of(" \t"));
+
+            // Parse the key-value pairs
+            if (key == "FRAME_RATE")
+            {
+                m_frameRate = std::stof(value); // Convert to float
+            }
+            else if (key == "X_RESOLUTION")
+            {
+                windowSize = sf::Vector2i(std::stof(value), windowSize.y);
+            }
+            else if (key == "Y_RESOLUTION")
+            {
+                windowSize = sf::Vector2i(windowSize.x, std::stof(value));
+            }
+        }
+    }
+
+    in.close();
+    return windowSize;
+}
+
+
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
 {
     std::ifstream in(filePath);
