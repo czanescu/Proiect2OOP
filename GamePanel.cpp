@@ -291,7 +291,7 @@ const float GamePanel::getFrameRate() const
 {
     return m_frameRate;
 }
-void GamePanel::checkPlayerCollision(float dt)
+void GamePanel::checkPlayerCollision(float dt, float scaleY)
 {
     float playerLeft = m_player.getPosX().getActual();
     float playerTop = m_player.getPosY().getActual();
@@ -506,7 +506,7 @@ void GamePanel::checkPlayerCollision(float dt)
         std::cout << "No sprite under the player. Triggering fall.";
         std::cout << std::endl;
         // Apply gravity to make the player fall
-        m_player.updateCalculationsY(DirectieY::NONE, dt, 1);
+        m_player.updateCalculationsY(DirectieY::NONE, dt, scaleY, 1);
         Delta zero(0,0);
         m_player.setPlatformSpeed(m_player.getXPlatformSpeed(), zero);
     }
@@ -599,67 +599,85 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     {
         throw std::runtime_error("Invalid file format");
     }
+
+    // Update background sprite
     m_backgroundSprite.updateTexture(path + texturePath);
     m_backgroundSprite.setDrawStatus(true);
-    sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
+
+    // Calculate scaling factors for the background
     sf::Vector2u windowSize = m_window.getSize();
-    float scaleX = static_cast<float>(windowSize.x) / textureSize.x;
-    m_backgroundSprite.setScale(2 * scaleX, 2 * scaleX); // Uniform scaling
-    m_backgroundSprite.setPosition
-    (
-        0,
-        windowSize.y - textureSize.y * 2 * scaleX
-    ); // Set position to top-left corner
-    std::cout << "Background incarcat" << std::endl;
+    sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
+    float backgroundScale = static_cast<float>(windowSize.x * 2.f) / (textureSize.x); // Twice the width of the background
+
+    // Apply scaling to the background sprite
+    m_backgroundSprite.setScale(backgroundScale, backgroundScale);
+    m_backgroundSprite.setPosition(0, windowSize.y - (textureSize.y * backgroundScale));
+    std::cout << "Background loaded" << std::endl;
+
+    // Calculate scaling factors for sprites and the player
+    const float referenceWidth = 1920.0f;
+    const float referenceHeight = 1080.0f;
+    float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
+    float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
+
+    // Load player initial position
     int startX, startY, count;
     bool collision;
-    in >> startX >> startY; // Player initial coordinates
-    m_player.setPosition
-    (
-        startX * 120.0f, 
-        m_window.getSize().y - (startY + 1) * 120.0f
-    ); // Convert to pixel coordinates
+    in >> startX >> startY;
+    m_player.setPosition(
+        startX * 120.0f * spriteScaleX, 
+        windowSize.y - (startY + 1) * 120.0f * spriteScaleY
+    );
+    float playerScaleX = windowSize.x / referenceWidth * m_player.getScaleX();
+    float playerScaleY = windowSize.y / referenceHeight * m_player.getScaleY();
+    m_player.setScale(playerScaleX, playerScaleY);
+    m_player.setHitBox(100.0f * spriteScaleX, 100.0f * spriteScaleY);
+
+    // Load other sprites
     while (in >> texturePath >> startX >> startY >> count >> collision)
     {
         if (in.fail())
         {
             throw std::runtime_error("Invalid file format");
         }
+
         // Convert starting coordinates from grid to pixel positions
-        float pixelX = startX * 120.0f;
-        float pixelY = m_window.getSize().y - (startY + 1) * 120.0f; 
+        float pixelX = startX * 120.0f * spriteScaleX;
+        float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
 
         if (count < 0)
         {
             count *= -1;
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite
-                (
+                Sprite sprite(
                     path + texturePath,
                     pixelX,
-                    pixelY - i * 120.0f,
-                    120.0f,
-                    120.0f
+                    pixelY - i * 120.0f * spriteScaleY,
+                    120.0f * spriteScaleX,
+                    120.0f * spriteScaleY
                 );
-                if (collision == 1) addSprite(sprite, path + texturePath);
-                else addCollisionlessSprite(sprite, path + texturePath);
+                if (collision == 1)
+                    addSprite(sprite, path + texturePath);
+                else
+                    addCollisionlessSprite(sprite, path + texturePath);
             }
         }
         else
         {
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite
-                (
-                    path + texturePath, 
-                    pixelX + i * 120.0f, 
-                    pixelY, 
-                    120.0f, 
-                    120.0f
+                Sprite sprite(
+                    path + texturePath,
+                    pixelX + i * 120.0f * spriteScaleX,
+                    pixelY,
+                    120.0f * spriteScaleX,
+                    120.0f * spriteScaleY
                 );
-                if (collision == 1) addSprite(sprite, path + texturePath);
-                else addCollisionlessSprite(sprite, path + texturePath);
+                if (collision == 1)
+                    addSprite(sprite, path + texturePath);
+                else
+                    addCollisionlessSprite(sprite, path + texturePath);
             }
         }
     }
@@ -674,41 +692,49 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     {
         throw std::runtime_error("Failed to open file: " + filePath);
     }
+
     std::string path, texturePath;
     in >> path;
     if (path == "/") path = "";
+
     int startX, startY, endX, endY, accelerationX, accelerationY;
-    bool collision;
-    while
-    (
-        in >> texturePath >> startX >> startY >> endX >> endY 
-           >> accelerationX >> accelerationY >> collision
-    )
+    bool collision = 1;
+    sf::Vector2u windowSize = m_window.getSize();
+    const float referenceWidth = 1920.0f;
+    const float referenceHeight = 1080.0f;
+    float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
+    float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
+
+    while (in >> texturePath >> startX >> startY >> endX >> endY >> accelerationX >> accelerationY)
     {
         if (in.fail())
         {
             throw std::runtime_error("Invalid file format");
         }
-        // Convert starting coordinates from grid to pixel positions
-        float pixelX = startX * 120.0f; // Bottom-right origin
-        float pixelY = m_window.getSize().y - (startY + 1) * 120.0f;
 
-        float pixelEndX = endX * 120.0f;
-        float pixelEndY = m_window.getSize().y - (endY + 1) * 120.0f;
-        MovableSprite sprite
-        (
+        // Convert starting and ending coordinates from grid to pixel positions
+        float pixelX = startX * 120.0f * spriteScaleX;
+        float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
+        float pixelEndX = endX * 120.0f * spriteScaleX;
+        float pixelEndY = windowSize.y - (endY + 1) * 120.0f * spriteScaleY;
+
+        // Create and add the movable sprite
+        MovableSprite sprite(
             path + texturePath,
-            120.0f, 
-            120.0f, 
-            pixelX, 
-            pixelY, 
-            pixelEndX, 
-            pixelEndY, 
-            accelerationX, 
+            120.0f * spriteScaleX, // Width
+            120.0f * spriteScaleY, // Height
+            pixelX,
+            pixelY,
+            pixelEndX,
+            pixelEndY,
+            accelerationX,
             accelerationY
         );
+
         addMovableSprite(sprite, path + texturePath);
     }
+
+    in.close();
 }
 
 void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
@@ -718,31 +744,44 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
     {
         throw std::runtime_error("Failed to open file: " + filePath);
     }
+
     std::string path, texturePath;
     in >> path;
     if (path == "/") path = "";
+
     int x, y, textureCount, frameDuration;
+    sf::Vector2u windowSize = m_window.getSize();
+    const float referenceWidth = 1920.0f;
+    const float referenceHeight = 1080.0f;
+    float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
+    float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
+
     while (in >> texturePath >> x >> y >> textureCount >> frameDuration)
     {
         if (in.fail())
         {
             throw std::runtime_error("Invalid file format");
         }
+
         // Convert starting coordinates from grid to pixel positions
-        float pixelX = x * 120.0f;
-        float pixelY = m_window.getSize().y - (y + 1) * 120.0f;
-        AnimatedSprite sprite
-        (
-            path + texturePath, 
-            pixelX, 
-            pixelY, 
-            120.0f, 
-            120.0f, 
-            textureCount, 
+        float pixelX = x * 120.0f * spriteScaleX;
+        float pixelY = windowSize.y - (y + 1) * 120.0f * spriteScaleY;
+
+        // Create and add the animated sprite
+        AnimatedSprite sprite(
+            path + texturePath,
+            pixelX,
+            pixelY,
+            120.0f * spriteScaleX, // Width
+            120.0f * spriteScaleY, // Height
+            textureCount,
             frameDuration
         );
+
         addAnimatedSprite(sprite, path + texturePath);
     }
+
+    in.close();
 }
 
 void GamePanel::moveSprites(float dt)

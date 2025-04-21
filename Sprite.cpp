@@ -112,6 +112,16 @@ void Sprite::setScale(float x, float y)
     m_sprite.setScale(x, y);
 }
 
+void Sprite::setHitBox(float x, float y)
+{
+    m_hitBoxX = x;
+    m_hitBoxY = y;
+    m_sprite.setScale
+    (
+        x / m_textura.getSize().x,
+        y / m_textura.getSize().y
+    );
+}
 void Sprite::draw(sf::RenderWindow& window)
 {
     if (m_isDrawn)
@@ -168,4 +178,12 @@ float Sprite::getWidth() const
 float Sprite::getHeight() const
 {
     return m_hitBoxY;
+}
+float Sprite::getScaleX() const
+{
+    return m_sprite.getScale().x;
+}
+float Sprite::getScaleY() const
+{
+    return m_sprite.getScale().y;
 }

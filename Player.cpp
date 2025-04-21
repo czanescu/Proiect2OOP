@@ -39,7 +39,7 @@ Player::Player
     m_platformXSpeed(0, 0),
     m_platformYSpeed(0, 0)
 {;}
-void Player::updateCalculationsX(DirectieX direction, double dt)
+void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
 {
     int i;
     if (direction == DirectieX::LEFT) i = -1;
@@ -105,7 +105,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt)
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
     float newX = 
-    ((m_speedX.getActual()+m_speedX.getPrecedent())/2 + 
+    ((m_speedX.getActual()+m_speedX.getPrecedent())/2 * scaleX+ 
     (m_platformXSpeed.getActual()+m_platformXSpeed.getPrecedent())/2) * dt;
     move(newX,0);
     m_pozX.update(m_sprite.getPosition().x);
@@ -121,6 +121,7 @@ void Player::updateCalculationsY
 (
     DirectieY direction, 
     double dt, 
+    float scaleY,
     bool noColiziuneJos
 )
 {
@@ -149,7 +150,7 @@ void Player::updateCalculationsY
         m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     }
-    float newY = (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt;
+    float newY = (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt * scaleY;
     int i;
     if (direction == DirectieY::DOWN) i = -1;
     else if (direction == DirectieY::NONE) i = 0;

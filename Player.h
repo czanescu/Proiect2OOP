@@ -20,11 +20,12 @@ public:
         float height, 
         float width
     );
-    void updateCalculationsX(DirectieX direction, double dt);
+    void updateCalculationsX(DirectieX direction, double dt, float scaleX);
     void updateCalculationsY
     (
         DirectieY direction, 
-        double dt, 
+        double dt,
+        float scaleY, 
         bool noColiziuneJos = 0
     );
     const Delta getSpeedX() const;

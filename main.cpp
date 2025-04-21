@@ -19,7 +19,7 @@ GamePanel Panel
     "assets/arial.ttf"
 );
 
-void calcule(double dt)
+void calcule(double dt, float scaleX, float scaleY)
 {
     Panel.moveSprites(dt);
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
@@ -27,33 +27,33 @@ void calcule(double dt)
         (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
     {
-        Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt);
+        Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        Panel.getPlayer().updateCalculationsX(DirectieX::LEFT, dt);
+        Panel.getPlayer().updateCalculationsX(DirectieX::LEFT, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
              sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        Panel.getPlayer().updateCalculationsX(DirectieX::RIGHT, dt);
+        Panel.getPlayer().updateCalculationsX(DirectieX::RIGHT, dt, scaleX);
     }
     else
     {
-        Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt);
+        Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt, scaleX);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
     {
-        Panel.getPlayer().updateCalculationsY(DirectieY::UP, dt);
+        Panel.getPlayer().updateCalculationsY(DirectieY::UP, dt, scaleY);
     }
     else
     {
-        Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt);
+        Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt, scaleY);
     }
-    Panel.checkPlayerCollision(dt);
+    Panel.checkPlayerCollision(dt, scaleY);
     
 }
 
@@ -76,7 +76,8 @@ int main()
     // Timing variables
 
     sceneSetup();
-
+    const float SCALE_X = Panel.getWindow().getSize().x / 1920.f;
+    const float SCALE_Y = Panel.getWindow().getSize().y / 1080.f;
     const double fixedTimeStep = 1.0 / Panel.getFrameRate();
     double accumulator = 0.0;
     auto oldTime = std::chrono::high_resolution_clock::now();
@@ -127,7 +128,7 @@ int main()
             frameTimeForFrameRate = accumulator;
             accumulator -= fixedTimeStep;
 
-            calcule(fixedTimeStep);
+            calcule(fixedTimeStep, SCALE_X, SCALE_Y);
 
             // Cod pentru frame counter
             if (frameTimeAccumulator >= 1.0)

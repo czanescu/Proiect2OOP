@@ -91,7 +91,7 @@ public:
     const sf::Text& getFrameCounter() const;
     const float getFrameRate() const;
 
-    void checkPlayerCollision(float dt);
+    void checkPlayerCollision(float dt, float scaleY);
     void moveSprites(float dt);
 
     ~GamePanel();

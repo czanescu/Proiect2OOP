@@ -24,6 +24,7 @@ public:
     void move(float x, float y);
     void setPosition(float x, float y);
     void setScale(float x, float y);
+    void setHitBox(float x, float y);
     virtual void draw(sf::RenderWindow& window);
     void updateTexture(const std::string& texturePath);
     void updatePosition(Delta& deltaX, Delta& deltaY);
@@ -33,6 +34,8 @@ public:
     Delta getPosY() const;
     float getWidth() const;
     float getHeight() const;
+    float getScaleX() const;
+    float getScaleY() const;
     sf::Texture getTexture() const;
     bool getDrawStatus() const;
     void setDrawStatus(bool status);
