@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Delta.h"
+#include "Exceptii.h"
 #include <string>
 #include <stdexcept>
 

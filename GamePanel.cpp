@@ -1,8 +1,4 @@
 #include "GamePanel.h"
-#include <iomanip>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -10,9 +6,13 @@ GamePanel::GamePanel()
       m_frameRate(60.0),
       m_sprites()
 {
-    if (!m_font.loadFromFile("arial.ttf"))
+    try
     {
-        throw std::runtime_error("Failed to load font");
+        m_font.loadFromFile("arial.ttf");
+    }
+    catch (const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     m_frameCounter.setFont(m_font);
     m_frameCounter.setCharacterSize(24);
@@ -40,9 +40,13 @@ GamePanel::GamePanel
     (
         sf::VideoMode(windowSize.x, windowSize.y), title, sf::Style::Default, settings
     );
-    if (!m_font.loadFromFile(fontPath))
+    try
     {
-        throw std::runtime_error("Failed to load font");
+        m_font.loadFromFile(fontPath);
+    }
+    catch (const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     m_frameCounter.setFont(m_font);
     m_frameCounter.setCharacterSize(24);
@@ -68,7 +72,7 @@ void GamePanel::addCollisionlessSprite
     const std::string& texturePath
 )
 {
-    std::cout << "Sprite-ul collissionless " << m_sprites.size() << " a fost incarcat" << std::endl;
+    std::cout << "Sprite-ul collissionless " << m_noColSprites.size() << " a fost incarcat" << std::endl;
     m_noColSprites.resize(m_noColSprites.size() + 1);
 
     m_noColSprites[m_noColSprites.size() - 1]=sprite;
@@ -115,26 +119,40 @@ void GamePanel::addAnimatedSprite
 }
 void GamePanel::removeSprite(int index)
 {
-    if (index < 0 || index >= (m_sprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_sprites.size());
+    }
+    catch (const IndexOutOfRangeException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
     m_sprites.erase(m_sprites.begin() + index);
 }
 void GamePanel::removeCollisionlessSprite(int index)
 {
-    if (index < 0 || index >= (m_noColSprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_noColSprites.size());
     }
+    catch (const IndexOutOfRangeException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    
     m_noColSprites.erase(m_noColSprites.begin() + index);
 }
 void GamePanel::removeMovableSprite(int index)
 {
-    if (index < 0 || index >= (m_movableSprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_movableSprites.size());
     }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Error:" << e.what() << '\n';
+    }
+    
     m_movableSprites.erase(m_movableSprites.begin() + index);
 }
 void GamePanel::clearSprites()
@@ -157,26 +175,40 @@ void GamePanel::clearAllSprites()
 }
 void GamePanel::updateSprite(int index, const Sprite& sprite)
 {
-    if (index < 0 || index >= (m_sprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_sprites.size());
     }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << '\n';
+    }
+    
     m_sprites[index] = sprite;
 }
 void GamePanel::updateCollisionlessSprite(int index, const Sprite& sprite)
 {
-    if (index < 0 || index >= (m_noColSprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_noColSprites.size());
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << '\n';
     }
     m_noColSprites[index] = sprite;
 }
 void GamePanel::updateMovableSprite(int index, const MovableSprite& sprite)
 {
-    if (index < 0 || index >= (m_movableSprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_movableSprites.size());
     }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << '\n';
+    }
+    
     m_movableSprites[index] = sprite;
 }
 void GamePanel::setBackgroundColor(const sf::Color& color)
@@ -195,9 +227,13 @@ void GamePanel::setFrameCounterValue(float value)
 }
 void GamePanel::setFont(const std::string& fontPath)
 {
-    if (!m_font.loadFromFile("arial.ttf"))
+    try
     {
-        throw std::runtime_error("Failed to load font");
+        m_font.loadFromFile(fontPath);
+    }
+    catch (const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
@@ -272,10 +308,15 @@ const std::vector<Sprite>& GamePanel::getSprites() const
 }
 const Sprite& GamePanel::getSprite(int index) const
 {
-    if (index < 0 || index >= (m_sprites.size()))
+    try
     {
-        throw std::out_of_range("Index out of range");
+        IndexOutOfRangeException(index, m_sprites.size());
     }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return m_sprites[index];
 }
 const sf::Font& GamePanel::getFont() const
@@ -534,12 +575,16 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
 
 sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
 {
-    std::ifstream in(filePath);
-    if (!in.is_open())
+    try
     {
-        throw std::runtime_error("Failed to open file: " + filePath);
+        FileException checker(filePath);
+    }
+    catch(const BaseException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
     }
 
+    std::ifstream in (filePath);
     std::string line;
     sf::Vector2i windowSize; 
     while (std::getline(in, line))
@@ -586,19 +631,18 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
 
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
 {
-    std::ifstream in(filePath);
-    if (!in.is_open())
-    {
-        throw std::runtime_error("Failed to open file: " + filePath);
+    try {
+        // Use FileException to validate the file
+        FileException checker(filePath);
+    } catch (const BaseException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return; // Exit the function if the file cannot be opened
     }
+    std::ifstream in(filePath);
 
     std::string path, texturePath;
     in >> path >> texturePath;
     if (path == "/") path = "";
-    if (in.fail())
-    {
-        throw std::runtime_error("Invalid file format");
-    }
 
     // Update background sprite
     m_backgroundSprite.updateTexture(path + texturePath);
@@ -636,11 +680,6 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     // Load other sprites
     while (in >> texturePath >> startX >> startY >> count >> collision)
     {
-        if (in.fail())
-        {
-            throw std::runtime_error("Invalid file format");
-        }
-
         // Convert starting coordinates from grid to pixel positions
         float pixelX = startX * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
@@ -687,11 +726,16 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
 
 void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 {
-    std::ifstream in(filePath);
-    if (!in.is_open())
+    try
     {
-        throw std::runtime_error("Failed to open file: " + filePath);
+        FileException checker(filePath);
     }
+    catch (const BaseException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return; // Exit the function if the file cannot be opened
+    }
+    std::ifstream in(filePath);
 
     std::string path, texturePath;
     in >> path;
@@ -707,11 +751,6 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 
     while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration)
     {
-        if (in.fail())
-        {
-            throw std::runtime_error("Invalid file format");
-        }
-
         // Convert starting and ending coordinates from grid to pixel positions
         float pixelX = startX * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
@@ -738,11 +777,16 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 
 void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
 {
-    std::ifstream in(filePath);
-    if (!in.is_open())
+    try
     {
-        throw std::runtime_error("Failed to open file: " + filePath);
+        FileException checker(filePath);
     }
+    catch (const BaseException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return; // Exit the function if the file cannot be opened
+    }
+    std::ifstream in(filePath);
 
     std::string path, texturePath;
     in >> path;
@@ -757,10 +801,6 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
 
     while (in >> texturePath >> x >> y >> textureCount >> frameDuration)
     {
-        if (in.fail())
-        {
-            throw std::runtime_error("Invalid file format");
-        }
 
         // Convert starting coordinates from grid to pixel positions
         float pixelX = x * 120.0f * spriteScaleX;

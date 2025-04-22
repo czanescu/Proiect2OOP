@@ -44,9 +44,13 @@ Sprite::Sprite
     m_hitBoxY(height),
     m_isDrawn(true)
 {
-    if (!m_textura.loadFromFile(texturePath))
+    try
     {
-        throw std::runtime_error("Failed to load texture: " + texturePath);
+        m_textura.loadFromFile(texturePath);
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << e.what() << '\n';
     }
     m_sprite.setTexture(m_textura);
     m_sprite.setPosition(x, y);
@@ -132,9 +136,13 @@ void Sprite::draw(sf::RenderWindow& window)
 
 void Sprite::updateTexture(const std::string& texturePath)
 {
-    if (!m_textura.loadFromFile(texturePath))
+    try
     {
-        throw std::runtime_error("Failed to load texture: " + texturePath);
+        m_textura.loadFromFile(texturePath);
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << e.what() << '\n';
     }
     m_sprite.setTexture(m_textura);
 }

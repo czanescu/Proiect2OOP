@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(gravity)
 
 # Add the executable
-add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp)
+add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp Exceptii.cpp)
 
 if (CMAKE_CROSSCOMPILING)
     # Cross-compiling on Linux for Windows

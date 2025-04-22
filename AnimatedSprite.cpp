@@ -30,19 +30,12 @@ AnimatedSprite::AnimatedSprite
     m_sprite.setPosition(x, y);
     for (int i = 0; i < textureCount; ++i)
     {
-        if
-        (
-            !m_textures[i].loadFromFile
-            (
-                texturePath + "/" + std::to_string(i) + ".png"
-            )
-        )
+        try
         {
-            throw std::runtime_error
-            (
-                "Failed to load texture: " + texturePath 
-                + "/" + std::to_string(i) + ".png"
-            );
+            m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".png");
+        } catch (const FileException& e)
+        {
+            std::cerr << "Error: " << e.what() << std::endl;
         }
     }
     m_sprite.setScale
