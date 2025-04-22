@@ -697,7 +697,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     in >> path;
     if (path == "/") path = "";
 
-    int startX, startY, endX, endY, accelerationX, accelerationY;
+    int startX, startY, endX, endY, acceleration;
     bool collision = 1;
     sf::Vector2u windowSize = m_window.getSize();
     const float referenceWidth = 1920.0f;
@@ -705,7 +705,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    while (in >> texturePath >> startX >> startY >> endX >> endY >> accelerationX >> accelerationY)
+    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration)
     {
         if (in.fail())
         {
@@ -727,8 +727,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
             pixelY,
             pixelEndX,
             pixelEndY,
-            accelerationX,
-            accelerationY
+            acceleration
         );
 
         addMovableSprite(sprite, path + texturePath);
@@ -808,6 +807,11 @@ void GamePanel::moveSprites(float dt)
             );
             not_movingY = true;
         }
+        // calculez acceleratia pe Y
+        float distantaX = sprite.getXEndPoz() - sprite.getXStartPoz();
+        float distantaY = sprite.getYEndPoz() - sprite.getYStartPoz();
+        float acceleratieX = sprite.getAcceleration();
+        float acceleratieY = -acceleratieX * distantaY / distantaX;
         //calcule pentru X si Y
         if 
         (
@@ -817,14 +821,14 @@ void GamePanel::moveSprites(float dt)
         {
             if (sprite.getXStartPoz()<sprite.getXEndPoz())
             {
-                sprite.updateXSpeed(sprite.getXAcceleration()*dt);
+                sprite.updateXSpeed(acceleratieX*dt);
             }
-            else sprite.updateXSpeed(-sprite.getXAcceleration()*dt);
+            else sprite.updateXSpeed(-acceleratieX*dt);
             if (sprite.getYStartPoz()<sprite.getYEndPoz())
             {
-                sprite.updateYSpeed(sprite.getYAcceleration()*dt);
+                sprite.updateYSpeed(acceleratieY*dt);
             }
-            else sprite.updateYSpeed(-sprite.getYAcceleration()*dt);
+            else sprite.updateYSpeed(-acceleratieY*dt);
         }
         else
         {
@@ -842,7 +846,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateXSpeed
                         (
                             sprite.getXSpeed().getAverage() + 
-                            sprite.getXAcceleration()*dt
+                            acceleratieX*dt
                         );
                     }
                     else if 
@@ -854,7 +858,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateXSpeed
                         (
                             sprite.getXSpeed().getAverage() - 
-                            sprite.getXAcceleration()*dt
+                            acceleratieX*dt
                         );
                     }
                 }
@@ -869,7 +873,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateXSpeed
                         (
                             sprite.getXSpeed().getAverage() - 
-                            sprite.getXAcceleration()*dt
+                            acceleratieX*dt
                         );
                     }
                     else if 
@@ -881,7 +885,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateXSpeed
                         (
                             sprite.getXSpeed().getAverage() + 
-                            sprite.getXAcceleration()*dt
+                            acceleratieX*dt
                         );
                     }
                 }
@@ -900,7 +904,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateYSpeed
                         (
                             sprite.getYSpeed().getAverage() + 
-                            sprite.getYAcceleration()*dt
+                            acceleratieY*dt
                         );
                     }
                     else if 
@@ -912,7 +916,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateYSpeed
                         (
                             sprite.getYSpeed().getAverage() - 
-                            sprite.getYAcceleration()*dt
+                            acceleratieY*dt
                         );
                     }
                 }
@@ -927,7 +931,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateYSpeed
                         (
                             sprite.getYSpeed().getAverage() - 
-                            sprite.getYAcceleration()*dt
+                            acceleratieY*dt
                         );
                     }
                     else if 
@@ -939,7 +943,7 @@ void GamePanel::moveSprites(float dt)
                         sprite.updateYSpeed
                         (
                             sprite.getYSpeed().getAverage() + 
-                            sprite.getYAcceleration()*dt
+                            acceleratieY*dt
                         );
                     }
                 }

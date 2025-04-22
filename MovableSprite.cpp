@@ -8,8 +8,7 @@ MovableSprite::MovableSprite()
     m_yEndPoz(0), 
     m_xSpeed(), 
     m_ySpeed(), 
-    m_xAcceleration(0), 
-    m_yAcceleration(0)
+    m_Acceleration(0)
 {;}
 MovableSprite::MovableSprite
 (
@@ -20,8 +19,7 @@ MovableSprite::MovableSprite
     float yStartPoz,
     float xEndPoz,
     float yEndPoz,
-    float xAcceleration,
-    float yAcceleration
+    float Acceleration
 )
     : Sprite(fileName, xStartPoz, yStartPoz, height, width),
       m_xStartPoz(xStartPoz),
@@ -30,8 +28,7 @@ MovableSprite::MovableSprite
       m_yEndPoz(yEndPoz),
       m_xSpeed(0, 0),
       m_ySpeed(0, 0),
-      m_xAcceleration(xAcceleration),
-      m_yAcceleration(yAcceleration)
+      m_Acceleration(Acceleration)
 {;}
 MovableSprite::MovableSprite(const MovableSprite& other)
     : Sprite(other),
@@ -41,8 +38,7 @@ MovableSprite::MovableSprite(const MovableSprite& other)
       m_yEndPoz(other.m_yEndPoz),
       m_xSpeed(other.m_xSpeed),
       m_ySpeed(other.m_ySpeed),
-      m_xAcceleration(other.m_xAcceleration),
-      m_yAcceleration(other.m_yAcceleration)
+      m_Acceleration(other.m_Acceleration)
 {;}
 MovableSprite& MovableSprite::operator=(const MovableSprite& other)
 {
@@ -55,8 +51,7 @@ MovableSprite& MovableSprite::operator=(const MovableSprite& other)
         m_yEndPoz = other.m_yEndPoz;
         m_xSpeed = other.m_xSpeed;
         m_ySpeed = other.m_ySpeed;
-        m_xAcceleration = other.m_xAcceleration;
-        m_yAcceleration = other.m_yAcceleration;
+        m_Acceleration = other.m_Acceleration;
     }
     return *this;
 }
@@ -85,13 +80,9 @@ float MovableSprite::getYEndPoz() const
 {
     return m_yEndPoz;
 }
-float MovableSprite::getXAcceleration() const
+float MovableSprite::getAcceleration() const
 {
-    return m_xAcceleration;
-}
-float MovableSprite::getYAcceleration() const
-{
-    return m_yAcceleration;
+    return m_Acceleration;
 }
 void MovableSprite::updateXSpeed(float newXSpeed)
 {

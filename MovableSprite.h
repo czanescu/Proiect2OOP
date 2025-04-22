@@ -16,8 +16,7 @@ class MovableSprite : public Sprite
             float yStartPoz,
             float xEndPoz,
             float yEndPoz,
-            float xAcceleration,
-            float yAcceleration
+            float Acceleration
         );
         MovableSprite(const MovableSprite& other);
         MovableSprite& operator=(const MovableSprite& other);
@@ -36,8 +35,7 @@ class MovableSprite : public Sprite
         float getYStartPoz() const;
         float getXEndPoz() const;
         float getYEndPoz() const;
-        float getXAcceleration() const;
-        float getYAcceleration() const;
+        float getAcceleration() const;
 
 
 
@@ -49,8 +47,7 @@ class MovableSprite : public Sprite
         float m_yEndPoz;
         Delta m_xSpeed;
         Delta m_ySpeed;
-        float m_xAcceleration;
-        float m_yAcceleration;
+        float m_Acceleration;
 };
 
 #endif
