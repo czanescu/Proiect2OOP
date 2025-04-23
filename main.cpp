@@ -1,7 +1,7 @@
-#include "Delta.h"
-#include "Sprite.h"
-#include "GamePanel.h"
-#include "Player.h"
+#include "Delta.hpp"
+#include "Sprite.hpp"
+#include "GamePanel.hpp"
+#include "Player.hpp"
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <thread>

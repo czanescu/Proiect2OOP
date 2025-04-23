@@ -1,8 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Sprite.h"
-#include "Enums.h"
+#include "Sprite.hpp"
+#include "Enums.hpp"
 
 class Player : public Sprite
 {

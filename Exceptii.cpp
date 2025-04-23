@@ -1,4 +1,4 @@
-#include "Exceptii.h"
+#include "Exceptii.hpp"
 
 BaseException::BaseException(const std::string& msg) : m_message(msg) 
 {;}

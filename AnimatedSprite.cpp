@@ -1,4 +1,4 @@
-#include "AnimatedSprite.h"
+#include "AnimatedSprite.hpp"
 #include <iostream>
 
 AnimatedSprite::AnimatedSprite()

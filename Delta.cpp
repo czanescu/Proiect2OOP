@@ -1,4 +1,4 @@
-#include "Delta.h"
+#include "Delta.hpp"
 
 Delta::Delta() : m_precedent(0), m_actual(0)
 {;}

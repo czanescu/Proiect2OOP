@@ -1,4 +1,4 @@
-#include "MovableSprite.h"
+#include "MovableSprite.hpp"
 
 MovableSprite::MovableSprite()
   : Sprite(),

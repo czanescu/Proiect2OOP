@@ -1,7 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "I_Sprite.h"
+#include "I_Sprite.hpp"
 
 class Sprite : public I_Sprite {
 public:

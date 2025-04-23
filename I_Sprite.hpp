@@ -2,8 +2,8 @@
 #define I_SPRITE_H
 
 #include <SFML/Graphics.hpp>
-#include "Delta.h"
-#include "Exceptii.h"
+#include "Delta.hpp"
+#include "Exceptii.hpp"
 #include <string>
 #include <stdexcept>
 

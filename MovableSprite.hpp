@@ -1,7 +1,7 @@
 #ifndef MOVABLESPRITE_H
 #define MOVABLESPRITE_H
 
-#include "Sprite.h"
+#include "Sprite.hpp"
 
 class MovableSprite : public Sprite
 {

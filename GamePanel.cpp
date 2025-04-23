@@ -1,4 +1,4 @@
-#include "GamePanel.h"
+#include "GamePanel.hpp"
 #include <cmath>
 
 GamePanel::GamePanel()

@@ -1,11 +1,11 @@
 #ifndef GAMEPANEL_H
 #define GAMEPANEL_H
 
-#include "I_Sprite.h"
-#include "Player.h"
-#include "Sprite.h"
-#include "MovableSprite.h"
-#include "AnimatedSprite.h"
+#include "I_Sprite.hpp"
+#include "Player.hpp"
+#include "Sprite.hpp"
+#include "MovableSprite.hpp"
+#include "AnimatedSprite.hpp"
 #include <vector>
 #include <memory>
 #include <iomanip>
