@@ -746,8 +746,17 @@ void GamePanel::moveSprites(float dt)
         // calculez acceleratia pe Y
         float distantaX = sprite->getXEndPoz() - sprite->getXStartPoz();
         float distantaY = sprite->getYEndPoz() - sprite->getYStartPoz();
-        float acceleratieX = sprite->getAcceleration();
-        float acceleratieY = abs(acceleratieX * distantaY / distantaX);
+        float acceleratieX, acceleratieY;
+        if (distantaX == 0)
+        {
+            acceleratieX = 0;
+            acceleratieY = sprite->getAcceleration();
+        }
+        else
+        {
+            acceleratieX = sprite->getAcceleration();
+            acceleratieY = abs(acceleratieX * distantaY / distantaX);
+        } 
         //calcule pentru X si Y
         if 
         (
