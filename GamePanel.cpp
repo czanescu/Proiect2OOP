@@ -136,8 +136,22 @@ void GamePanel::setFrameRate(float framerate)
     m_frameRate=framerate;
 }
 
+void GamePanel::endProgram()
+{
+    m_window.close();
+    std::exit(0);
+}
+
 void GamePanel::renderProgressBar()
 {
+    sf::Event event;
+    while (m_window.pollEvent(event))
+    {
+        if ((event.type == sf::Event::Closed)
+        || event.type == sf::Event::KeyPressed
+        && event.key.code == sf::Keyboard::Escape)
+            endProgram();
+    }
     float barWidth = 640.f * (m_window.getSize().x / 1920.f);
     float barHeight = 20.f * (m_window.getSize().y / 1080.f);
     float progress = static_cast<float>(m_spriteProgress) / m_spriteCount;
@@ -146,7 +160,7 @@ void GamePanel::renderProgressBar()
     sf::Text progressText;
     progressText.setFont(m_font);
     progressText.setCharacterSize(24);
-    progressText.setFillColor(sf::Color::Yellow);
+    progressText.setFillColor(sf::Color::White);
     progressText.setString(std::to_string(static_cast<int>(progress * 100)) + "%");
     progressBar.setFillColor(sf::Color::Green);
     outline.setFillColor(sf::Color::White);
@@ -163,10 +177,11 @@ void GamePanel::renderProgressBar()
     progressText.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
-        m_window.getSize().y / 2 - barHeight * 2 - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+        m_window.getSize().y / 2 - barHeight * 3 - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressBar.setScale(progress, 1.f);
     outline.setScale(1.f, 1.f);
+    m_window.clear(m_backgroundColor);
     m_window.draw(outline);
     m_window.draw(progressBar);
     m_window.draw(progressText);
@@ -520,6 +535,7 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
         std::cerr << "Error: " << e.what() << std::endl;
         return; // Exit the function if the file cannot be opened
     }
+
     std::ifstream in(filePath);
 
     std::string path, texturePath;
