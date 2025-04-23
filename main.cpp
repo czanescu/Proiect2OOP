@@ -59,6 +59,8 @@ void calcule(double dt, float scaleX, float scaleY)
 
 void sceneSetup()
 {
+    Panel.calculateSpriteCount("assets/map1/map1");
+    int spriteCount = Panel.getSpriteCount();
     std::cout << "Am inceput incarcarea sprite-urilor" << std::endl;
     Panel.loadSpritesFromFile("assets/map1/map1.sprites");
     std::cout << "Loaded sprites from file" << std::endl;

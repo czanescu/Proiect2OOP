@@ -12,6 +12,8 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <cmath>
 
 #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
 #include <windows.h>
@@ -82,6 +84,8 @@ public:
     const sf::Font& getFont() const;
     const sf::Text& getFrameCounter() const;
     const float getFrameRate() const;
+    const void calculateSpriteCount(const std::string& filePath) const;
+    const int getSpriteCount() const;
 
     void checkPlayerCollision(float dt, float scaleY);
     void moveSprites(float dt);
@@ -99,6 +103,7 @@ private:
     float m_frameRate;
     float m_verticalOffset = 0.0f;
     float m_horizontalOffset = 0.0f;
+    static int m_spriteCount;
 };
 
 #endif

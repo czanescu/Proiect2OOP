@@ -1,5 +1,6 @@
 #include "GamePanel.hpp"
-#include <cmath>
+
+int GamePanel::m_spriteCount = -1; // Definition and initialization
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -56,7 +57,7 @@ GamePanel::GamePanel
 }
 void GamePanel::addSprite(std::unique_ptr<I_Sprite> sprite, const std::string& texturePath, bool collision)
 {
-    std::cout << "Sprite-ul " << m_sprites.size() << " a fost incarcat" << std::endl;
+    std::cout << "Sprite-ul (" << m_sprites.size() << "/" << m_spriteCount << ") a fost incarcat" << std::endl;
 
     m_sprites.push_back(std::move(sprite));
     m_sprites[m_sprites.size() - 1]->updateTexture(texturePath);
@@ -199,6 +200,50 @@ const sf::Text& GamePanel::getFrameCounter() const
 const float GamePanel::getFrameRate() const
 {
     return m_frameRate;
+}
+const void GamePanel::calculateSpriteCount(const std::string& filePath) const
+{
+    try
+    {
+        FileException checker(filePath + ".sprites");
+        FileException checker2(filePath + ".movable");
+        FileException checker3(filePath + ".animated");
+    }
+    catch(const BaseException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    std::ifstream spr (filePath + ".sprites");
+    std::ifstream mov (filePath + ".movable");
+    std::ifstream ani (filePath + ".animated");
+
+    std::string line;
+    int number, number2;
+    spr>>line>>line>>number>>number2;
+    mov>>line;
+    ani>>line;
+    while (spr >> line >> number >> number >> number2 >> number)
+    {
+        m_spriteCount+= abs(number2);
+        std::cout << "Gasit sprite" <<std::endl;
+    }
+    while (mov >> line >> number >> number >> number >> number >> number)
+    {
+        m_spriteCount++;
+        std::cout << "Gasit sprite mobil" << std::endl;
+    }
+    while (ani >> line >> number >> number >> number >> number >> number)
+    {
+        m_spriteCount++;
+        std::cout << "Gasit sprite animat" << std::endl;
+    }
+    spr.close();
+    mov.close();
+    ani.close();
+}
+const int GamePanel::getSpriteCount() const
+{
+    return m_spriteCount;
 }
 void GamePanel::checkPlayerCollision(float dt, float scaleY)
 {
