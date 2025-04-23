@@ -19,7 +19,8 @@ public:
         int frameDuration
     );
     void draw(sf::RenderWindow& window) override;
-    void updateTextures(const std::string& texturePath);
+    void updateTextures(const std::string& texturePath) override;
+    void operator=(const I_Sprite& other) override;
 
 private:
     std::vector <sf::Texture> m_textures;

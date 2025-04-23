@@ -79,24 +79,25 @@ Sprite::Sprite(const Sprite& other)
     m_sprite.setPosition(m_pozX.getActual(), m_pozY.getActual());
 }
 
-const sf::Sprite Sprite::getSprite() const
+sf::Sprite Sprite::getSprite() const
 {
     return m_sprite;
 }
 
-void Sprite::operator=(const Sprite& other)
+void Sprite::operator=(const I_Sprite& other)
 {
-    if (this != &other)
-    {
-        m_sprite = other.m_sprite;
-        m_pozX = other.m_pozX;
-        m_pozY = other.m_pozY;
-        m_hitBoxX = other.m_hitBoxX;
-        m_hitBoxY = other.m_hitBoxY;
-        m_textura = other.m_textura;
-        m_isDrawn = other.m_isDrawn;
-        m_sprite.setTexture(m_textura);
+    const Sprite* otherSprite = dynamic_cast<const Sprite*>(&other);
+    if (!otherSprite) {
+        throw std::invalid_argument("Assigned object is not of type Sprite");
     }
+
+    m_sprite = otherSprite->m_sprite;
+    m_textura = otherSprite->m_textura;
+    m_pozX = otherSprite->m_pozX;
+    m_pozY = otherSprite->m_pozY;
+    m_hitBoxX = otherSprite->m_hitBoxX;
+    m_hitBoxY = otherSprite->m_hitBoxY;
+    m_isDrawn = otherSprite->m_isDrawn;
 }
 
 void Sprite::move(float x, float y)
@@ -167,9 +168,17 @@ void Sprite::setDrawStatus(bool status)
 {
     m_isDrawn = status;
 }
+void Sprite::setCollision(bool collision)
+{
+    m_collision = collision;
+}
 bool Sprite::getDrawStatus() const
 {
     return m_isDrawn;
+}
+bool Sprite::getCollision() const
+{
+    return m_collision;
 }
 Delta Sprite::getPosX() const
 {
@@ -194,4 +203,69 @@ float Sprite::getScaleX() const
 float Sprite::getScaleY() const
 {
     return m_sprite.getScale().y;
+}
+// MovableSprite methods
+void Sprite::updateXSpeed(float newXSpeed)
+{
+    // Not applicable for base class
+}
+void Sprite::updateYSpeed(float newYSpeed)
+{
+    // Not applicable for base class
+}
+void Sprite::setXStartPoz(float newXStartPoz)
+{
+    // Not applicable for base class
+}
+void Sprite::setYStartPoz(float newYStartPoz)
+{
+    // Not applicable for base class
+}
+void Sprite::setXEndPoz(float newXEndPoz)
+{
+    // Not applicable for base class
+}
+void Sprite::setYEndPoz(float newYEndPoz)
+{
+    // Not applicable for base class
+}
+Delta Sprite::getXSpeed() const
+{
+    // Not applicable for base class
+    return Delta(0, 0);
+}
+Delta Sprite::getYSpeed() const
+{
+    // Not applicable for base class
+    return Delta(0, 0);
+}
+float Sprite::getXStartPoz() const
+{
+    // Not applicable for base class
+    return 0;
+}
+float Sprite::getYStartPoz() const
+{
+    // Not applicable for base class
+    return 0;
+}
+float Sprite::getXEndPoz() const
+{
+    // Not applicable for base class
+    return 0;
+}
+float Sprite::getYEndPoz() const
+{
+    // Not applicable for base class
+    return 0;
+}
+float Sprite::getAcceleration() const
+{
+    // Not applicable for base class
+    return 0;
+}
+// AnimatedSprite methods
+void Sprite::updateTextures(const std::string& texturePath)
+{
+    // Not applicable for base class
 }

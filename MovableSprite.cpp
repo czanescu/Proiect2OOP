@@ -108,3 +108,19 @@ void MovableSprite::setYEndPoz(float newYEndPoz)
 {
     m_yEndPoz = newYEndPoz;
 }
+void MovableSprite::operator=(const I_Sprite& other)
+{
+    const MovableSprite* otherMovableSprite = dynamic_cast<const MovableSprite*>(&other);
+    if (!otherMovableSprite) {
+        throw std::invalid_argument("Assigned object is not of type MovableSprite");
+    }
+
+    Sprite::operator=(other);
+    m_xStartPoz = otherMovableSprite->m_xStartPoz;
+    m_yStartPoz = otherMovableSprite->m_yStartPoz;
+    m_xEndPoz = otherMovableSprite->m_xEndPoz;
+    m_yEndPoz = otherMovableSprite->m_yEndPoz;
+    m_xSpeed = otherMovableSprite->m_xSpeed;
+    m_ySpeed = otherMovableSprite->m_ySpeed;
+    m_Acceleration = otherMovableSprite->m_Acceleration;
+}

@@ -1,12 +1,13 @@
 #ifndef GAMEPANEL_H
 #define GAMEPANEL_H
 
+#include "I_Sprite.h"
+#include "Player.h"
 #include "Sprite.h"
 #include "MovableSprite.h"
 #include "AnimatedSprite.h"
-#include "Player.h"
-#include "Enums.h"
 #include <vector>
+#include <memory>
 #include <iomanip>
 #include <sstream>
 #include <fstream>
@@ -18,63 +19,50 @@
 #include <thread>
 #endif
 
-class GamePanel
-{
+class GamePanel {
 public:
     GamePanel();
-    GamePanel
-    (
+    GamePanel(
         Player& player,
-        const std::string& title, 
-        const sf::Color& backgroundColor, 
+        const std::string& title,
+        const sf::Color& backgroundColor,
         const std::string& fontPath
     );
 
-    void addSprite(const Sprite& sprite, const std::string& texturePath);
-    void addCollisionlessSprite
+    // Add sprites of any type
+    void addSprite
     (
-        const Sprite& sprite, 
-        const std::string& texturePath
-    );
-    void addMovableSprite
-    (
-        const MovableSprite& sprite, 
-        const std::string& texturePath
-    );
-    void addAnimatedSprite
-    (
-        const AnimatedSprite& sprite, 
-        const std::string& texturePath
+        std::unique_ptr<I_Sprite> sprite, 
+        const std::string& texturePath,
+        bool collision
     );
 
-    void setBackgroundTexture(const std::string& texturePath);
-
+    // Remove a sprite by index
     void removeSprite(int index);
-    void removeCollisionlessSprite(int index);
-    void removeMovableSprite(int index);
 
+    // Clear all sprites
     void clearSprites();
-    void clearCollisionlessSprites();
-    void clearMovableSprites();
-    void clearAllSprites();
 
-    void updateSprite(int index, const Sprite& sprite);
-    void updateCollisionlessSprite(int index, const Sprite& sprite);
-    void updateMovableSprite(int index, const MovableSprite& sprite);
+    // Update a sprite at a specific index
+    void updateSprite(int index, std::unique_ptr<I_Sprite> sprite);
 
+    // Render all sprites
     void renderFrame();
+
+    // Other methods
     void setBackgroundColor(const sf::Color& color);
+    void setBackgroundTexture(const std::string& texturePath);
     void setFont(const std::string& fontPath);
     void setFrameRate(float frameRate);
     void setWindowTitle(const std::string& title);
     void setWindowSize(int width, int height);
     void setFrameCounterValue(float value);
-    void panelSleep (float seconds);
+
+    void panelSleep(float seconds);
 
     bool isOpen();
     void close();
     void clear();
-
     bool pollEvent(sf::Event& event);
 
     sf::Vector2i loadConfigFromFile(const std::string& filePath);
@@ -88,10 +76,9 @@ public:
     void moveScreenRight(float playerTop);
 
     Player& getPlayer();
+    const I_Sprite& getSprite(int index) const;
     const sf::Color getBackgroundColor() const;
     const sf::RenderWindow& getWindow() const;
-    const std::vector<Sprite>& getSprites() const;
-    const Sprite& getSprite(int index) const;
     const sf::Font& getFont() const;
     const sf::Text& getFrameCounter() const;
     const float getFrameRate() const;
@@ -102,10 +89,7 @@ public:
     ~GamePanel();
 
 private:
-    std::vector<Sprite> m_sprites;
-    std::vector<Sprite> m_noColSprites;
-    std::vector<MovableSprite> m_movableSprites;
-    std::vector<AnimatedSprite> m_animatedSprites;
+    std::vector<std::unique_ptr<I_Sprite>> m_sprites; // Unified vector for all sprites
     Sprite m_backgroundSprite;
     Player m_player;
     sf::Color m_backgroundColor;

@@ -21,24 +21,23 @@ class MovableSprite : public Sprite
         MovableSprite(const MovableSprite& other);
         MovableSprite& operator=(const MovableSprite& other);
 
-        void updateXSpeed(float newXSpeed);
-        void updateYSpeed(float newYSpeed);
+        void updateXSpeed(float newXSpeed) override;
+        void updateYSpeed(float newYSpeed) override;
 
-        void setXStartPoz(float newXStartPoz);
-        void setYStartPoz(float newYStartPoz);
-        void setXEndPoz(float newXEndPoz);
-        void setYEndPoz(float newYEndPoz);
+        void setXStartPoz(float newXStartPoz) override;
+        void setYStartPoz(float newYStartPoz) override;
+        void setXEndPoz(float newXEndPoz) override;
+        void setYEndPoz(float newYEndPoz) override;
 
-        Delta getXSpeed() const;
-        Delta getYSpeed() const;
-        float getXStartPoz() const;
-        float getYStartPoz() const;
-        float getXEndPoz() const;
-        float getYEndPoz() const;
-        float getAcceleration() const;
+        Delta getXSpeed() const override;
+        Delta getYSpeed() const override;
+        float getXStartPoz() const override;
+        float getYStartPoz() const override;
+        float getXEndPoz() const override;
+        float getYEndPoz() const override;
+        float getAcceleration() const override;
 
-
-
+        void operator=(const I_Sprite& other) override;
 
     private:
         float m_xStartPoz;

@@ -28,6 +28,7 @@ AnimatedSprite::AnimatedSprite
     m_hitBoxX = width;
     m_hitBoxY = height;
     m_sprite.setPosition(x, y);
+    setPosition(x, y);
     for (int i = 0; i < textureCount; ++i)
     {
         try
@@ -76,4 +77,24 @@ void AnimatedSprite::updateTextures(const std::string& texturePath)
         );
     }
     m_sprite.setTexture(m_textures[m_currentTexture]);
+}
+void AnimatedSprite::operator=(const I_Sprite& other)
+{
+    const AnimatedSprite* otherSprite = dynamic_cast<const AnimatedSprite*>(&other);
+    if (!otherSprite)
+    {
+        throw std::runtime_error("Invalid assignment to AnimatedSprite");
+    }
+    Sprite::operator=(other);
+    m_currentTexture = otherSprite->m_currentTexture;
+    m_textureCount = otherSprite->m_textureCount;
+    m_framesUntilNext = otherSprite->m_framesUntilNext;
+    m_frameDuration = otherSprite->m_frameDuration;
+    m_textures = otherSprite->m_textures;
+    m_sprite.setTexture(m_textures[m_currentTexture]);
+    m_sprite.setScale
+    (
+        m_hitBoxX / m_textures[m_currentTexture].getSize().x,
+        m_hitBoxY / m_textures[m_currentTexture].getSize().y
+    );
 }

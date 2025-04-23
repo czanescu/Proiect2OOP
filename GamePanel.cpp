@@ -53,70 +53,17 @@ GamePanel::GamePanel
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
 }
-void GamePanel::addSprite(const Sprite& sprite, const std::string& texturePath)
+void GamePanel::addSprite(std::unique_ptr<I_Sprite> sprite, const std::string& texturePath, bool collision)
 {
     std::cout << "Sprite-ul " << m_sprites.size() << " a fost incarcat" << std::endl;
-    m_sprites.resize(m_sprites.size() + 1);
 
-    m_sprites[m_sprites.size() - 1]=sprite;
-    m_sprites[m_sprites.size() - 1].setPosition
-    (
-        sprite.getSprite().getPosition().x, 
-        sprite.getSprite().getPosition().y
-    );
-    m_sprites[m_sprites.size() - 1].updateTexture(texturePath);
+    m_sprites.push_back(std::move(sprite));
+    m_sprites[m_sprites.size() - 1]->updateTexture(texturePath);
+    m_sprites[m_sprites.size() - 1]->setDrawStatus(collision);
+    m_sprites[m_sprites.size() - 1]->setCollision(collision);
+    m_sprites[m_sprites.size() - 1]->setDrawStatus(true);
 }
-void GamePanel::addCollisionlessSprite
-(
-    const Sprite& sprite, 
-    const std::string& texturePath
-)
-{
-    std::cout << "Sprite-ul collissionless " << m_noColSprites.size() << " a fost incarcat" << std::endl;
-    m_noColSprites.resize(m_noColSprites.size() + 1);
 
-    m_noColSprites[m_noColSprites.size() - 1]=sprite;
-    m_noColSprites[m_noColSprites.size() - 1].setPosition
-    (
-        sprite.getSprite().getPosition().x, 
-        sprite.getSprite().getPosition().y
-    );
-    m_noColSprites[m_noColSprites.size() - 1].updateTexture(texturePath);
-}
-void GamePanel::addMovableSprite
-(
-    const MovableSprite& sprite, 
-    const std::string& texturePath
-)
-{
-    std::cout << "Sprite-ul movable " << m_movableSprites.size() << " a fost incarcat" << std::endl;
-    m_movableSprites.resize(m_movableSprites.size() + 1);
-
-    m_movableSprites[m_movableSprites.size() - 1]=sprite;
-    m_movableSprites[m_movableSprites.size() - 1].setPosition
-    (
-        sprite.getSprite().getPosition().x,
-        sprite.getSprite().getPosition().y
-    );
-    m_movableSprites[m_movableSprites.size() - 1].updateTexture(texturePath);
-}
-void GamePanel::addAnimatedSprite
-(
-    const AnimatedSprite& sprite, 
-    const std::string& texturePath
-)
-{
-    std::cout << "Sprite-ul animated " << m_animatedSprites.size() << " a fost incarcat" << std::endl;
-    m_animatedSprites.resize(m_animatedSprites.size() + 1);
-
-    m_animatedSprites[m_animatedSprites.size() - 1]=sprite;
-    m_animatedSprites[m_animatedSprites.size() - 1].setPosition
-    (
-        sprite.getSprite().getPosition().x, 
-        sprite.getSprite().getPosition().y
-    );
-    m_animatedSprites[m_animatedSprites.size() - 1].updateTextures(texturePath);
-}
 void GamePanel::removeSprite(int index)
 {
     try
@@ -129,51 +76,13 @@ void GamePanel::removeSprite(int index)
     }
     m_sprites.erase(m_sprites.begin() + index);
 }
-void GamePanel::removeCollisionlessSprite(int index)
-{
-    try
-    {
-        IndexOutOfRangeException(index, m_noColSprites.size());
-    }
-    catch (const IndexOutOfRangeException& e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
-    
-    m_noColSprites.erase(m_noColSprites.begin() + index);
-}
-void GamePanel::removeMovableSprite(int index)
-{
-    try
-    {
-        IndexOutOfRangeException(index, m_movableSprites.size());
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << "Error:" << e.what() << '\n';
-    }
-    
-    m_movableSprites.erase(m_movableSprites.begin() + index);
-}
+
 void GamePanel::clearSprites()
 {
     m_sprites.clear();
 }
-void GamePanel::clearCollisionlessSprites()
-{
-    m_noColSprites.clear();
-}
-void GamePanel::clearMovableSprites()
-{
-    m_movableSprites.clear();
-}
-void GamePanel::clearAllSprites()
-{
-    m_sprites.clear();
-    m_noColSprites.clear();
-    m_movableSprites.clear();
-}
-void GamePanel::updateSprite(int index, const Sprite& sprite)
+
+void GamePanel::updateSprite(int index, std::unique_ptr<I_Sprite> sprite)
 {
     try
     {
@@ -183,33 +92,7 @@ void GamePanel::updateSprite(int index, const Sprite& sprite)
     {
         std::cerr << "Error: " << e.what() << '\n';
     }
-    
-    m_sprites[index] = sprite;
-}
-void GamePanel::updateCollisionlessSprite(int index, const Sprite& sprite)
-{
-    try
-    {
-        IndexOutOfRangeException(index, m_noColSprites.size());
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << "Error: " << e.what() << '\n';
-    }
-    m_noColSprites[index] = sprite;
-}
-void GamePanel::updateMovableSprite(int index, const MovableSprite& sprite)
-{
-    try
-    {
-        IndexOutOfRangeException(index, m_movableSprites.size());
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << "Error: " << e.what() << '\n';
-    }
-    
-    m_movableSprites[index] = sprite;
+    m_sprites[index] = std::move(sprite);
 }
 void GamePanel::setBackgroundColor(const sf::Color& color)
 {
@@ -246,21 +129,9 @@ void GamePanel::renderFrame()
 {
     m_window.clear(m_backgroundColor);
     m_window.draw(m_backgroundSprite.getSprite());
-    for (int i = 0; i < m_noColSprites.size(); ++i)
-    {
-        m_noColSprites[i].draw(m_window);
-    }
     for (int i = 0; i < m_sprites.size(); ++i)
     {
-        m_sprites[i].draw(m_window);
-    }
-    for (int i = 0; i < m_movableSprites.size(); ++i)
-    {
-        m_movableSprites[i].draw(m_window);
-    }
-    for (int i = 0; i < m_animatedSprites.size(); ++i)
-    {
-        m_animatedSprites[i].draw(m_window);
+        m_sprites[i]->draw(m_window);
     }
     m_player.draw(m_window);
     m_window.draw(m_frameCounter);
@@ -302,11 +173,7 @@ const sf::RenderWindow& GamePanel::getWindow() const
 {
     return m_window;
 }
-const std::vector<Sprite>& GamePanel::getSprites() const
-{
-    return m_sprites;
-}
-const Sprite& GamePanel::getSprite(int index) const
+const I_Sprite& GamePanel::getSprite(int index) const
 {
     try
     {
@@ -317,7 +184,7 @@ const Sprite& GamePanel::getSprite(int index) const
         std::cerr << e.what() << '\n';
     }
     
-    return m_sprites[index];
+    return *m_sprites[index];
 }
 const sf::Font& GamePanel::getFont() const
 {
@@ -343,10 +210,15 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
     // Collision check for m_sprites
     for (const auto& sprite : m_sprites)
     {
-        float spriteLeft = sprite.getPosX().getActual();
-        float spriteTop = sprite.getPosY().getActual();
-        float spriteRight = spriteLeft + sprite.getWidth();
-        float spriteBottom = spriteTop + sprite.getHeight();
+        // Check if the sprite is drawn and has a collision box
+        if (sprite->getDrawStatus() == 0)
+            continue; // Skip if the sprite is not drawn
+        if (sprite->getCollision() == 0)
+            continue; // Skip if the sprite has no collision box
+        float spriteLeft = sprite->getPosX().getActual();
+        float spriteTop = sprite->getPosY().getActual();
+        float spriteRight = spriteLeft + sprite->getWidth();
+        float spriteBottom = spriteTop + sprite->getHeight();
 
         // 0. Proximity Check (Player is close to a sprite below)
         if (playerBottom <= spriteTop &&
@@ -428,115 +300,6 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             {
                 m_player.hitRight(spriteLeft);
                 break; // Stop checking after the first collision
-            }
-        }
-    }
-    // Collision check for m_movableSprites
-    for (const auto& sprite : m_movableSprites)
-    {
-        float spriteLeft = sprite.getPosX().getActual();
-        float spriteTop = sprite.getPosY().getActual();
-        float spriteRight = spriteLeft + sprite.getWidth();
-        float spriteBottom = spriteTop + sprite.getHeight();
-
-        // 0. Proximity Check (Player is close to a sprite below)
-        if (playerBottom <= spriteTop &&
-            playerBottom + 1 >= spriteTop &&
-            playerRight > spriteLeft &&
-            playerLeft < spriteRight
-            || ( playerBottom -1 <= spriteTop &&
-            playerBottom + 1 >= spriteTop &&
-            playerRight > spriteLeft &&
-            playerLeft < spriteRight))
-        {
-            std::cout 
-            << "Proximity Check Passed!"
-            << " Player is close to sprite below. Sprite Top: "
-            << spriteTop << ' ' << playerBottom << std::endl;
-            isOnGround = true; // Player is considered on the ground
-            m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
-        }
-
-        // 1. Ground Collision (Player falling onto a sprite below)
-        if 
-        (
-            m_player.getSpeedY().getActual() > 0 || 
-            m_player.getYPlatformSpeed().getActual() != 0
-        ) // Falling
-        {
-            if (playerBottom >= spriteTop && 
-                playerBottom <= (spriteTop + spriteBottom)/2 &&
-                playerRight > spriteLeft &&
-                playerLeft < spriteRight)
-            {
-                isOnGround = true;
-                std::cout 
-                << "Ground Collision Detected! Sprite Top: " 
-                << spriteTop << std::endl;
-                m_player.hitGround(spriteTop);
-                break; // Stop checking after the first collision
-            }
-        }
-
-        // 2. Ceiling Collision (Player jumping into a sprite above)
-        if (m_player.getSpeedY().getActual() < 0) // Jumping
-        {
-            if (playerTop <= spriteBottom && 
-                playerTop >= (spriteTop + spriteBottom)/2 &&
-                playerRight > spriteLeft &&
-                playerLeft < spriteRight)
-            {
-                
-                m_player.hitCeiling(spriteBottom);
-                break; // Stop checking after the first collision
-            }
-        }
-
-        // 3. Left Wall Collision (Player moving left into a sprite, or sprite moving right)
-        if (m_player.getSpeedX().getActual() < 0) // Moving left
-        {
-            if (playerLeft <= spriteRight && 
-                playerLeft >= (spriteLeft + spriteRight)/2 &&
-                playerBottom > spriteTop &&
-                playerTop < spriteBottom)
-            {
-                m_player.hitLeft(spriteRight);
-                break; // Stop checking after the first collision
-            }
-        }
-        if (sprite.getXSpeed().getActual() > 0)
-        {
-            if (playerLeft <= spriteRight && 
-                playerLeft >= (spriteLeft + spriteRight)/2 &&
-                playerBottom > spriteTop &&
-                playerTop < spriteBottom)
-            {
-                m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
-                break; // Stop checking after the first collision
-            }
-        }
-
-        // 4. Right Wall Collision (Player moving right into a sprite, or sprite moving left)
-        if (m_player.getSpeedX().getActual() > 0) // Moving right
-        {
-            if (playerRight >= spriteLeft && 
-                playerRight <= (spriteLeft + spriteRight)/2 &&
-                playerBottom > spriteTop &&
-                playerTop < spriteBottom)
-            {
-                m_player.hitRight(spriteLeft);
-                break; // Stop checking after the first collision
-            }
-        }
-        if (sprite.getXSpeed().getActual() < 0) //Sprite moving left
-        {
-            if (playerRight >= spriteLeft && 
-                playerRight <= (spriteLeft + spriteRight)/2 &&
-                playerBottom > spriteTop &&
-                playerTop < spriteBottom)
-            {
-                m_player.setPlatformSpeed(sprite.getXSpeed(), sprite.getYSpeed());
-                break;
             }
         }
     }
@@ -689,34 +452,30 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
             count *= -1;
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite(
+                std::unique_ptr<I_Sprite> sprite = std::make_unique<Sprite>(
                     path + texturePath,
                     pixelX,
                     pixelY - i * 120.0f * spriteScaleY,
-                    120.0f * spriteScaleY,
-                    120.0f * spriteScaleX
+                    120.0f * spriteScaleY, // Height
+                    120.0f * spriteScaleX  // Width
                 );
-                if (collision == 1)
-                    addSprite(sprite, path + texturePath);
-                else
-                    addCollisionlessSprite(sprite, path + texturePath);
+                
+                // Add the sprite to the vector
+                addSprite(std::move(sprite), path + texturePath, collision);
             }
         }
         else
         {
             for (int i = 0; i < count; ++i)
             {
-                Sprite sprite(
+                std::unique_ptr<I_Sprite> sprite = std::make_unique<Sprite>(
                     path + texturePath,
                     pixelX + i * 120.0f * spriteScaleX,
                     pixelY,
                     120.0f * spriteScaleY,
                     120.0f * spriteScaleX
                 );
-                if (collision == 1)
-                    addSprite(sprite, path + texturePath);
-                else
-                    addCollisionlessSprite(sprite, path + texturePath);
+                addSprite(std::move(sprite), path + texturePath, collision);
             }
         }
     }
@@ -758,7 +517,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
         float pixelEndY = windowSize.y - (endY + 1) * 120.0f * spriteScaleY;
 
         // Create and add the movable sprite
-        MovableSprite sprite(
+        std::unique_ptr<I_Sprite> sprite = std::make_unique<MovableSprite>(
             path + texturePath,
             120.0f * spriteScaleY, // Width
             120.0f * spriteScaleX, // Height
@@ -769,7 +528,7 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
             acceleration
         );
 
-        addMovableSprite(sprite, path + texturePath);
+        addSprite(std::move(sprite), path + texturePath, collision);
     }
 
     in.close();
@@ -792,14 +551,14 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
     in >> path;
     if (path == "/") path = "";
 
-    int x, y, textureCount, frameDuration;
+    int x, y, textureCount, frameDuration, collision;
     sf::Vector2u windowSize = m_window.getSize();
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    while (in >> texturePath >> x >> y >> textureCount >> frameDuration)
+    while (in >> texturePath >> x >> y >> textureCount >> frameDuration >> collision)
     {
 
         // Convert starting coordinates from grid to pixel positions
@@ -807,7 +566,7 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
         float pixelY = windowSize.y - (y + 1) * 120.0f * spriteScaleY;
 
         // Create and add the animated sprite
-        AnimatedSprite sprite(
+        std::unique_ptr <I_Sprite> sprite = std::make_unique<AnimatedSprite>(
             path + texturePath,
             pixelX,
             pixelY,
@@ -817,7 +576,7 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
             frameDuration
         );
 
-        addAnimatedSprite(sprite, path + texturePath);
+        addSprite(std::move(sprite), path + texturePath, collision);
     }
 
     in.close();
@@ -825,79 +584,81 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
 
 void GamePanel::moveSprites(float dt)
 {
-    for (auto& sprite : m_movableSprites)
+    for (auto& sprite : m_sprites)
     {
+        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+        if (!movableSprite) continue; // Skip if not a MovableSprite
         bool not_movingX = false;
         bool not_movingY = false;
-        if (sprite.getXStartPoz() == sprite.getXEndPoz())
+        if (sprite->getXStartPoz() == sprite->getXEndPoz())
         {
-            sprite.setPosition
+            sprite->setPosition
             (
-                sprite.getXStartPoz(), 
-                sprite.getPosY().getActual()
+                sprite->getXStartPoz(), 
+                sprite->getPosY().getActual()
             );
             not_movingX = true;
         }
-        if (sprite.getYStartPoz() == sprite.getYEndPoz())
+        if (sprite->getYStartPoz() == sprite->getYEndPoz())
         {
-            sprite.setPosition
+            sprite->setPosition
             (
-                sprite.getPosX().getActual(), 
-                sprite.getYStartPoz()
+                sprite->getPosX().getActual(), 
+                sprite->getYStartPoz()
             );
             not_movingY = true;
         }
         // calculez acceleratia pe Y
-        float distantaX = sprite.getXEndPoz() - sprite.getXStartPoz();
-        float distantaY = sprite.getYEndPoz() - sprite.getYStartPoz();
-        float acceleratieX = sprite.getAcceleration();
+        float distantaX = sprite->getXEndPoz() - sprite->getXStartPoz();
+        float distantaY = sprite->getYEndPoz() - sprite->getYStartPoz();
+        float acceleratieX = sprite->getAcceleration();
         float acceleratieY = -acceleratieX * distantaY / distantaX;
         //calcule pentru X si Y
         if 
         (
-            sprite.getXSpeed().getActual() == 0 && 
-            sprite.getYSpeed().getActual() == 0
+            sprite->getXSpeed().getActual() == 0 && 
+            sprite->getYSpeed().getActual() == 0
         )
         {
-            if (sprite.getXStartPoz()<sprite.getXEndPoz())
+            if (sprite->getXStartPoz()<sprite->getXEndPoz())
             {
-                sprite.updateXSpeed(acceleratieX*dt);
+                sprite->updateXSpeed(acceleratieX*dt);
             }
-            else sprite.updateXSpeed(-acceleratieX*dt);
-            if (sprite.getYStartPoz()<sprite.getYEndPoz())
+            else sprite->updateXSpeed(-acceleratieX*dt);
+            if (sprite->getYStartPoz()<sprite->getYEndPoz())
             {
-                sprite.updateYSpeed(acceleratieY*dt);
+                sprite->updateYSpeed(acceleratieY*dt);
             }
-            else sprite.updateYSpeed(-acceleratieY*dt);
+            else sprite->updateYSpeed(-acceleratieY*dt);
         }
         else
         {
             //calcule pentru X
             if (!not_movingX)
             {
-                if (sprite.getXStartPoz()<sprite.getXEndPoz())
+                if (sprite->getXStartPoz()<sprite->getXEndPoz())
                 {
                     if 
                     (
-                        sprite.getPosX().getActual() < 
-                        (sprite.getXStartPoz() + sprite.getXEndPoz())/2
+                        sprite->getPosX().getActual() < 
+                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
                     )
                     {
-                        sprite.updateXSpeed
+                        sprite->updateXSpeed
                         (
-                            sprite.getXSpeed().getAverage() + 
+                            sprite->getXSpeed().getAverage() + 
                             acceleratieX*dt
                         );
                     }
                     else if 
                     (
-                        sprite.getPosX().getActual() > 
-                        (sprite.getXStartPoz() + sprite.getXEndPoz())/2
+                        sprite->getPosX().getActual() > 
+                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
                     )
                     {
-                        sprite.updateXSpeed
+                        sprite->updateXSpeed
                         (
-                            sprite.getXSpeed().getAverage() - 
+                            sprite->getXSpeed().getAverage() - 
                             acceleratieX*dt
                         );
                     }
@@ -906,25 +667,25 @@ void GamePanel::moveSprites(float dt)
                 {
                     if 
                     (
-                        sprite.getPosX().getActual() > 
-                        (sprite.getXStartPoz() + sprite.getXEndPoz())/2
+                        sprite->getPosX().getActual() > 
+                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
                     )
                     {
-                        sprite.updateXSpeed
+                        sprite->updateXSpeed
                         (
-                            sprite.getXSpeed().getAverage() - 
+                            sprite->getXSpeed().getAverage() - 
                             acceleratieX*dt
                         );
                     }
                     else if 
                     (
-                        sprite.getPosX().getActual() < 
-                        (sprite.getXStartPoz() + sprite.getXEndPoz())/2
+                        sprite->getPosX().getActual() < 
+                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
                     )
                     {
-                        sprite.updateXSpeed
+                        sprite->updateXSpeed
                         (
-                            sprite.getXSpeed().getAverage() + 
+                            sprite->getXSpeed().getAverage() + 
                             acceleratieX*dt
                         );
                     }
@@ -933,29 +694,29 @@ void GamePanel::moveSprites(float dt)
             //calcule pentru Y
             if (!not_movingY)
             {
-                if (sprite.getYStartPoz()<sprite.getYEndPoz())
+                if (sprite->getYStartPoz()<sprite->getYEndPoz())
                 {
                     if 
                     (
-                        sprite.getPosY().getActual() < 
-                        (sprite.getYStartPoz() + sprite.getYEndPoz())/2
+                        sprite->getPosY().getActual() < 
+                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
                     )
                     {
-                        sprite.updateYSpeed
+                        sprite->updateYSpeed
                         (
-                            sprite.getYSpeed().getAverage() + 
+                            sprite->getYSpeed().getAverage() + 
                             acceleratieY*dt
                         );
                     }
                     else if 
                     (
-                        sprite.getPosY().getActual() > 
-                        (sprite.getYStartPoz() + sprite.getYEndPoz())/2
+                        sprite->getPosY().getActual() > 
+                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
                     )
                     {
-                        sprite.updateYSpeed
+                        sprite->updateYSpeed
                         (
-                            sprite.getYSpeed().getAverage() - 
+                            sprite->getYSpeed().getAverage() - 
                             acceleratieY*dt
                         );
                     }
@@ -964,38 +725,38 @@ void GamePanel::moveSprites(float dt)
                 {
                     if 
                     (
-                        sprite.getPosY().getActual() > 
-                        (sprite.getYStartPoz() + sprite.getYEndPoz())/2
+                        sprite->getPosY().getActual() > 
+                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
                     )
                     {
-                        sprite.updateYSpeed
+                        sprite->updateYSpeed
                         (
-                            sprite.getYSpeed().getAverage() - 
+                            sprite->getYSpeed().getAverage() - 
                             acceleratieY*dt
                         );
                     }
                     else if 
                     (
-                        sprite.getPosY().getActual() < 
-                        (sprite.getYStartPoz() + sprite.getYEndPoz())/2
+                        sprite->getPosY().getActual() < 
+                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
                     )
                     {
-                        sprite.updateYSpeed
+                        sprite->updateYSpeed
                         (
-                            sprite.getYSpeed().getAverage() + 
+                            sprite->getYSpeed().getAverage() + 
                             acceleratieY*dt
                         );
                     }
                 }
             }
         }
-        float pozX=sprite.getPosX().getActual();
-        float pozY = sprite.getPosY().getActual();
-        float newPosX = pozX + sprite.getXSpeed().getActual() * dt;
-        float newPosY = pozY + sprite.getYSpeed().getActual() * dt;
+        float pozX=sprite->getPosX().getActual();
+        float pozY = sprite->getPosY().getActual();
+        float newPosX = pozX + sprite->getXSpeed().getActual() * dt;
+        float newPosY = pozY + sprite->getYSpeed().getActual() * dt;
         Delta newPosXDelta(pozX, newPosX);
         Delta newPosYDelta(pozY, newPosY);
-        sprite.updatePosition(newPosXDelta, newPosYDelta);
+        sprite->updatePosition(newPosXDelta, newPosYDelta);
     }
 }
 
@@ -1014,42 +775,18 @@ void GamePanel::moveScreenUp(float playerLeft){
     // Apply the offset to all sprites
     for (auto& sprite : m_sprites)
     {
-        sprite.setPosition
+        sprite->setPosition
         (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() + m_window.getSize().y
+            sprite->getPosX().getActual(), 
+            sprite->getPosY().getActual() + m_window.getSize().y
         );
+        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableSprite)
+        {
+            movableSprite->setYStartPoz(movableSprite->getYStartPoz() + m_window.getSize().y);
+            movableSprite->setYEndPoz(movableSprite->getYEndPoz() + m_window.getSize().y);
+        }
     }
-    //Apply offset to all collisionless sprites
-    for (auto& sprite : m_noColSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() + m_window.getSize().y
-        );
-    }
-    //Apply offset to all movable sprites
-    for (auto& sprite : m_movableSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() + m_window.getSize().y
-        );
-        sprite.setYStartPoz(sprite.getYStartPoz() + m_window.getSize().y);
-        sprite.setYEndPoz(sprite.getYEndPoz() + m_window.getSize().y);
-    }
-    //Apply offset to all animated sprites
-    for (auto& sprite : m_animatedSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() + m_window.getSize().y
-        );
-    }
-    //Apply offset to the background sprite
     m_backgroundSprite.setPosition
     (
         m_backgroundSprite.getPosX().getActual(), 
@@ -1069,40 +806,17 @@ void GamePanel::moveScreenDown(float playerLeft)
     // Apply the offset to all sprites
     for (auto& sprite : m_sprites)
     {
-        sprite.setPosition
+        sprite->setPosition
         (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() - m_window.getSize().y
+            sprite->getPosX().getActual(), 
+            sprite->getPosY().getActual() - m_window.getSize().y
         );
-    }
-    //Apply offset to all collisionless sprites
-    for (auto& sprite : m_noColSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(),
-            sprite.getPosY().getActual() - m_window.getSize().y
-        );
-    }
-    //Apply offset to all movable sprites
-    for (auto& sprite : m_movableSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() - m_window.getSize().y
-        );
-        sprite.setYStartPoz(sprite.getYStartPoz() - m_window.getSize().y);
-        sprite.setYEndPoz(sprite.getYEndPoz() - m_window.getSize().y);
-    }
-    //Apply offset to all animated sprites
-    for (auto& sprite : m_animatedSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual(), 
-            sprite.getPosY().getActual() - m_window.getSize().y
-        );
+        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableSprite)
+        {
+            movableSprite->setYStartPoz(movableSprite->getYStartPoz() - m_window.getSize().y);
+            movableSprite->setYEndPoz(movableSprite->getYEndPoz() - m_window.getSize().y);
+        }
     }
     //Apply offset to the background sprite
     m_backgroundSprite.setPosition
@@ -1126,40 +840,17 @@ void GamePanel::moveScreenLeft(float playerTop)
     // Apply the offset to all sprites
     for (auto& sprite : m_sprites)
     {
-        sprite.setPosition
+        sprite->setPosition
         (
-            sprite.getPosX().getActual()+m_window.getSize().x, 
-            sprite.getPosY().getActual()
+            sprite->getPosX().getActual()+m_window.getSize().x, 
+            sprite->getPosY().getActual()
         );
-    }
-    //Apply offset to all collisionless sprites
-    for (auto& sprite : m_noColSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()+m_window.getSize().x, 
-            sprite.getPosY().getActual()
-        );
-    }
-    //Apply offset to all movable sprites
-    for (auto& sprite : m_movableSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()+m_window.getSize().x, 
-            sprite.getPosY().getActual()
-        );
-        sprite.setXStartPoz(sprite.getXStartPoz() + m_window.getSize().x);
-        sprite.setXEndPoz(sprite.getXEndPoz() + m_window.getSize().x);
-    }
-    //Apply offset to all animated sprites
-    for (auto& sprite : m_animatedSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()+m_window.getSize().x, 
-            sprite.getPosY().getActual()
-        );
+        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableSprite)
+        {
+            movableSprite->setXStartPoz(movableSprite->getXStartPoz() + m_window.getSize().x);
+            movableSprite->setXEndPoz(movableSprite->getXEndPoz() + m_window.getSize().x);
+        }
     }
     //Apply offset to the background sprite
     m_backgroundSprite.setPosition
@@ -1183,40 +874,17 @@ void GamePanel::moveScreenRight(float playerTop)
     // Apply the offset to all sprites
     for (auto& sprite : m_sprites)
     {
-        sprite.setPosition
+        sprite->setPosition
         (
-            sprite.getPosX().getActual()-m_window.getSize().x, 
-            sprite.getPosY().getActual()
+            sprite->getPosX().getActual()-m_window.getSize().x, 
+            sprite->getPosY().getActual()
         );
-    }
-    //Apply offset to all collisionless sprites
-    for (auto& sprite : m_noColSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()-m_window.getSize().x, 
-           sprite.getPosY().getActual()
-        );
-    }
-    //Apply offset to all movable sprites
-    for (auto& sprite : m_movableSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()-m_window.getSize().x, 
-            sprite.getPosY().getActual()
-        );
-        sprite.setXStartPoz(sprite.getXStartPoz() - m_window.getSize().x);
-        sprite.setXEndPoz(sprite.getXEndPoz() - m_window.getSize().x);
-    }
-    //Apply offset to all animated sprites
-    for (auto& sprite : m_animatedSprites)
-    {
-        sprite.setPosition
-        (
-            sprite.getPosX().getActual()-m_window.getSize().x, 
-            sprite.getPosY().getActual()
-        );
+        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableSprite)
+        {
+            movableSprite->setXStartPoz(movableSprite->getXStartPoz() - m_window.getSize().x);
+            movableSprite->setXEndPoz(movableSprite->getXEndPoz() - m_window.getSize().x);
+        }
     }
     //Apply offset to the background sprite
     m_backgroundSprite.setPosition
