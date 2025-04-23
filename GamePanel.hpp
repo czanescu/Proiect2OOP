@@ -38,20 +38,12 @@ public:
         const std::string& texturePath,
         bool collision
     );
-
-    // Remove a sprite by index
     void removeSprite(int index);
-
-    // Clear all sprites
     void clearSprites();
-
-    // Update a sprite at a specific index
     void updateSprite(int index, std::unique_ptr<I_Sprite> sprite);
 
-    // Render all sprites
     void renderFrame();
 
-    // Other methods
     void setBackgroundColor(const sf::Color& color);
     void setBackgroundTexture(const std::string& texturePath);
     void setFont(const std::string& fontPath);
@@ -90,6 +82,11 @@ public:
     void checkPlayerCollision(float dt, float scaleY);
     void moveSprites(float dt);
 
+    static void raiseSpriteCount();
+    static void raiseSpriteProgress();
+
+    void renderProgressBar();
+
     ~GamePanel();
 
 private:
@@ -104,6 +101,7 @@ private:
     float m_verticalOffset = 0.0f;
     float m_horizontalOffset = 0.0f;
     static int m_spriteCount;
+    static int m_spriteProgress;
 };
 
 #endif

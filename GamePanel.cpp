@@ -1,6 +1,7 @@
 #include "GamePanel.hpp"
 
 int GamePanel::m_spriteCount = -1; // Definition and initialization
+int GamePanel::m_spriteProgress = 0;
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -58,7 +59,8 @@ GamePanel::GamePanel
 void GamePanel::addSprite(std::unique_ptr<I_Sprite> sprite, const std::string& texturePath, bool collision)
 {
     std::cout << "Sprite-ul (" << m_sprites.size() << "/" << m_spriteCount << ") a fost incarcat" << std::endl;
-
+    raiseSpriteProgress();
+    renderProgressBar();
     m_sprites.push_back(std::move(sprite));
     m_sprites[m_sprites.size() - 1]->setCollision(collision);
     m_sprites[m_sprites.size() - 1]->setDrawStatus(true);
@@ -132,6 +134,43 @@ void GamePanel::setFont(const std::string& fontPath)
 void GamePanel::setFrameRate(float framerate)
 {
     m_frameRate=framerate;
+}
+
+void GamePanel::renderProgressBar()
+{
+    float barWidth = 640.f * (m_window.getSize().x / 1920.f);
+    float barHeight = 20.f * (m_window.getSize().y / 1080.f);
+    float progress = static_cast<float>(m_spriteProgress) / m_spriteCount;
+    sf::RectangleShape outline(sf::Vector2f(barWidth+10.f, barHeight+10.f));
+    sf::RectangleShape progressBar(sf::Vector2f(barWidth, barHeight));
+    sf::Text progressText;
+    progressText.setFont(m_font);
+    progressText.setCharacterSize(24);
+    progressText.setFillColor(sf::Color::Yellow);
+    progressText.setString(std::to_string(static_cast<int>(progress * 100)) + "%");
+    progressBar.setFillColor(sf::Color::Green);
+    outline.setFillColor(sf::Color::White);
+    progressBar.setPosition
+    (
+        m_window.getSize().x / 2 - barWidth / 2, 
+        m_window.getSize().y / 2 - barHeight - 10.f * (m_window.getSize().y / 1080.f)
+    );
+    outline.setPosition
+    (
+        m_window.getSize().x / 2 - barWidth / 2 - 5.f, 
+        m_window.getSize().y / 2 - barHeight - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+    );
+    progressText.setPosition
+    (
+        m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
+        m_window.getSize().y / 2 - barHeight * 2 - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+    );
+    progressBar.setScale(progress, 1.f);
+    outline.setScale(1.f, 1.f);
+    m_window.draw(outline);
+    m_window.draw(progressBar);
+    m_window.draw(progressText);
+    m_window.display();
 }
 
 void GamePanel::renderFrame()
@@ -462,6 +501,15 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
     return windowSize;
 }
 
+void GamePanel::raiseSpriteCount()
+{
+    m_spriteCount++;
+};
+
+void GamePanel::raiseSpriteProgress()
+{
+    m_spriteProgress++;
+}
 
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
 {
