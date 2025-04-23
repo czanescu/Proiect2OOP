@@ -1,4 +1,5 @@
 #include "GamePanel.h"
+#include <cmath>
 
 GamePanel::GamePanel()
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
@@ -221,18 +222,39 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         float spriteBottom = spriteTop + sprite->getHeight();
 
         // 0. Proximity Check (Player is close to a sprite below)
-        if (playerBottom <= spriteTop &&
-            playerBottom + 1 >= spriteTop &&
-            playerRight > spriteLeft &&
-            playerLeft < spriteRight)
+        if(((playerBottom <= spriteTop &&
+             playerBottom + 5 >= spriteTop) ||
+             playerBottom >= spriteTop &&
+             playerBottom - 5 <= spriteTop) &&
+             playerRight > spriteLeft &&
+             playerLeft < spriteRight)
         {
             std::cout 
             << "Proximity Check Passed!"
             << "Player is close to sprite below. Sprite Top: " 
             << spriteTop << ' ' << playerBottom << std::endl;
+            MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
+            if (movableSprite)
+            {
+                // If the sprite is a MovableSprite, set its speed to zero
+                m_player.setPlatformSpeed
+                (
+                    sprite->getXSpeed(), 
+                    sprite->getYSpeed()
+                );
+                std::cout << "Player is on a movable sprite." << std::endl;
+                m_player.setPosition
+                (
+                    playerLeft, 
+                    spriteTop - m_player.getHeight() - 1
+                );
+            }
+            else
+            {
+                Delta zero(0,0);
+                m_player.setPlatformSpeed(zero,zero);
+            }
             isOnGround = true; // Player is considered on the ground
-            Delta zero(0,0);
-            m_player.setPlatformSpeed(zero,zero);
         }
 
         // 1. Ground Collision (Player falling onto a sprite below)
@@ -612,7 +634,7 @@ void GamePanel::moveSprites(float dt)
         float distantaX = sprite->getXEndPoz() - sprite->getXStartPoz();
         float distantaY = sprite->getYEndPoz() - sprite->getYStartPoz();
         float acceleratieX = sprite->getAcceleration();
-        float acceleratieY = -acceleratieX * distantaY / distantaX;
+        float acceleratieY = abs(acceleratieX * distantaY / distantaX);
         //calcule pentru X si Y
         if 
         (
