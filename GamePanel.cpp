@@ -60,10 +60,17 @@ void GamePanel::addSprite(std::unique_ptr<I_Sprite> sprite, const std::string& t
     std::cout << "Sprite-ul (" << m_sprites.size() << "/" << m_spriteCount << ") a fost incarcat" << std::endl;
 
     m_sprites.push_back(std::move(sprite));
-    m_sprites[m_sprites.size() - 1]->updateTexture(texturePath);
-    m_sprites[m_sprites.size() - 1]->setDrawStatus(collision);
     m_sprites[m_sprites.size() - 1]->setCollision(collision);
     m_sprites[m_sprites.size() - 1]->setDrawStatus(true);
+    AnimatedSprite* animatedSprite = dynamic_cast<AnimatedSprite*>(sprite.get());
+    if (animatedSprite)
+    {
+        m_sprites[m_sprites.size() - 1]->updateTextures(texturePath);
+    }
+    else
+    {
+        m_sprites[m_sprites.size() - 1]->updateTexture(texturePath);
+    }
 }
 
 void GamePanel::removeSprite(int index)
@@ -225,17 +232,14 @@ const void GamePanel::calculateSpriteCount(const std::string& filePath) const
     while (spr >> line >> number >> number >> number2 >> number)
     {
         m_spriteCount+= abs(number2);
-        std::cout << "Gasit sprite" <<std::endl;
     }
-    while (mov >> line >> number >> number >> number >> number >> number)
+    while (mov >> line >> number >> number >> number >> number >> number >> number)
     {
         m_spriteCount++;
-        std::cout << "Gasit sprite mobil" << std::endl;
     }
     while (ani >> line >> number >> number >> number >> number >> number)
     {
         m_spriteCount++;
-        std::cout << "Gasit sprite animat" << std::endl;
     }
     spr.close();
     mov.close();
@@ -568,14 +572,14 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     if (path == "/") path = "";
 
     int startX, startY, endX, endY, acceleration;
-    bool collision = 1;
+    bool collision;
     sf::Vector2u windowSize = m_window.getSize();
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration)
+    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration >> collision)
     {
         // Convert starting and ending coordinates from grid to pixel positions
         float pixelX = startX * 120.0f * spriteScaleX;

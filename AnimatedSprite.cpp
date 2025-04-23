@@ -47,13 +47,22 @@ AnimatedSprite::AnimatedSprite
     m_sprite.setTexture(m_textures[0]);
 }
 
+const std::vector<sf::Texture>& AnimatedSprite::getTextures() const
+{
+    return m_textures;
+}
+const sf::Texture& AnimatedSprite::getCurrentTexture() const
+{
+    return m_textures[m_currentTexture];
+}
+
 void AnimatedSprite::draw(sf::RenderWindow& window)
 {
     m_framesUntilNext--;
+    m_sprite.setTexture(m_textures[m_currentTexture]);
     if (m_framesUntilNext <= 0)
     {
         m_currentTexture = (m_currentTexture + 1) % m_textureCount;
-        m_sprite.setTexture(m_textures[m_currentTexture]);
         m_framesUntilNext = m_frameDuration; // Reset the frame counter
         m_sprite.setScale
         (

@@ -18,6 +18,9 @@ public:
         int textureCount, 
         int frameDuration
     );
+    const std::vector <sf::Texture>& getTextures() const;
+    const sf::Texture& getCurrentTexture() const;
+
     void draw(sf::RenderWindow& window) override;
     void updateTextures(const std::string& texturePath) override;
     void operator=(const I_Sprite& other) override;
