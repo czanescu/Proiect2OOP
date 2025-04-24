@@ -120,10 +120,24 @@ int main()
             sf::Event event;
             while (Panel.pollEvent(event))
             {
-                if ((event.type == sf::Event::Closed)
-                || event.type == sf::Event::KeyPressed
-                && event.key.code == sf::Keyboard::Escape)
+                if ((event.type == sf::Event::Closed))
+                {
                     Panel.close();
+                }
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == sf::Keyboard::Escape)
+                    {
+                        auto beforePause = std::chrono::high_resolution_clock::now();
+                        Panel.pauseMenu();
+                        auto afterPause = std::chrono::high_resolution_clock::now();
+                        double pauseTime = 
+                            std::chrono::duration<double>(afterPause - beforePause).count();
+                        oldTime += std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>
+                        (std::chrono::duration<double>(pauseTime));
+                    }
+                }
+                    
             }
 
             frameCount++;

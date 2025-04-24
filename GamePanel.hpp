@@ -87,6 +87,8 @@ public:
 
     void renderProgressBar();
 
+    void pauseMenu();
+
     void endProgram();
 
     ~GamePanel();

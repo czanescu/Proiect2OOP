@@ -142,6 +142,139 @@ void GamePanel::endProgram()
     std::exit(0);
 }
 
+void GamePanel::pauseMenu()
+{
+    float windowHeight = m_window.getSize().y;
+    float windowWidth = m_window.getSize().x;
+    float spriteWidth = windowWidth / 4;
+    float spriteHeight = windowHeight / 10;
+    float largeSpriteWidth = spriteWidth * 1.1f;
+    float largeSpriteHeight = spriteHeight * 1.1f;
+    Sprite pauseMenuBackground;
+    pauseMenuBackground.updateTexture("assets/pauseMenu.png");
+    pauseMenuBackground.setScale
+    (
+        windowWidth / pauseMenuBackground.getTexture().getSize().x, 
+        windowHeight / pauseMenuBackground.getTexture().getSize().y
+    );
+    Sprite Exit, Continue;
+    Exit.updateTexture("assets/exit.png");
+    Continue.updateTexture("assets/continue.png");
+    Exit.setScale
+    (
+        spriteWidth / Exit.getTexture().getSize().x, 
+        spriteHeight / Exit.getTexture().getSize().y
+    );
+    Continue.setScale
+    (
+        spriteWidth / Continue.getTexture().getSize().x, 
+        spriteHeight / Continue.getTexture().getSize().y
+    );
+    Exit.setPosition
+    (
+        windowWidth / 2 - spriteWidth / 2, 
+        windowHeight / 2 - spriteHeight / 2
+    );
+    Continue.setPosition
+    (
+        windowWidth / 2 - spriteWidth / 2, 
+        windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
+    );
+    MenuSelection menuSelection = MenuSelection::CONTINUE;
+    while (1)
+    {
+        if (menuSelection == MenuSelection::EXIT)
+        {
+            Exit.setScale
+            (
+                spriteWidth / Exit.getTexture().getSize().x * 1.1f, 
+                spriteHeight / Exit.getTexture().getSize().y * 1.1f
+            );
+            Exit.setPosition
+            (
+                windowWidth / 2 - largeSpriteWidth / 2, 
+                windowHeight / 2 - largeSpriteHeight / 2 + spriteHeight * 1.5f
+            );
+            Continue.setScale
+            (
+                spriteWidth / Continue.getTexture().getSize().x, 
+                spriteHeight / Continue.getTexture().getSize().y
+            );
+            Continue.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2
+            );
+        }
+        else
+        {
+            Continue.setScale
+            (
+                spriteWidth / Continue.getTexture().getSize().x * 1.1f, 
+                spriteHeight / Continue.getTexture().getSize().y * 1.1f
+            );
+            Continue.setPosition
+            (
+                windowWidth / 2 - largeSpriteWidth / 2, 
+                windowHeight / 2 - largeSpriteHeight / 2
+            );
+            Exit.setScale
+            (
+                spriteWidth / Exit.getTexture().getSize().x, 
+                spriteHeight / Exit.getTexture().getSize().y
+            );
+            Exit.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5f
+            );
+        }
+        sf::Event event;
+        while (m_window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                m_window.close();
+                std::exit(0);
+            }
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Escape) return;
+                if (event.key.code == sf::Keyboard::Up)
+                {
+                    menuSelection = static_cast<MenuSelection>(static_cast<int>(menuSelection) - 1);
+                    if (static_cast<int>(menuSelection) < 0)
+                        menuSelection = MenuSelection::CONTINUE;
+                }
+                if (event.key.code == sf::Keyboard::Down)
+                {
+                    menuSelection = static_cast<MenuSelection>(static_cast<int>(menuSelection) + 1);
+                    if (static_cast<int>(menuSelection) > 1)
+                        menuSelection = MenuSelection::EXIT;
+                }
+                if (event.key.code == sf::Keyboard::Enter)
+                {
+                    if (menuSelection == MenuSelection::EXIT)
+                    {
+                        m_window.close();
+                        std::exit(0);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        m_window.clear(m_backgroundColor);
+        pauseMenuBackground.draw(m_window);
+        Exit.draw(m_window);
+        Continue.draw(m_window);
+        m_window.display();
+    }
+}
+
 void GamePanel::renderProgressBar()
 {
     sf::Event event;

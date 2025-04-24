@@ -15,4 +15,10 @@ enum class DirectieY
     NONE
 };
 
+enum class MenuSelection
+{
+    EXIT,
+    CONTINUE
+};
+
 #endif // TYPES_H
