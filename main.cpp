@@ -9,6 +9,10 @@
 #include <stdexcept>
 #include <iostream>
 
+typedef std::chrono::high_resolution_clock              HiResClock;
+typedef std::chrono::high_resolution_clock::duration    HiResDuration;
+typedef std::chrono::duration<double>                   ChrDurationDouble;                           
+
 Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
 GamePanel Panel
@@ -82,17 +86,19 @@ int main()
     const float SCALE_Y = Panel.getWindow().getSize().y / 1080.f;
     const double fixedTimeStep = 1.0 / Panel.getFrameRate();
     double accumulator = 0.0;
-    auto oldTime = std::chrono::high_resolution_clock::now();
+    auto oldTime = HiResClock::now();
 
     int frameCount = 0; // Frame counter
     double frameTimeAccumulator = 0.0; // Accumulator for frame time
     float frameTimeForFrameRate;
+    double actualSleeptime = 0.0;
+    double sleepTime = 0.0;
 
     while (Panel.isOpen())
     {
         // Calculate frameTime
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsedTime = currentTime - oldTime;
+        auto currentTime = HiResClock::now();
+        ChrDurationDouble elapsedTime = currentTime - oldTime;
         double frameTime = elapsedTime.count();
         oldTime = currentTime;
         accumulator += frameTime;
@@ -103,16 +109,17 @@ int main()
             fixedTimeStep - accumulator > fixedTimeStep * 0.5
         )
         {
-            double sleepTime = (fixedTimeStep - accumulator);
-            auto sleepTimeStart = std::chrono::high_resolution_clock::now();
-            ///std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
+            sleepTime = (fixedTimeStep - accumulator);
+            auto sleepTimeStart = HiResClock::now();
             Panel.panelSleep(sleepTime);
-            auto sleepTimeEnd = std::chrono::high_resolution_clock::now();
-            double actualSleeptime = 
-                std::chrono::duration<double>(sleepTimeEnd - sleepTimeStart).count();
-            std::cout<<"Sleeping for: " << sleepTime << " seconds" << "but actually its " << actualSleeptime << std::endl;
+            auto sleepTimeEnd = HiResClock::now();
+            actualSleeptime = 
+                ChrDurationDouble(sleepTimeEnd - sleepTimeStart).count();
+            std::cout <<"Sleeping for: " << sleepTime << " seconds ";
+            std::cout << "but actually its " << actualSleeptime << std::endl;
         }
 
+        double pauseTime = 0.0;
         // Fixed update loop
         while (accumulator >= fixedTimeStep)
         {
@@ -128,13 +135,13 @@ int main()
                 {
                     if (event.key.code == sf::Keyboard::Escape)
                     {
-                        auto beforePause = std::chrono::high_resolution_clock::now();
+                        auto beforePause = HiResClock::now();
                         Panel.pauseMenu();
-                        auto afterPause = std::chrono::high_resolution_clock::now();
-                        double pauseTime = 
-                            std::chrono::duration<double>(afterPause - beforePause).count();
-                        oldTime += std::chrono::duration_cast<std::chrono::high_resolution_clock::duration>
-                        (std::chrono::duration<double>(pauseTime));
+                        auto afterPause = HiResClock::now();
+                        pauseTime = ChrDurationDouble(afterPause
+                             - beforePause).count();
+                        oldTime += std::chrono::duration_cast<HiResDuration>
+                        (ChrDurationDouble(pauseTime));
                     }
                 }
                     

@@ -94,7 +94,7 @@ public:
     ~GamePanel();
 
 private:
-    std::vector<std::unique_ptr<I_Sprite>> m_sprites; // Unified vector for all sprites
+    std::vector<std::unique_ptr<I_Sprite>> m_sprites;
     Sprite m_backgroundSprite;
     Player m_player;
     sf::Color m_backgroundColor;

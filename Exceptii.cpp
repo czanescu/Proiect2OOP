@@ -25,7 +25,8 @@ ConfigException::ConfigException(int frameRate, int width, int height) :
     if (frameRate <= 0 || width <= 0 || height <= 0) {
         throw BaseException
         (
-            "Invalid configuration values: frame rate and dimensions must be positive."
+            "Invalid configuration values: frame "
+            "rate and dimensions must be positive."
         );
     }
     std::cout << "Configuration is valid: " << frameRate;
@@ -40,5 +41,6 @@ IndexOutOfRangeException::IndexOutOfRangeException(int index, int size) :
         throw BaseException("Index " + std::to_string(index) + 
         " is out of range for size " + std::to_string(size));
     }
-    std::cout << "Index " << index << " is within range for size " << size << "\n";
+    std::cout << "Index " << index;
+    std::cout << " is within range for size " << size << "\n";
 }

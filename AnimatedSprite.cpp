@@ -33,7 +33,10 @@ AnimatedSprite::AnimatedSprite
     {
         try
         {
-            m_textures[i].loadFromFile(texturePath + "/" + std::to_string(i) + ".png");
+            m_textures[i].loadFromFile
+            (
+                texturePath + "/" + std::to_string(i) + ".png"
+            );
         } catch (const FileException& e)
         {
             std::cerr << "Error: " << e.what() << std::endl;
@@ -89,17 +92,17 @@ void AnimatedSprite::updateTextures(const std::string& texturePath)
 }
 void AnimatedSprite::operator=(const I_Sprite& other)
 {
-    const AnimatedSprite* otherSprite = dynamic_cast<const AnimatedSprite*>(&other);
-    if (!otherSprite)
+    const AnimatedSprite* otherA = dynamic_cast<const AnimatedSprite*>(&other);
+    if (!otherA)
     {
         throw std::runtime_error("Invalid assignment to AnimatedSprite");
     }
     Sprite::operator=(other);
-    m_currentTexture = otherSprite->m_currentTexture;
-    m_textureCount = otherSprite->m_textureCount;
-    m_framesUntilNext = otherSprite->m_framesUntilNext;
-    m_frameDuration = otherSprite->m_frameDuration;
-    m_textures = otherSprite->m_textures;
+    m_currentTexture = otherA->m_currentTexture;
+    m_textureCount = otherA->m_textureCount;
+    m_framesUntilNext = otherA->m_framesUntilNext;
+    m_frameDuration = otherA->m_frameDuration;
+    m_textures = otherA->m_textures;
     m_sprite.setTexture(m_textures[m_currentTexture]);
     m_sprite.setScale
     (

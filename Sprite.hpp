@@ -7,7 +7,14 @@ class Sprite : public I_Sprite {
 public:
     Sprite();
     Sprite(float x, float y, float height, float width);
-    Sprite(const std::string& texturePath, float x, float y, float height, float width);
+    Sprite
+    (
+        const std::string& texturePath, 
+        float x, 
+        float y, 
+        float height, 
+        float width
+    );
     Sprite(const Sprite& other);
 
     // Implementing I_Sprite methods

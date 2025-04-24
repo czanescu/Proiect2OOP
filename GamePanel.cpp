@@ -41,7 +41,10 @@ GamePanel::GamePanel
     // Create the window with DPI scaling disabled
     m_window.create
     (
-        sf::VideoMode(windowSize.x, windowSize.y), title, sf::Style::Default, settings
+        sf::VideoMode(windowSize.x, windowSize.y), 
+        title, 
+        sf::Style::Default, 
+        settings
     );
     try
     {
@@ -56,16 +59,22 @@ GamePanel::GamePanel
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
 }
-void GamePanel::addSprite(std::unique_ptr<I_Sprite> sprite, const std::string& texturePath, bool collision)
+void GamePanel::addSprite
+(
+    std::unique_ptr<I_Sprite> sprite, 
+    const std::string& texturePath, 
+    bool collision
+)
 {
-    std::cout << "Sprite-ul (" << m_sprites.size() << "/" << m_spriteCount << ") a fost incarcat" << std::endl;
+    std::cout << "Sprite-ul (" << m_sprites.size() << "/";
+    std::cout << m_spriteCount << ") a fost incarcat" << std::endl;
     raiseSpriteProgress();
     renderProgressBar();
     m_sprites.push_back(std::move(sprite));
     m_sprites[m_sprites.size() - 1]->setCollision(collision);
     m_sprites[m_sprites.size() - 1]->setDrawStatus(true);
-    AnimatedSprite* animatedSprite = dynamic_cast<AnimatedSprite*>(sprite.get());
-    if (animatedSprite)
+    AnimatedSprite* animatedS = dynamic_cast<AnimatedSprite*>(sprite.get());
+    if (animatedS)
     {
         m_sprites[m_sprites.size() - 1]->updateTextures(texturePath);
     }
@@ -242,15 +251,11 @@ void GamePanel::pauseMenu()
                 if (event.key.code == sf::Keyboard::Escape) return;
                 if (event.key.code == sf::Keyboard::Up)
                 {
-                    menuSelection = static_cast<MenuSelection>(static_cast<int>(menuSelection) - 1);
-                    if (static_cast<int>(menuSelection) < 0)
-                        menuSelection = MenuSelection::CONTINUE;
+                    --menuSelection;
                 }
                 if (event.key.code == sf::Keyboard::Down)
                 {
-                    menuSelection = static_cast<MenuSelection>(static_cast<int>(menuSelection) + 1);
-                    if (static_cast<int>(menuSelection) > 1)
-                        menuSelection = MenuSelection::EXIT;
+                    ++menuSelection;
                 }
                 if (event.key.code == sf::Keyboard::Enter)
                 {
@@ -294,23 +299,29 @@ void GamePanel::renderProgressBar()
     progressText.setFont(m_font);
     progressText.setCharacterSize(24);
     progressText.setFillColor(sf::Color::White);
-    progressText.setString(std::to_string(static_cast<int>(progress * 100)) + "%");
+    progressText.setString
+    (
+        std::to_string(static_cast<int>(progress * 100)) + "%"
+    );
     progressBar.setFillColor(sf::Color::Green);
     outline.setFillColor(sf::Color::White);
     progressBar.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2, 
-        m_window.getSize().y / 2 - barHeight - 10.f * (m_window.getSize().y / 1080.f)
+        m_window.getSize().y / 2 - barHeight
+            - 10.f * (m_window.getSize().y / 1080.f)
     );
     outline.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 - 5.f, 
-        m_window.getSize().y / 2 - barHeight - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+        m_window.getSize().y / 2 - barHeight 
+            - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressText.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
-        m_window.getSize().y / 2 - barHeight * 3 - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+        m_window.getSize().y / 2 - barHeight * 3 
+            - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressBar.setScale(progress, 1.f);
     outline.setScale(1.f, 1.f);
@@ -420,7 +431,10 @@ const void GamePanel::calculateSpriteCount(const std::string& filePath) const
     {
         m_spriteCount+= abs(number2);
     }
-    while (mov >> line >> number >> number >> number >> number >> number >> number)
+    while 
+    (
+        mov >> line >> number >> number >> number >> number >> number >> number
+    )
     {
         m_spriteCount++;
     }
@@ -469,8 +483,8 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             << "Proximity Check Passed!"
             << "Player is close to sprite below. Sprite Top: " 
             << spriteTop << ' ' << playerBottom << std::endl;
-            MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-            if (movableSprite)
+            MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+            if (movableS)
             {
                 // If the sprite is a MovableSprite, set its speed to zero
                 m_player.setPlatformSpeed
@@ -497,8 +511,10 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         if (m_player.getSpeedY().getActual() > 0) // Falling
         {
             if (((playerBottom >= spriteTop &&
-                playerBottom <= spriteTop + (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||(
-                playerBottom >= spriteTop && playerBottom <= (spriteTop + spriteBottom)/2)) &&
+                playerBottom <= spriteTop + (m_player.getSpeedY().getActual()
+                    + m_player.getSpeedY().getPrecedent()) / 2 * dt) ||
+                (playerBottom >= spriteTop &&
+                playerBottom <= (spriteTop + spriteBottom) / 2)) &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
@@ -514,8 +530,10 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         if (m_player.getSpeedY().getActual() < 0) // Jumping
         {
             if(((playerTop >= spriteBottom &&
-                playerTop <= spriteBottom - (m_player.getSpeedY().getActual()+m_player.getSpeedY().getPrecedent())/2*dt)||
-                (playerTop <= spriteBottom  && playerTop >= (spriteTop + spriteBottom)/2)) &&
+                playerTop <= spriteBottom - (m_player.getSpeedY().getActual()
+                    + m_player.getSpeedY().getPrecedent()) / 2 * dt) ||
+                (playerTop <= spriteBottom &&
+                playerTop >= (spriteTop + spriteBottom) / 2)) &&
                 playerRight > spriteLeft &&
                 playerLeft < spriteRight)
             {
@@ -533,8 +551,10 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         ) // Moving left
         {
             if (((playerLeft >= spriteRight &&
-                playerLeft <= spriteRight - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
-                (playerLeft <= spriteRight && playerLeft >= (spriteLeft + spriteRight)/2)) &&
+                playerLeft <= spriteRight - (m_player.getSpeedX().getActual() 
+                    + m_player.getSpeedX().getPrecedent()) / 2 * dt) ||
+                (playerLeft <= spriteRight && 
+                playerLeft >= (spriteLeft + spriteRight) / 2)) &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
@@ -551,8 +571,10 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         ) // Moving right
         {
             if (((playerRight <= spriteLeft &&
-                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()+m_player.getSpeedX().getPrecedent())/2*dt)||
-                (playerRight >= spriteLeft && playerRight <= (spriteLeft + spriteRight)/2)) &&
+                playerRight >= spriteLeft - (m_player.getSpeedX().getActual()
+                    + m_player.getSpeedX().getPrecedent()) / 2 * dt) ||
+                (playerRight >= spriteLeft &&
+                playerRight <= (spriteLeft + spriteRight) / 2)) &&
                 playerBottom > spriteTop &&
                 playerTop < spriteBottom)
             {
@@ -569,26 +591,26 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         std::cout << std::endl;
         // Apply gravity to make the player fall
         m_player.updateCalculationsY(DirectieY::NONE, dt, scaleY, 1);
-        Delta zero(0,0);
+        Delta zero(0, 0);
         m_player.setPlatformSpeed(m_player.getXPlatformSpeed(), zero);
     }
     // Handle climbing above the screen
-    if ((playerTop+playerBottom)/2 < 0)
+    if ((playerTop + playerBottom) / 2 < 0)
     {
         moveScreenUp(playerLeft);
     }
     // Handle falling below the screen
-    if ((playerBottom+playerTop)/2 > m_window.getSize().y)
+    if ((playerBottom + playerTop) / 2 > m_window.getSize().y)
     {
         moveScreenDown(playerLeft);
     }
     // Handle moving beyond the left of the screen
-    if ((playerLeft+playerRight)/2 < 0)
+    if ((playerLeft + playerRight) / 2 < 0)
     {
         moveScreenLeft(playerTop);
     }
     // Handle moving beyond the right of the screen
-    if ((playerLeft+playerRight)/2 > m_window.getSize().x)
+    if ((playerLeft + playerRight) / 2 > m_window.getSize().x)
     {
         moveScreenRight(playerTop);
     }
@@ -623,7 +645,6 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
             std::getline(lineStream, value)
         )
         {
-            // Trim whitespace from key and value
             key.erase(key.find_last_not_of(" \t") + 1);
             key.erase(0, key.find_first_not_of(" \t"));
             value.erase(value.find_last_not_of(" \t") + 1);
@@ -682,11 +703,16 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     // Calculate scaling factors for the background
     sf::Vector2u windowSize = m_window.getSize();
     sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
-    float backgroundScale = static_cast<float>(windowSize.x * 2.f) / (textureSize.x); // Twice the width of the background
+    float backgroundScale = 
+        static_cast<float>(windowSize.x * 2.f) / (textureSize.x);
 
     // Apply scaling to the background sprite
     m_backgroundSprite.setScale(backgroundScale, backgroundScale);
-    m_backgroundSprite.setPosition(0, windowSize.y - (textureSize.y * backgroundScale));
+    m_backgroundSprite.setPosition
+    (
+        0,
+        windowSize.y - (textureSize.y * backgroundScale)
+    );
     std::cout << "Background loaded" << std::endl;
 
     // Calculate scaling factors for sprites and the player
@@ -776,7 +802,11 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    while (in >> texturePath >> startX >> startY >> endX >> endY >> acceleration >> collision)
+    while 
+    (
+        in >> texturePath >> startX >> startY 
+           >> endX >> endY >> acceleration >> collision
+    )
     {
         // Convert starting and ending coordinates from grid to pixel positions
         float pixelX = startX * 120.0f * spriteScaleX;
@@ -826,7 +856,11 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    while (in >> texturePath >> x >> y >> textureCount >> frameDuration >> collision)
+    while 
+    (
+        in >> texturePath >> x >> y 
+           >> textureCount >> frameDuration >> collision
+    )
     {
 
         // Convert starting coordinates from grid to pixel positions
@@ -854,8 +888,8 @@ void GamePanel::moveSprites(float dt)
 {
     for (auto& sprite : m_sprites)
     {
-        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-        if (!movableSprite) continue; // Skip if not a MovableSprite
+        MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+        if (!movableS) continue; // Skip if not a MovableSprite
         bool not_movingX = false;
         bool not_movingY = false;
         if (sprite->getXStartPoz() == sprite->getXEndPoz())
@@ -897,16 +931,16 @@ void GamePanel::moveSprites(float dt)
             sprite->getYSpeed().getActual() == 0
         )
         {
-            if (sprite->getXStartPoz()<sprite->getXEndPoz())
+            if (sprite->getXStartPoz() < sprite->getXEndPoz())
             {
-                sprite->updateXSpeed(acceleratieX*dt);
+                sprite->updateXSpeed(acceleratieX * dt);
             }
-            else sprite->updateXSpeed(-acceleratieX*dt);
+            else sprite->updateXSpeed(-acceleratieX * dt);
             if (sprite->getYStartPoz()<sprite->getYEndPoz())
             {
-                sprite->updateYSpeed(acceleratieY*dt);
+                sprite->updateYSpeed(acceleratieY * dt);
             }
-            else sprite->updateYSpeed(-acceleratieY*dt);
+            else sprite->updateYSpeed(-acceleratieY * dt);
         }
         else
         {
@@ -918,25 +952,25 @@ void GamePanel::moveSprites(float dt)
                     if 
                     (
                         sprite->getPosX().getActual() < 
-                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
+                        (sprite->getXStartPoz() + sprite->getXEndPoz()) / 2
                     )
                     {
                         sprite->updateXSpeed
                         (
                             sprite->getXSpeed().getAverage() + 
-                            acceleratieX*dt
+                            acceleratieX * dt
                         );
                     }
                     else if 
                     (
                         sprite->getPosX().getActual() > 
-                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
+                        (sprite->getXStartPoz() + sprite->getXEndPoz()) / 2
                     )
                     {
                         sprite->updateXSpeed
                         (
                             sprite->getXSpeed().getAverage() - 
-                            acceleratieX*dt
+                            acceleratieX * dt
                         );
                     }
                 }
@@ -945,25 +979,25 @@ void GamePanel::moveSprites(float dt)
                     if 
                     (
                         sprite->getPosX().getActual() > 
-                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
+                        (sprite->getXStartPoz() + sprite->getXEndPoz()) / 2
                     )
                     {
                         sprite->updateXSpeed
                         (
                             sprite->getXSpeed().getAverage() - 
-                            acceleratieX*dt
+                            acceleratieX * dt
                         );
                     }
                     else if 
                     (
                         sprite->getPosX().getActual() < 
-                        (sprite->getXStartPoz() + sprite->getXEndPoz())/2
+                        (sprite->getXStartPoz() + sprite->getXEndPoz()) / 2
                     )
                     {
                         sprite->updateXSpeed
                         (
                             sprite->getXSpeed().getAverage() + 
-                            acceleratieX*dt
+                            acceleratieX * dt
                         );
                     }
                 }
@@ -976,25 +1010,25 @@ void GamePanel::moveSprites(float dt)
                     if 
                     (
                         sprite->getPosY().getActual() < 
-                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
+                        (sprite->getYStartPoz() + sprite->getYEndPoz()) / 2
                     )
                     {
                         sprite->updateYSpeed
                         (
                             sprite->getYSpeed().getAverage() + 
-                            acceleratieY*dt
+                            acceleratieY * dt
                         );
                     }
                     else if 
                     (
                         sprite->getPosY().getActual() > 
-                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
+                        (sprite->getYStartPoz() + sprite->getYEndPoz()) / 2
                     )
                     {
                         sprite->updateYSpeed
                         (
                             sprite->getYSpeed().getAverage() - 
-                            acceleratieY*dt
+                            acceleratieY * dt
                         );
                     }
                 }
@@ -1003,25 +1037,25 @@ void GamePanel::moveSprites(float dt)
                     if 
                     (
                         sprite->getPosY().getActual() > 
-                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
+                        (sprite->getYStartPoz() + sprite->getYEndPoz()) / 2
                     )
                     {
                         sprite->updateYSpeed
                         (
                             sprite->getYSpeed().getAverage() - 
-                            acceleratieY*dt
+                            acceleratieY * dt
                         );
                     }
                     else if 
                     (
                         sprite->getPosY().getActual() < 
-                        (sprite->getYStartPoz() + sprite->getYEndPoz())/2
+                        (sprite->getYStartPoz() + sprite->getYEndPoz()) / 2
                     )
                     {
                         sprite->updateYSpeed
                         (
                             sprite->getYSpeed().getAverage() + 
-                            acceleratieY*dt
+                            acceleratieY * dt
                         );
                     }
                 }
@@ -1057,11 +1091,17 @@ void GamePanel::moveScreenUp(float playerLeft){
             sprite->getPosX().getActual(), 
             sprite->getPosY().getActual() + m_window.getSize().y
         );
-        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-        if (movableSprite)
+        MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableS)
         {
-            movableSprite->setYStartPoz(movableSprite->getYStartPoz() + m_window.getSize().y);
-            movableSprite->setYEndPoz(movableSprite->getYEndPoz() + m_window.getSize().y);
+            movableS->setYStartPoz
+            (
+                movableS->getYStartPoz() + m_window.getSize().y
+            );
+            movableS->setYEndPoz
+            (
+                movableS->getYEndPoz() + m_window.getSize().y
+            );
         }
     }
     m_backgroundSprite.setPosition
@@ -1088,11 +1128,17 @@ void GamePanel::moveScreenDown(float playerLeft)
             sprite->getPosX().getActual(), 
             sprite->getPosY().getActual() - m_window.getSize().y
         );
-        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-        if (movableSprite)
+        MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableS)
         {
-            movableSprite->setYStartPoz(movableSprite->getYStartPoz() - m_window.getSize().y);
-            movableSprite->setYEndPoz(movableSprite->getYEndPoz() - m_window.getSize().y);
+            movableS->setYStartPoz
+            (
+                movableS->getYStartPoz() - m_window.getSize().y
+            );
+            movableS->setYEndPoz
+            (
+                movableS->getYEndPoz() - m_window.getSize().y
+            );
         }
     }
     //Apply offset to the background sprite
@@ -1122,11 +1168,17 @@ void GamePanel::moveScreenLeft(float playerTop)
             sprite->getPosX().getActual()+m_window.getSize().x, 
             sprite->getPosY().getActual()
         );
-        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-        if (movableSprite)
+        MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableS)
         {
-            movableSprite->setXStartPoz(movableSprite->getXStartPoz() + m_window.getSize().x);
-            movableSprite->setXEndPoz(movableSprite->getXEndPoz() + m_window.getSize().x);
+            movableS->setXStartPoz
+            (
+                movableS->getXStartPoz() + m_window.getSize().x
+            );
+            movableS->setXEndPoz
+            (
+                movableS->getXEndPoz() + m_window.getSize().x
+            );
         }
     }
     //Apply offset to the background sprite
@@ -1156,11 +1208,17 @@ void GamePanel::moveScreenRight(float playerTop)
             sprite->getPosX().getActual()-m_window.getSize().x, 
             sprite->getPosY().getActual()
         );
-        MovableSprite* movableSprite = dynamic_cast<MovableSprite*>(sprite.get());
-        if (movableSprite)
+        MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+        if (movableS)
         {
-            movableSprite->setXStartPoz(movableSprite->getXStartPoz() - m_window.getSize().x);
-            movableSprite->setXEndPoz(movableSprite->getXEndPoz() - m_window.getSize().x);
+            movableS->setXStartPoz
+            (
+                movableS->getXStartPoz() - m_window.getSize().x
+            );
+            movableS->setXEndPoz
+            (
+                movableS->getXEndPoz() - m_window.getSize().x
+            );
         }
     }
     //Apply offset to the background sprite

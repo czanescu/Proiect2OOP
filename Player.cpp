@@ -46,36 +46,32 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     else if (direction == DirectieX::NONE) i = 0;
     else if (direction == DirectieX::RIGHT) i = 1;
     else i = 2;
-    /*if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
-    {
-        m_speedX.setActual(0);
-    }*/
     if (direction == DirectieX::RIGHT && m_speedY.getActual() == 0)
     {
-        if (m_speedX.getActual()>0 || m_speedX.getActual() < m_maxSpeedX)
+        if (m_speedX.getActual() > 0 || m_speedX.getActual() < m_maxSpeedX)
         {
-            m_speedX.update(m_speedX.getActual()+m_accelX*dt);
+            m_speedX.update(m_speedX.getActual() + m_accelX * dt);
         }
         else if (m_speedX.getActual() < 0)
         {
             m_speedX.update
             (
-                m_speedX.getActual()+m_decelerationX*dt + m_accelX*dt
+                m_speedX.getActual() + m_decelerationX * dt + m_accelX * dt
             );
         }
             
     }
     else if (direction == DirectieX::LEFT && m_speedY.getActual() == 0)
     {
-        if (m_speedX.getActual()<0 || m_speedX.getActual() > -m_maxSpeedX)
+        if (m_speedX.getActual() < 0 || m_speedX.getActual() > -m_maxSpeedX)
         {
-            m_speedX.update(m_speedX.getActual()-m_accelX*dt);
+            m_speedX.update(m_speedX.getActual() - m_accelX * dt);
         }   
         else if (m_speedX.getActual() > 0)
         {
             m_speedX.update
             (
-                m_speedX.getActual()-m_decelerationX*dt - m_accelX*dt
+                m_speedX.getActual() - m_decelerationX * dt - m_accelX * dt
             );
         }
     }
@@ -83,17 +79,17 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     {
         if (m_speedX.getActual() > 0)
         {
-            if (m_speedX.getActual()-m_decelerationX*dt < 0)
+            if (m_speedX.getActual() - m_decelerationX * dt < 0)
                 m_speedX.update(0);
             else
-                m_speedX.update(m_speedX.getActual()-m_decelerationX*dt);
+                m_speedX.update(m_speedX.getActual() - m_decelerationX * dt);
         }
         else if (m_speedX.getActual() < 0)
         {
-            if (m_speedX.getActual()+m_decelerationX*dt > 0)
+            if (m_speedX.getActual() + m_decelerationX * dt > 0)
                 m_speedX.update(0);
             else
-                m_speedX.update(m_speedX.getActual()+m_decelerationX*dt);
+                m_speedX.update(m_speedX.getActual() + m_decelerationX * dt);
         }
         if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
         {
@@ -104,9 +100,11 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
         m_speedX.setActual(m_maxSpeedX);
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
-    float newX = 
-    ((m_speedX.getActual()+m_speedX.getPrecedent())/2 * scaleX+ 
-    (m_platformXSpeed.getActual()+m_platformXSpeed.getPrecedent())/2) * dt;
+
+    float newX = ((m_speedX.getActual() + m_speedX.getPrecedent()) / 2
+        * scaleX + (m_platformXSpeed.getActual() 
+        + m_platformXSpeed.getPrecedent()) / 2) * dt;
+
     move(newX,0);
     m_pozX.update(m_sprite.getPosition().x);
     std::cout << std::fixed << std::setprecision(6) 
@@ -114,8 +112,8 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
           << " m_speedX: "<< m_speedX.getActual()
           << " dt: " << dt
           << " directie: "<< i
-          << " pozX "<< m_pozX.getActual()<< ' ' << m_sprite.getPosition().x
-          <<std::endl;
+          << " pozX " << m_pozX.getActual()<< ' ' << m_sprite.getPosition().x
+          << std::endl;
 }
 void Player::updateCalculationsY
 (
@@ -140,7 +138,8 @@ void Player::updateCalculationsY
             float actualJumpForce=-m_jumpForce+gravityF;
             m_speedY.update
             (
-                (actualJumpForce / m_mass * 0.01667) + m_platformYSpeed.getActual()
+                (actualJumpForce / m_mass * 0.01667)
+                    + m_platformYSpeed.getActual()
             );
             m_platformYSpeed = Delta(0, 0);
         }
@@ -150,17 +149,18 @@ void Player::updateCalculationsY
         m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     }
-    float newY = (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt * scaleY;
+    float newY = 
+        (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt * scaleY;
     int i;
     if (direction == DirectieY::DOWN) i = -1;
     else if (direction == DirectieY::NONE) i = 0;
     else if (direction == DirectieY::UP) i = 1;
     else i = 2;
     m_pozY.update(m_sprite.getPosition().y);
-    std::cout<<"newY: "<<newY<<"m_speedY: "<<m_speedY.getActual()
-             <<"m_platformYSpeed: "<<m_platformYSpeed.getActual()
-             <<"direction: "<<i
-             <<"pozY: "<<m_pozY.getActual()<<m_sprite.getPosition().y<<std::endl;
+    std::cout << "newY: " << newY << "m_speedY: " << m_speedY.getActual()
+              << "m_platformYSpeed: " << m_platformYSpeed.getActual()
+              << "direction: " << i << "pozY: " << m_pozY.getActual()
+              << m_sprite.getPosition().y << std::endl;
 
     move(0, newY);
 }
