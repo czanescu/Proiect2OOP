@@ -189,10 +189,10 @@ void GamePanel::pauseMenu()
         windowWidth / 2 - spriteWidth / 2, 
         windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
     );
-    MenuSelection menuSelection = MenuSelection::CONTINUE;
+    MenuSelection menuSelection = CONTINUE;
     while (1)
     {
-        if (menuSelection == MenuSelection::EXIT)
+        if (menuSelection == EXIT)
         {
             Exit.setScale
             (

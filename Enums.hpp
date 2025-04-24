@@ -15,7 +15,7 @@ enum class DirectieY
     NONE
 };
 
-enum class MenuSelection
+enum MenuSelection
 {
     EXIT,
     CONTINUE
@@ -29,7 +29,7 @@ inline MenuSelection& operator++(MenuSelection& selection)
         static_cast<MenuSelection>(static_cast<UnderlyingType>(selection) + 1);
     if (static_cast<int>(selection) > 1)
     {
-        selection = MenuSelection::EXIT;
+        selection = EXIT;
     }
     return selection;
 }
@@ -42,7 +42,7 @@ inline MenuSelection& operator--(MenuSelection& selection)
         static_cast<MenuSelection>(static_cast<UnderlyingType>(selection) - 1);
     if (static_cast<int>(selection) < 0)
     {
-        selection = MenuSelection::CONTINUE;
+        selection = CONTINUE;
     }
     return selection;
 }
