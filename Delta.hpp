@@ -4,22 +4,27 @@
 class Delta
 {
 public:
-    Delta();
-    Delta(float precedent, float actual);
-    Delta(const Delta& other);
+    Delta(); // Constructor gol
+    Delta(float precedent, float actual); // Constructor
+    Delta(const Delta& other); // Constructor de copiere
 
+    // getteri
     float getPrecedent() const;
     float getActual() const;
     float getAverage() const;
 
+    // setteri
     void setPrecedent(float value);
     void setActual(float value);
     void setDelta(float precedent, float actual);
 
+    // getter pentru diferenta dintre cele doua valori
     float value() const;
 
+    // metoda pentru a actualiza precedentul si actualul
     void update(float other);
 
+    // destructor
     ~Delta() = default;
 
 private:

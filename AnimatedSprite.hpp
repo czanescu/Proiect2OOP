@@ -3,12 +3,11 @@
 
 #include "Sprite.hpp"
 
-
 class AnimatedSprite : public Sprite
 {
 public:
-    AnimatedSprite();
-    AnimatedSprite
+    AnimatedSprite(); // Constructor gol
+    AnimatedSprite // Constructor
     (
         const std::string& texturePath, 
         float x, 
@@ -18,8 +17,8 @@ public:
         int textureCount, 
         int frameDuration
     );
-    const std::vector <sf::Texture>& getTextures() const;
-    const sf::Texture& getCurrentTexture() const;
+    const std::vector <sf::Texture>& getTextures() const; // getter vector
+    const sf::Texture& getCurrentTexture() const; // getter textura curenta
 
     void draw(sf::RenderWindow& window) override;
     void updateTextures(const std::string& texturePath) override;

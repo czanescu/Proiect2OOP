@@ -7,8 +7,8 @@
 class Player : public Sprite
 {
 public:
-    Player();
-    Player
+    Player(); // Constructor gol
+    Player // Constructor
     (
         const std::string& texturePath,
         float x, 
@@ -20,6 +20,7 @@ public:
         float height, 
         float width
     );
+    // Calcule
     void updateCalculationsX(DirectieX direction, double dt, float scaleX);
     void updateCalculationsY
     (
@@ -28,15 +29,18 @@ public:
         float scaleY, 
         bool noColiziuneJos = 0
     );
+    // Getteri
     const Delta getSpeedX() const;
     const Delta getSpeedY() const;
+    const Delta getXPlatformSpeed() const;
+    const Delta getYPlatformSpeed() const;
+    // Coliziuni
     void hitGround(float height);
     void hitCeiling(float height);
     void hitLeft(float width);
     void hitRight(float width);
+    // Setter pentru viteza platformei
     void setPlatformSpeed(Delta speedX, Delta speedY);
-    const Delta getXPlatformSpeed() const;
-    const Delta getYPlatformSpeed() const;
 private:
     Delta m_speedX;
     Delta m_speedY;

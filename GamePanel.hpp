@@ -15,6 +15,7 @@
 #include <string>
 #include <cmath>
 
+// librariile care difera intre platforme
 #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
 #include <windows.h>
 #else
@@ -23,15 +24,16 @@
 
 class GamePanel {
 public:
-    GamePanel();
-    GamePanel(
+    GamePanel(); // Constructor gol
+    GamePanel // Constructor
+    (
         Player& player,
         const std::string& title,
         const sf::Color& backgroundColor,
         const std::string& fontPath
     );
 
-    // Add sprites of any type
+    // adaug sprite-uri de orice fel
     void addSprite
     (
         std::unique_ptr<I_Sprite> sprite, 
@@ -52,6 +54,7 @@ public:
     void setWindowSize(int width, int height);
     void setFrameCounterValue(float value);
 
+    // metoda care face sleep de seconds pe linux si 0 pe windows
     void panelSleep(float seconds);
 
     bool isOpen();
@@ -59,11 +62,13 @@ public:
     void clear();
     bool pollEvent(sf::Event& event);
 
+    // metode care incarca sprite-uri din fisiere
     sf::Vector2i loadConfigFromFile(const std::string& filePath);
     void loadSpritesFromFile(const std::string& filePath);
     void loadMovableSpritesFromFile(const std::string& filePath);
     void loadAnimatedSpritesFromFile(const std::string& filePath);
 
+    // metode care muta camera in functie de pozitia player-ului
     void moveScreenUp(float playerLeft);
     void moveScreenDown(float playerLeft);
     void moveScreenLeft(float playerTop);
@@ -85,13 +90,16 @@ public:
     static void raiseSpriteCount();
     static void raiseSpriteProgress();
 
+    // metoda care afiseaza un loading screen
     void renderProgressBar();
 
+    // metoda care afiseaza un meniu de pauza
     void pauseMenu();
 
+    // metoda care inchide programul
     void endProgram();
 
-    ~GamePanel();
+    ~GamePanel() = default;
 
 private:
     std::vector<std::unique_ptr<I_Sprite>> m_sprites;

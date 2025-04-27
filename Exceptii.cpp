@@ -1,5 +1,7 @@
 #include "Exceptii.hpp"
 
+
+// Exceptie de bază
 BaseException::BaseException(const std::string& msg) : m_message(msg) 
 {;}
 const char* BaseException::what() const noexcept
@@ -7,6 +9,7 @@ const char* BaseException::what() const noexcept
     return m_message.c_str();
 }
 
+// Exceptie pentru fișiere
 FileException::FileException(const std::string& filename) 
     : BaseException("File error: " + filename) {
     // Verificăm dacă fișierul există și poate fi deschis
@@ -18,6 +21,7 @@ FileException::FileException(const std::string& filename)
     file.close();
 }
 
+// Exceptie pentru configurare
 ConfigException::ConfigException(int frameRate, int width, int height) :
     BaseException("Invalid configuration: " + std::to_string(frameRate) +
     " FPS, " + std::to_string(width) + "x" + std::to_string(height))
@@ -33,6 +37,7 @@ ConfigException::ConfigException(int frameRate, int width, int height) :
     std::cout << " FPS, " << width << "x" << height << "\n";
 }
 
+// Exceptie pentru indecsi
 IndexOutOfRangeException::IndexOutOfRangeException(int index, int size) : 
     BaseException("Index out of range: " + std::to_string(index) + 
     " (size: " + std::to_string(size) + ")") 

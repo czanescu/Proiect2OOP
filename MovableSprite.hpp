@@ -6,8 +6,8 @@
 class MovableSprite : public Sprite
 {
     public:
-        MovableSprite();
-        MovableSprite
+        MovableSprite(); // Constructor gol
+        MovableSprite // Constructor
         (
             const std::string& fileName,
             float height,
@@ -18,17 +18,19 @@ class MovableSprite : public Sprite
             float yEndPoz,
             float Acceleration
         );
-        MovableSprite(const MovableSprite& other);
-        MovableSprite& operator=(const MovableSprite& other);
+        MovableSprite(const MovableSprite& other); // Constructor de copiere
 
+        // Updateri (pentru tipul de date Delta)
         void updateXSpeed(float newXSpeed) override;
         void updateYSpeed(float newYSpeed) override;
 
+        // Setteri
         void setXStartPoz(float newXStartPoz) override;
         void setYStartPoz(float newYStartPoz) override;
         void setXEndPoz(float newXEndPoz) override;
         void setYEndPoz(float newYEndPoz) override;
 
+        // Getteri
         Delta getXSpeed() const override;
         Delta getYSpeed() const override;
         float getXStartPoz() const override;
@@ -37,6 +39,7 @@ class MovableSprite : public Sprite
         float getYEndPoz() const override;
         float getAcceleration() const override;
 
+        // operator de atribuire
         void operator=(const I_Sprite& other) override;
 
     private:

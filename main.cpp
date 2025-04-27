@@ -11,7 +11,7 @@
 
 typedef std::chrono::high_resolution_clock              HiResClock;
 typedef std::chrono::high_resolution_clock::duration    HiResDuration;
-typedef std::chrono::duration<double>                   ChrDurationDouble;                           
+typedef std::chrono::duration<double>                   ChrDurationDouble;                    
 
 Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
@@ -22,10 +22,12 @@ GamePanel Panel
     sf::Color(37, 37, 164, 0.7),
     "assets/arial.ttf"
 );
-
+// functie calcule care ruleaza in fiecare frame
 void calcule(double dt, float scaleX, float scaleY)
 {
+    // schimb pozitia sprite-urilor care se misca
     Panel.moveSprites(dt);
+    // iau input de la tastatura
     if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::A)) &&
         (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
@@ -57,10 +59,12 @@ void calcule(double dt, float scaleX, float scaleY)
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt, scaleY);
     }
+    // verific daca apare coliziune intre player si sprite-uri
     Panel.checkPlayerCollision(dt, scaleY);
     
 }
 
+// functie care incarca sprite-urile din fisier si afiseaza loading screen
 void sceneSetup()
 {
     Panel.calculateSpriteCount("assets/map1/map1");
@@ -77,32 +81,34 @@ void sceneSetup()
 
 int main()
 {
-    sf::Color backgroundColor(37,37,164,0.7);
-
-    // Timing variables
-
+    // apelez incarcarea scenei
     sceneSetup();
+    //setez variabilele pentru scale si framerate
     const float SCALE_X = Panel.getWindow().getSize().x / 1920.f;
     const float SCALE_Y = Panel.getWindow().getSize().y / 1080.f;
     const double fixedTimeStep = 1.0 / Panel.getFrameRate();
     double accumulator = 0.0;
     auto oldTime = HiResClock::now();
-
-    int frameCount = 0; // Frame counter
-    double frameTimeAccumulator = 0.0; // Accumulator for frame time
+    //initializare variabile de timing din loop
+    double frameTimeAccumulator = 0.0;
     float frameTimeForFrameRate;
     double actualSleeptime = 0.0;
     double sleepTime = 0.0;
+    double pauseTime = 0.0;
 
     while (Panel.isOpen())
     {
-        // Calculate frameTime
         auto currentTime = HiResClock::now();
         ChrDurationDouble elapsedTime = currentTime - oldTime;
         double frameTime = elapsedTime.count();
         oldTime = currentTime;
         accumulator += frameTime;
         frameTimeAccumulator += frameTime;
+        //sleep pentru a nu consuma CPU, panelSleep() face sleep insa doar pe
+        //linux, deoarece implementarea de sleep pentru windows nu este
+        //suficient de precisa pentru a putea face sleep mai puțin de un frame.
+        //din acest motiv pe windows face Sleep(0), pentru a elibera măcar
+        //threadul pentru alte task-uri. (busy wait)
         if 
         (
             fixedTimeStep > accumulator && 
@@ -115,15 +121,15 @@ int main()
             auto sleepTimeEnd = HiResClock::now();
             actualSleeptime = 
                 ChrDurationDouble(sleepTimeEnd - sleepTimeStart).count();
+            // pentru debugging
             std::cout <<"Sleeping for: " << sleepTime << " seconds ";
             std::cout << "but actually its " << actualSleeptime << std::endl;
         }
-
-        double pauseTime = 0.0;
-        // Fixed update loop
+        // loop-ul care ruleaza o data pentru fiecare frame
         while (accumulator >= fixedTimeStep)
         {
-            // Handle events
+            // secventa necesara pentru a putea inchide fereastra si pentru a
+            // putea intra in meniul de pauza (tasta escape)
             sf::Event event;
             while (Panel.pollEvent(event))
             {
@@ -141,25 +147,26 @@ int main()
                         pauseTime = ChrDurationDouble(afterPause
                              - beforePause).count();
                         oldTime += std::chrono::duration_cast<HiResDuration>
+                        //adaug timpul de pauza la timpul de inceput pentru ca
+                        //programul sa nu incerce sa prinda din urma frame-urile
+                        //nedesenate în timpul pauzei
                         (ChrDurationDouble(pauseTime));
                     }
                 }
-                    
             }
-
-            frameCount++;
             frameTimeForFrameRate = accumulator;
             accumulator -= fixedTimeStep;
 
+            // apelez functia care calculeaza pozitia a tuturor sprite-urilor
             calcule(fixedTimeStep, SCALE_X, SCALE_Y);
 
             // Cod pentru frame counter
             if (frameTimeAccumulator >= 1.0)
             {
                 Panel.setFrameCounterValue(1.f / frameTimeForFrameRate);
-                frameCount = 0;
                 frameTimeAccumulator = 0.0;
             }
+            // pentru debugging
             std::cout << "Frame time: " << fixedTimeStep << std::endl;
 
             //Render

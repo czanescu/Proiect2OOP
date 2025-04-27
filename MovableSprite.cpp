@@ -1,5 +1,6 @@
 #include "MovableSprite.hpp"
 
+// Constructor gol MovableSprite
 MovableSprite::MovableSprite()
   : Sprite(),
     m_xStartPoz(0), 
@@ -10,6 +11,7 @@ MovableSprite::MovableSprite()
     m_ySpeed(), 
     m_Acceleration(0)
 {;}
+// Constructor MovableSprite
 MovableSprite::MovableSprite
 (
     const std::string& fileName,
@@ -30,6 +32,7 @@ MovableSprite::MovableSprite
       m_ySpeed(0, 0),
       m_Acceleration(Acceleration)
 {;}
+// Constructor de copiere MovableSprite
 MovableSprite::MovableSprite(const MovableSprite& other)
     : Sprite(other),
       m_xStartPoz(other.m_xStartPoz),
@@ -40,22 +43,8 @@ MovableSprite::MovableSprite(const MovableSprite& other)
       m_ySpeed(other.m_ySpeed),
       m_Acceleration(other.m_Acceleration)
 {;}
-MovableSprite& MovableSprite::operator=(const MovableSprite& other)
-{
-    if (this != &other)
-    {
-        Sprite::operator=(other);
-        m_xStartPoz = other.m_xStartPoz;
-        m_yStartPoz = other.m_yStartPoz;
-        m_xEndPoz = other.m_xEndPoz;
-        m_yEndPoz = other.m_yEndPoz;
-        m_xSpeed = other.m_xSpeed;
-        m_ySpeed = other.m_ySpeed;
-        m_Acceleration = other.m_Acceleration;
-    }
-    return *this;
-}
 
+// getteri
 Delta MovableSprite::getXSpeed() const
 {
     return m_xSpeed;
@@ -84,6 +73,7 @@ float MovableSprite::getAcceleration() const
 {
     return m_Acceleration;
 }
+//  updateri (pentru tipul de date Delta)
 void MovableSprite::updateXSpeed(float newXSpeed)
 {
     m_xSpeed.update(newXSpeed);
@@ -92,6 +82,7 @@ void MovableSprite::updateYSpeed(float newYSpeed)
 {
     m_ySpeed.update(newYSpeed);
 }
+// setteri
 void MovableSprite::setXStartPoz(float newXStartPoz)
 {
     m_xStartPoz = newXStartPoz;
@@ -108,6 +99,7 @@ void MovableSprite::setYEndPoz(float newYEndPoz)
 {
     m_yEndPoz = newYEndPoz;
 }
+// operator de atribuire
 void MovableSprite::operator=(const I_Sprite& other)
 {
     const MovableSprite* otherMS = dynamic_cast<const MovableSprite*>(&other);

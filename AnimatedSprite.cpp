@@ -1,6 +1,7 @@
 #include "AnimatedSprite.hpp"
 #include <iostream>
 
+// Constructor gol AnimatedSprite
 AnimatedSprite::AnimatedSprite()
     : Sprite(),
       m_currentTexture(0),
@@ -9,6 +10,7 @@ AnimatedSprite::AnimatedSprite()
       m_frameDuration(0)
 {;}
 
+// Constructor AnimatedSprite
 AnimatedSprite::AnimatedSprite
 (
     const std::string& texturePath,
@@ -33,6 +35,7 @@ AnimatedSprite::AnimatedSprite
     {
         try
         {
+            // texturile sunt incarcate dintr-un folder
             m_textures[i].loadFromFile
             (
                 texturePath + "/" + std::to_string(i) + ".png"
@@ -49,16 +52,17 @@ AnimatedSprite::AnimatedSprite
     );
     m_sprite.setTexture(m_textures[0]);
 }
-
+// getter pentru vector de texturi
 const std::vector<sf::Texture>& AnimatedSprite::getTextures() const
 {
     return m_textures;
 }
+// getter pentru textura curenta
 const sf::Texture& AnimatedSprite::getCurrentTexture() const
 {
     return m_textures[m_currentTexture];
 }
-
+// metoda care deseneaza sprite-ul
 void AnimatedSprite::draw(sf::RenderWindow& window)
 {
     m_framesUntilNext--;
@@ -78,7 +82,7 @@ void AnimatedSprite::draw(sf::RenderWindow& window)
         window.draw(m_sprite);
     }
 }
-
+// metoda care actualizeaza texturile
 void AnimatedSprite::updateTextures(const std::string& texturePath)
 {
     for (int i = 0; i < m_textureCount; ++i)
@@ -90,6 +94,7 @@ void AnimatedSprite::updateTextures(const std::string& texturePath)
     }
     m_sprite.setTexture(m_textures[m_currentTexture]);
 }
+// operator de atribuire
 void AnimatedSprite::operator=(const I_Sprite& other)
 {
     const AnimatedSprite* otherA = dynamic_cast<const AnimatedSprite*>(&other);

@@ -2,8 +2,9 @@
 #include <iostream>
 #include <iomanip>
 
-const float GRAVITY = 981.0f; // Gravity constant
+const float GRAVITY = 981.0f; // constanta folosita pentru gravitate
 
+// Constructor gol Player
 Player::Player()
     : Sprite("sprite.png", 0, 0, 100, 100),
       m_speedX(0, 0),
@@ -16,6 +17,7 @@ Player::Player()
       m_platformXSpeed(0, 0),
       m_platformYSpeed(0, 0)
 {;}
+// Constructor Player
 Player::Player
 (
     const std::string& texturePath,
@@ -39,13 +41,16 @@ Player::Player
     m_platformXSpeed(0, 0),
     m_platformYSpeed(0, 0)
 {;}
+
+// functia care se ocupa cu calculele pe axa X
 void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
 {
-    int i;
+    int i; //setez i in functie de directie (pentru debug)
     if (direction == DirectieX::LEFT) i = -1;
     else if (direction == DirectieX::NONE) i = 0;
     else if (direction == DirectieX::RIGHT) i = 1;
     else i = 2;
+    // if-uri care se ocupa cu miscarea stanga, dreapta si oprire
     if (direction == DirectieX::RIGHT && m_speedY.getActual() == 0)
     {
         if (m_speedX.getActual() > 0 || m_speedX.getActual() < m_maxSpeedX)
@@ -96,17 +101,21 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
             m_speedX.update(0);
         }
     }
+    // limitarea vitezei maxime
     if (m_speedX.getActual() > m_maxSpeedX)
         m_speedX.setActual(m_maxSpeedX);
     else if (m_speedX.getActual() < -m_maxSpeedX)
         m_speedX.setActual(-m_maxSpeedX);
 
+    // calculul noii pozitii
     float newX = ((m_speedX.getActual() + m_speedX.getPrecedent()) / 2
         * scaleX + (m_platformXSpeed.getActual() 
         + m_platformXSpeed.getPrecedent()) / 2) * dt;
 
+    // setez pozitia sprite-ului
     move(newX,0);
     m_pozX.update(m_sprite.getPosition().x);
+    // cod pentru debugging
     std::cout << std::fixed << std::setprecision(6) 
           << "newX: " << newX
           << " m_speedX: "<< m_speedX.getActual()
@@ -115,6 +124,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
           << " pozX " << m_pozX.getActual()<< ' ' << m_sprite.getPosition().x
           << std::endl;
 }
+// functia care se ocupa cu calculele pe axa Y
 void Player::updateCalculationsY
 (
     DirectieY direction, 
@@ -124,33 +134,37 @@ void Player::updateCalculationsY
 )
 {
     const float gravityF = GRAVITY * m_mass;
+    // daca nu exista vreun sprite sub player, acesta va cadea
     if (noColiziuneJos == 1)
     {
         m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
     }
     else
     {
-    if (m_speedY.getActual() == 0)
-    {
-        if (direction == DirectieY::UP)
+        if (m_speedY.getActual() == 0)
         {
-            
-            float actualJumpForce=-m_jumpForce+gravityF;
-            m_speedY.update
-            (
-                (actualJumpForce / m_mass * 0.01667)
-                    + m_platformYSpeed.getActual()
-            );
-            m_platformYSpeed = Delta(0, 0);
+            // verific daca player-ul trebuie sa sara
+            if (direction == DirectieY::UP)
+            {
+                
+                float actualJumpForce=-m_jumpForce+gravityF;
+                m_speedY.update
+                (
+                    (actualJumpForce / m_mass * 0.01667)
+                        + m_platformYSpeed.getActual()
+                );
+                m_platformYSpeed = Delta(0, 0);
+            }
+        }
+        else
+        {
+            m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
         }
     }
-    else
-    {
-        m_speedY.update(m_speedY.getActual() + GRAVITY * dt);
-    }
-    }
+    // noua pozitie
     float newY = 
         (m_speedY.getActual() + m_platformYSpeed.getActual()) * dt * scaleY;
+    //cod pentru debugging
     int i;
     if (direction == DirectieY::DOWN) i = -1;
     else if (direction == DirectieY::NONE) i = 0;
@@ -161,9 +175,10 @@ void Player::updateCalculationsY
               << "m_platformYSpeed: " << m_platformYSpeed.getActual()
               << "direction: " << i << "pozY: " << m_pozY.getActual()
               << m_sprite.getPosition().y << std::endl;
-
+    // setez pozitia sprite-ului
     move(0, newY);
 }
+// getteri
 const Delta Player::getSpeedX() const
 {
     return m_speedX;
@@ -173,6 +188,7 @@ const Delta Player::getSpeedY() const
     return m_speedY;
 }
 
+// functiile care seteaza pozitia in caz de coliziune
 void Player::hitGround(float height)
 {
     m_pozY.update(height - getHeight()); // Snap to the ground
@@ -193,7 +209,8 @@ void Player::hitLeft(float width)
     m_pozX.update(width); // Snap to the left wall
     m_pozX.update(width);
     m_sprite.setPosition(width, m_sprite.getPosition().y);
-    // Check is player is moving left or wall is moving right, act accordingly
+    // verific daca player-ul se misca spre stanga sau daca peretele se misca
+    // spre dreapta
     if (m_speedX.getActual() < 0)
     {
         m_speedX.update(-m_speedX.getActual()/4);
@@ -205,9 +222,9 @@ void Player::hitRight(float width)
 {
     m_pozX.update(width - getWidth());
     m_pozX.update(width - getWidth());
-     // Snap to the right wall
     m_sprite.setPosition(width - getWidth(), m_sprite.getPosition().y);
-    // Check is player is moving right or wall is moving left, act accordingly
+    // verific daca player-ul se misca spre dreapta sau daca peretele se
+    // misca spre stanga
     if (m_speedX.getActual() > 0)
     {
         m_speedX.update(-m_speedX.getActual()/4);
@@ -215,12 +232,14 @@ void Player::hitRight(float width)
     }
 }
 
+// setter pentru viteza platformei (ca sa stiu cu cat misc player-ul)
 void Player::setPlatformSpeed(Delta speedX, Delta speedY)
 {
     m_platformXSpeed = speedX;
     m_platformYSpeed = speedY;
 }
 
+// getteri pentru viteza platformei
 const Delta Player::getXPlatformSpeed() const
 {
     return m_platformXSpeed;

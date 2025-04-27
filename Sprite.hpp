@@ -5,9 +5,10 @@
 
 class Sprite : public I_Sprite {
 public:
-    Sprite();
-    Sprite(float x, float y, float height, float width);
-    Sprite
+    Sprite(); // Constructor gol
+    // Constructor fara textura
+    Sprite(float x, float y, float height, float width); 
+    Sprite // Constructor
     (
         const std::string& texturePath, 
         float x, 
@@ -15,9 +16,9 @@ public:
         float height, 
         float width
     );
-    Sprite(const Sprite& other);
+    Sprite(const Sprite& other); // Constructor de copiere
 
-    // Implementing I_Sprite methods
+    // Implementarea metodelor I_Sprite
     void draw(sf::RenderWindow& window) override;
     void move(float x, float y) override;
     void setPosition(float x, float y) override;
@@ -41,7 +42,8 @@ public:
     void updatePosition(Delta& deltaX, Delta& deltaY) override;
     void changeDrawStatus() override;
 
-    // MovableSprite methods
+    // Metodele MovableSprite trebuie sa fie mentionate,
+    // implementarea este insa goala
     void updateXSpeed(float newXSpeed) override;
     void updateYSpeed(float newYSpeed) override;
     void setXStartPoz(float newXStartPoz) override;
@@ -56,11 +58,13 @@ public:
     float getYEndPoz() const override;
     float getAcceleration() const override;
 
-    // AnimatedSprite methods
+    // alcelasi lucri pentru AnimatedSprite
     void updateTextures(const std::string& texturePath) override;
 
+    // operator de atribuire
     virtual void operator=(const I_Sprite& other);
 
+    // Destructor
     virtual ~Sprite() = default;
 
 protected:
@@ -74,4 +78,4 @@ protected:
     sf::Texture m_textura;
 };
 
-#endif // SPRITE_H
+#endif

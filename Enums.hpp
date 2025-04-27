@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+// clase cu rol in simplificarea comunicarii intre metode
+
 enum class DirectieX
 {
     LEFT,
@@ -21,7 +23,7 @@ enum MenuSelection
     CONTINUE
 };
 
-// Overload ++ for MenuSelection
+// Overload ++ pentru MenuSelection
 inline MenuSelection& operator++(MenuSelection& selection)
 {
     using UnderlyingType = std::underlying_type_t<MenuSelection>;
@@ -34,7 +36,7 @@ inline MenuSelection& operator++(MenuSelection& selection)
     return selection;
 }
 
-// Overload -- for MenuSelection
+// Overload -- pentru MenuSelection
 inline MenuSelection& operator--(MenuSelection& selection)
 {
     using UnderlyingType = std::underlying_type_t<MenuSelection>;

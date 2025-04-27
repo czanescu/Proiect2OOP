@@ -1,6 +1,6 @@
 #include "Sprite.hpp"
 
-Sprite::Sprite()
+Sprite::Sprite() // Constructor gol
     : m_sprite(),
       m_pozX(0, 0),
       m_pozY(0, 0),
@@ -9,7 +9,7 @@ Sprite::Sprite()
       m_isDrawn(true)
 {;}
 
-Sprite::Sprite
+Sprite::Sprite // Constructor fara textura
 (
     float x, 
     float y,
@@ -30,7 +30,7 @@ Sprite::Sprite
     );
 }
 
-Sprite::Sprite
+Sprite::Sprite // Constructor cu textura
 (
     const std::string& texturePath,
     float x, 
@@ -61,7 +61,7 @@ Sprite::Sprite
     );
 }
 
-Sprite::Sprite(const Sprite& other)
+Sprite::Sprite(const Sprite& other) // Constructor de copiere
     : m_sprite(other.m_sprite),
       m_pozX(other.m_pozX),
       m_pozY(other.m_pozY),
@@ -84,6 +84,7 @@ sf::Sprite Sprite::getSprite() const
     return m_sprite;
 }
 
+// operator de atribuire
 void Sprite::operator=(const I_Sprite& other)
 {
     const Sprite* otherSprite = dynamic_cast<const Sprite*>(&other);
@@ -204,68 +205,68 @@ float Sprite::getScaleY() const
 {
     return m_sprite.getScale().y;
 }
-// MovableSprite methods
+// metode MovableSprite
 void Sprite::updateXSpeed(float newXSpeed)
 {
-    // Not applicable for base class
+    // gol
 }
 void Sprite::updateYSpeed(float newYSpeed)
 {
-    // Not applicable for base class
+    // gol
 }
 void Sprite::setXStartPoz(float newXStartPoz)
 {
-    // Not applicable for base class
+    // gol
 }
 void Sprite::setYStartPoz(float newYStartPoz)
 {
-    // Not applicable for base class
+    // gol
 }
 void Sprite::setXEndPoz(float newXEndPoz)
 {
-    // Not applicable for base class
+    // gol
 }
 void Sprite::setYEndPoz(float newYEndPoz)
 {
-    // Not applicable for base class
+    // gol
 }
 Delta Sprite::getXSpeed() const
 {
-    // Not applicable for base class
+    // gol
     return Delta(0, 0);
 }
 Delta Sprite::getYSpeed() const
 {
-    // Not applicable for base class
+    // gol
     return Delta(0, 0);
 }
 float Sprite::getXStartPoz() const
 {
-    // Not applicable for base class
+    // gol
     return 0;
 }
 float Sprite::getYStartPoz() const
 {
-    // Not applicable for base class
+    // gol
     return 0;
 }
 float Sprite::getXEndPoz() const
 {
-    // Not applicable for base class
+    // gol
     return 0;
 }
 float Sprite::getYEndPoz() const
 {
-    // Not applicable for base class
+    // gol
     return 0;
 }
 float Sprite::getAcceleration() const
 {
-    // Not applicable for base class
+    // gol
     return 0;
 }
 // AnimatedSprite methods
 void Sprite::updateTextures(const std::string& texturePath)
 {
-    // Not applicable for base class
+    // gol
 }

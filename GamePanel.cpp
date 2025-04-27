@@ -1,9 +1,10 @@
 #include "GamePanel.hpp"
 
-int GamePanel::m_spriteCount = -1; // Definition and initialization
+// initializare variabile statice folosite la incarcarea sprite-urilor
+int GamePanel::m_spriteCount = -1;
 int GamePanel::m_spriteProgress = 0;
 
-GamePanel::GamePanel()
+GamePanel::GamePanel() // Constructor gol
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
       m_backgroundColor(sf::Color::Black),
       m_frameRate(60.0),
@@ -22,7 +23,7 @@ GamePanel::GamePanel()
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
 }
-GamePanel::GamePanel
+GamePanel::GamePanel // Constructor
 (
     Player& player,
     const std::string& title,
@@ -59,20 +60,24 @@ GamePanel::GamePanel
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
 }
-void GamePanel::addSprite
+void GamePanel::addSprite // metoda care adauga un sprite
 (
     std::unique_ptr<I_Sprite> sprite, 
     const std::string& texturePath, 
     bool collision
 )
 {
+    // cod pentru debugging
     std::cout << "Sprite-ul (" << m_sprites.size() << "/";
     std::cout << m_spriteCount << ") a fost incarcat" << std::endl;
+    // lungesc bara de progres (add sprite se intampla doar atunci cand se
+    // incarca sprite-uri din fisier)
     raiseSpriteProgress();
     renderProgressBar();
     m_sprites.push_back(std::move(sprite));
     m_sprites[m_sprites.size() - 1]->setCollision(collision);
     m_sprites[m_sprites.size() - 1]->setDrawStatus(true);
+    // sprite-urile animate trebuie tratate diferit
     AnimatedSprite* animatedS = dynamic_cast<AnimatedSprite*>(sprite.get());
     if (animatedS)
     {
@@ -84,6 +89,7 @@ void GamePanel::addSprite
     }
 }
 
+// cod pentru eventuala stergere a sprite-urilor (deocamdata nu e folosit)
 void GamePanel::removeSprite(int index)
 {
     try
@@ -97,6 +103,8 @@ void GamePanel::removeSprite(int index)
     m_sprites.erase(m_sprites.begin() + index);
 }
 
+// cod pentru eventuala stergere a sprite-urilor (deocamdata nu e folosit)
+// ar putea fi folosit daca adaug mai multe niveluri
 void GamePanel::clearSprites()
 {
     m_sprites.clear();
@@ -151,6 +159,7 @@ void GamePanel::endProgram()
     std::exit(0);
 }
 
+// meniul de pauza
 void GamePanel::pauseMenu()
 {
     float windowHeight = m_window.getSize().y;
@@ -285,6 +294,7 @@ void GamePanel::renderProgressBar()
     sf::Event event;
     while (m_window.pollEvent(event))
     {
+        // cod pentru a permite x-ului din dreapta sus sa inchida fereastra
         if ((event.type == sf::Event::Closed)
         || event.type == sf::Event::KeyPressed
         && event.key.code == sf::Keyboard::Escape)
@@ -332,6 +342,7 @@ void GamePanel::renderProgressBar()
     m_window.display();
 }
 
+// metoda care randeaza un frame
 void GamePanel::renderFrame()
 {
     m_window.clear(m_backgroundColor);
@@ -406,6 +417,8 @@ const float GamePanel::getFrameRate() const
 {
     return m_frameRate;
 }
+// metoda care calculeaza numarul de sprite-uri
+// (in variabila statica m_spriteCount)
 const void GamePanel::calculateSpriteCount(const std::string& filePath) const
 {
     try
@@ -450,6 +463,8 @@ const int GamePanel::getSpriteCount() const
 {
     return m_spriteCount;
 }
+
+//metoda care descopera coliziunile dintre player si sprite-uri
 void GamePanel::checkPlayerCollision(float dt, float scaleY)
 {
     float playerLeft = m_player.getPosX().getActual();
@@ -457,21 +472,24 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
     float playerRight = playerLeft + m_player.getWidth();
     float playerBottom = playerTop + m_player.getHeight();
 
-    bool isOnGround = false; // Flag to check if the player is on the ground
-    // Collision check for m_sprites
+    // variabila steag care verifica daca jucatorul este pe sol
+    bool isOnGround = false; 
+    // check de coliziuni pt fiecare sprite
     for (const auto& sprite : m_sprites)
     {
-        // Check if the sprite is drawn and has a collision box
+        // verific daca sprite-ul este desenat (momentan toate sunt)
         if (sprite->getDrawStatus() == 0)
-            continue; // Skip if the sprite is not drawn
+            continue;
+        // verific daca sprite-ul are coliziune
         if (sprite->getCollision() == 0)
-            continue; // Skip if the sprite has no collision box
+            continue;
+        // obtin coordonatele sprite-ului
         float spriteLeft = sprite->getPosX().getActual();
         float spriteTop = sprite->getPosY().getActual();
         float spriteRight = spriteLeft + sprite->getWidth();
         float spriteBottom = spriteTop + sprite->getHeight();
 
-        // 0. Proximity Check (Player is close to a sprite below)
+        // 0. check de proximitate (jucatorul este pe un sprite)
         if(((playerBottom <= spriteTop &&
              playerBottom + 5 >= spriteTop) ||
              playerBottom >= spriteTop &&
@@ -479,14 +497,15 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
              playerRight > spriteLeft &&
              playerLeft < spriteRight)
         {
+            // cod de debugging
             std::cout 
             << "Proximity Check Passed!"
             << "Player is close to sprite below. Sprite Top: " 
             << spriteTop << ' ' << playerBottom << std::endl;
             MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
+            // daca sprite-ul este mobil, setez viteza platformei
             if (movableS)
             {
-                // If the sprite is a MovableSprite, set its speed to zero
                 m_player.setPlatformSpeed
                 (
                     sprite->getXSpeed(), 
@@ -499,6 +518,7 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
                     spriteTop - m_player.getHeight() - 1
                 );
             }
+            // altfel setez viteza platformei la 0
             else
             {
                 Delta zero(0,0);
@@ -507,8 +527,8 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             isOnGround = true; // Player is considered on the ground
         }
 
-        // 1. Ground Collision (Player falling onto a sprite below)
-        if (m_player.getSpeedY().getActual() > 0) // Falling
+        // 1. coliziune cu solul (player-ul cade pe un sprite)
+        if (m_player.getSpeedY().getActual() > 0) // doar cand jucatorul cade
         {
             if (((playerBottom >= spriteTop &&
                 playerBottom <= spriteTop + (m_player.getSpeedY().getActual()
@@ -519,15 +539,16 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
                 playerLeft < spriteRight)
             {
                 isOnGround = true;
+                // cod de debugging
                 std::cout << "Ground Collision Detected! Sprite Top: " 
                 << spriteTop << std::endl;
                 m_player.hitGround(spriteTop);
-                break; // Stop checking after the first collision
+                break;
             }
         }
 
-        // 2. Ceiling Collision (Player jumping into a sprite above)
-        if (m_player.getSpeedY().getActual() < 0) // Jumping
+        // 2. coliziune cu tavanul (player-ul sare in sus)
+        if (m_player.getSpeedY().getActual() < 0) // saritura
         {
             if(((playerTop >= spriteBottom &&
                 playerTop <= spriteBottom - (m_player.getSpeedY().getActual()
@@ -539,16 +560,17 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             {
                 
                 m_player.hitCeiling(spriteBottom);
-                break; // Stop checking after the first collision
+                break;
             }
         }
 
-        // 3. Left Wall Collision (Player moving left into a sprite)
+        // 3. coliziune cu peretele stang (player-ul se misca spre stanga
+        //    sau sprite-ul se misca spre dreapta)
         if 
         (
             m_player.getSpeedX().getActual() < 0 || 
             m_player.getXPlatformSpeed().getActual() < 0
-        ) // Moving left
+        )
         {
             if (((playerLeft >= spriteRight &&
                 playerLeft <= spriteRight - (m_player.getSpeedX().getActual() 
@@ -559,16 +581,17 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
                 playerTop < spriteBottom)
             {
                 m_player.hitLeft(spriteRight);
-                break; // Stop checking after the first collision
+                break;
             }
         }
 
-        // 4. Right Wall Collision (Player moving right into a sprite)
+        // 4. coliziune cu peretele drept (player-ul se misca spre dreapta
+        //    sau sprite-ul se misca spre stanga)
         if 
         (
             m_player.getSpeedX().getActual() > 0 || 
             m_player.getXPlatformSpeed().getActual() > 0
-        ) // Moving right
+        ) 
         {
             if (((playerRight <= spriteLeft &&
                 playerRight >= spriteLeft - (m_player.getSpeedX().getActual()
@@ -579,43 +602,45 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
                 playerTop < spriteBottom)
             {
                 m_player.hitRight(spriteLeft);
-                break; // Stop checking after the first collision
+                break;
             }
         }
     }
 
-    // If no sprite is directly under the player, trigger falling
+    // daca nici-un srite nu este sub jucator, il las sa cada
     if (!isOnGround && m_player.getSpeedY().getActual() == 0)
     {
         std::cout << "No sprite under the player. Triggering fall.";
         std::cout << std::endl;
-        // Apply gravity to make the player fall
+        // aplic gravitatia
         m_player.updateCalculationsY(DirectieY::NONE, dt, scaleY, 1);
+        // setez viteza platformei la 0
         Delta zero(0, 0);
         m_player.setPlatformSpeed(m_player.getXPlatformSpeed(), zero);
     }
-    // Handle climbing above the screen
+    // verific daca jucatorul este deasupra ecranului
     if ((playerTop + playerBottom) / 2 < 0)
     {
         moveScreenUp(playerLeft);
     }
-    // Handle falling below the screen
+    // verific daca jucatorul este sub ecran
     if ((playerBottom + playerTop) / 2 > m_window.getSize().y)
     {
         moveScreenDown(playerLeft);
     }
-    // Handle moving beyond the left of the screen
+    // verific daca jucatorul este la stanga ecranului
     if ((playerLeft + playerRight) / 2 < 0)
     {
         moveScreenLeft(playerTop);
     }
-    // Handle moving beyond the right of the screen
+    // verific daca jucatorul este la dreapta ecranului
     if ((playerLeft + playerRight) / 2 > m_window.getSize().x)
     {
         moveScreenRight(playerTop);
     }
 }
 
+// metoda care incarca configuratia programului din fisier
 sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
 {
     try
@@ -632,11 +657,9 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
     sf::Vector2i windowSize; 
     while (std::getline(in, line))
     {
-        // Ignore empty lines or lines without '='
         if (line.empty() || line.find('=') == std::string::npos)
             continue;
 
-        // Split the line into key and value
         std::istringstream lineStream(line);
         std::string key, value;
         if 
@@ -650,10 +673,9 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
             value.erase(value.find_last_not_of(" \t") + 1);
             value.erase(0, value.find_first_not_of(" \t"));
 
-            // Parse the key-value pairs
             if (key == "FRAME_RATE")
             {
-                m_frameRate = std::stof(value); // Convert to float
+                m_frameRate = std::stof(value);
             }
             else if (key == "X_RESOLUTION")
             {
@@ -680,33 +702,35 @@ void GamePanel::raiseSpriteProgress()
     m_spriteProgress++;
 }
 
+// metoda care incarca sprite-urile simple,
+// background-ul si pozitia jucatorului din fisier
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
 {
     try {
-        // Use FileException to validate the file
         FileException checker(filePath);
     } catch (const BaseException& e) {
         std::cerr << "Error: " << e.what() << std::endl;
-        return; // Exit the function if the file cannot be opened
+        return;
     }
 
     std::ifstream in(filePath);
 
+    // incarc path-ul sprite-urilor
     std::string path, texturePath;
     in >> path >> texturePath;
     if (path == "/") path = "";
 
-    // Update background sprite
+    
     m_backgroundSprite.updateTexture(path + texturePath);
     m_backgroundSprite.setDrawStatus(true);
 
-    // Calculate scaling factors for the background
+    // calculez scala cu care trebuie sa incarc background-ul
     sf::Vector2u windowSize = m_window.getSize();
     sf::Vector2u textureSize = m_backgroundSprite.getTexture().getSize();
     float backgroundScale = 
         static_cast<float>(windowSize.x * 2.f) / (textureSize.x);
 
-    // Apply scaling to the background sprite
+    // aplic scala pe background
     m_backgroundSprite.setScale(backgroundScale, backgroundScale);
     m_backgroundSprite.setPosition
     (
@@ -715,13 +739,13 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     );
     std::cout << "Background loaded" << std::endl;
 
-    // Calculate scaling factors for sprites and the player
+    // calculez factoii de scala pentru sprite-uri si jucator
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
 
-    // Load player initial position
+    // incarc pozitia jucatorului
     int startX, startY, count;
     bool collision;
     in >> startX >> startY;
@@ -734,10 +758,10 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     m_player.setScale(playerScaleX, playerScaleY);
     m_player.setHitBox(100.0f * spriteScaleX, 100.0f * spriteScaleY);
 
-    // Load other sprites
+    // incarc restul sprite-urilor
     while (in >> texturePath >> startX >> startY >> count >> collision)
     {
-        // Convert starting coordinates from grid to pixel positions
+        // convertesc coordonatele din grid in coordonate pixel
         float pixelX = startX * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
 
@@ -750,11 +774,11 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
                     path + texturePath,
                     pixelX,
                     pixelY - i * 120.0f * spriteScaleY,
-                    120.0f * spriteScaleY, // Height
-                    120.0f * spriteScaleX  // Width
+                    120.0f * spriteScaleY,
+                    120.0f * spriteScaleX
                 );
                 
-                // Add the sprite to the vector
+                // adaug sprite-ul in vector
                 addSprite(std::move(sprite), path + texturePath, collision);
             }
         }
@@ -777,6 +801,7 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     in.close();
 }
 
+// metoda care incarca sprite-urile mobile din fisier
 void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
 {
     try
@@ -786,35 +811,37 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
     catch (const BaseException& e)
     {
         std::cerr << "Error: " << e.what() << std::endl;
-        return; // Exit the function if the file cannot be opened
+        return;
     }
     std::ifstream in(filePath);
 
+    // incarc path-ul sprite-urilor
     std::string path, texturePath;
     in >> path;
     if (path == "/") path = "";
 
     int startX, startY, endX, endY, acceleration;
     bool collision;
+    // calculez scala cu care trebuie sa incarc sprite-urile
     sf::Vector2u windowSize = m_window.getSize();
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
-
+    // incarc sprite-urile
     while 
     (
         in >> texturePath >> startX >> startY 
            >> endX >> endY >> acceleration >> collision
     )
     {
-        // Convert starting and ending coordinates from grid to pixel positions
+        // convertesc coordonatele din grid in coordonate pixel
         float pixelX = startX * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (startY + 1) * 120.0f * spriteScaleY;
         float pixelEndX = endX * 120.0f * spriteScaleX;
         float pixelEndY = windowSize.y - (endY + 1) * 120.0f * spriteScaleY;
 
-        // Create and add the movable sprite
+        // creez un sprite mobil
         std::unique_ptr<I_Sprite> sprite = std::make_unique<MovableSprite>(
             path + texturePath,
             120.0f * spriteScaleY, // Width
@@ -825,13 +852,14 @@ void GamePanel::loadMovableSpritesFromFile(const std::string& filePath)
             pixelEndY,
             acceleration
         );
-
+        // adaug sprite-ul in vector
         addSprite(std::move(sprite), path + texturePath, collision);
     }
 
     in.close();
 }
 
+// metoda care incarca sprite-urile animate din fisier
 void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
 {
     try
@@ -844,18 +872,19 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
         return; // Exit the function if the file cannot be opened
     }
     std::ifstream in(filePath);
-
+    // incarc path-ul sprite-urilor
     std::string path, texturePath;
     in >> path;
     if (path == "/") path = "";
 
     int x, y, textureCount, frameDuration, collision;
+    // calculez scala cu care trebuie sa incarc sprite-urile
     sf::Vector2u windowSize = m_window.getSize();
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;
     float spriteScaleY = static_cast<float>(windowSize.y) / referenceHeight;
-
+    // incarc sprite-urile
     while 
     (
         in >> texturePath >> x >> y 
@@ -863,11 +892,11 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
     )
     {
 
-        // Convert starting coordinates from grid to pixel positions
+        // cpmvertesc coordonatele din grid in coordonate pixel
         float pixelX = x * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (y + 1) * 120.0f * spriteScaleY;
 
-        // Create and add the animated sprite
+        // creez un sprite animat
         std::unique_ptr <I_Sprite> sprite = std::make_unique<AnimatedSprite>(
             path + texturePath,
             pixelX,
@@ -877,17 +906,20 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
             textureCount,
             frameDuration
         );
-
+        // adaug sprite-ul in vector
         addSprite(std::move(sprite), path + texturePath, collision);
     }
 
     in.close();
 }
 
+// metoda care se ocupa cu miscarea sprite-urilor
 void GamePanel::moveSprites(float dt)
 {
+    // trec prin fiecare sprite
     for (auto& sprite : m_sprites)
     {
+        // verific daca sprite-ul se misca
         MovableSprite* movableS = dynamic_cast<MovableSprite*>(sprite.get());
         if (!movableS) continue; // Skip if not a MovableSprite
         bool not_movingX = false;
@@ -1071,19 +1103,20 @@ void GamePanel::moveSprites(float dt)
     }
 }
 
+// metodele care se ocupa cu miscarea ecranului
 void GamePanel::moveScreenUp(float playerLeft){
     std::cout << "Player climbed above the screen. Applying offset.";
     std::cout << std::endl;
-    // Increase the vertical offset
+    // modific offset-ul
     m_verticalOffset += m_window.getSize().y;
-    // Reset player to bottom of the screen
+    // setez noua pozitie a jucatorului
     m_player.setPosition
     (
         playerLeft, 
         m_window.getSize().y - m_player.getHeight()
     ); 
 
-    // Apply the offset to all sprites
+    // aplic offset-ul la toate sprite-urile
     for (auto& sprite : m_sprites)
     {
         sprite->setPosition
@@ -1104,6 +1137,7 @@ void GamePanel::moveScreenUp(float playerLeft){
             );
         }
     }
+    // aplic offset-ul la background
     m_backgroundSprite.setPosition
     (
         m_backgroundSprite.getPosX().getActual(), 
@@ -1115,12 +1149,12 @@ void GamePanel::moveScreenDown(float playerLeft)
 {
     std::cout << "Player fell below the screen. Removing offset.";
     std::cout << std::endl;
-    // Decrease the vertical offset
+    // modific offset-ul
     m_verticalOffset -= m_window.getSize().y;
-    // Reset player to the top of the screen 
+    // setez noua pozitie a jucatorului
     m_player.setPosition(playerLeft, 0); 
 
-    // Apply the offset to all sprites
+    // aplic offset-ul la toate sprite-urile
     for (auto& sprite : m_sprites)
     {
         sprite->setPosition
@@ -1141,7 +1175,7 @@ void GamePanel::moveScreenDown(float playerLeft)
             );
         }
     }
-    //Apply offset to the background sprite
+    // aplic offset-ul la background
     m_backgroundSprite.setPosition
     (
         m_backgroundSprite.getPosX().getActual(), 
@@ -1153,14 +1187,16 @@ void GamePanel::moveScreenLeft(float playerTop)
 {
     std::cout << "Player moved beyond the left side. Applying offset.";
     std::cout << std::endl;
-    m_horizontalOffset += m_window.getSize().x; // Increase the vertical offset
+    // modific offset-ul
+    m_horizontalOffset += m_window.getSize().x;
+    // setez noua pozitie a jucatorului
     m_player.setPosition
     (
         m_window.getSize().x-m_player.getWidth()/2, 
         playerTop
-    ); // Reset player to bottom of the screen
+    );
 
-    // Apply the offset to all sprites
+    // aplic offset-ul la toate sprite-urile
     for (auto& sprite : m_sprites)
     {
         sprite->setPosition
@@ -1181,7 +1217,7 @@ void GamePanel::moveScreenLeft(float playerTop)
             );
         }
     }
-    //Apply offset to the background sprite
+    // aplic offset-ul la background
     m_backgroundSprite.setPosition
     (
         m_backgroundSprite.getPosX().getActual()+m_window.getSize().x, 
@@ -1193,14 +1229,16 @@ void GamePanel::moveScreenRight(float playerTop)
 {
     std::cout << "Player moved beyond the right side. Removing offset.";
     std::cout << std::endl;
-    m_horizontalOffset -= m_window.getSize().x; // Decrease the vertical offset
+    // modific offset-ul
+    m_horizontalOffset -= m_window.getSize().x;
+    // setez noua pozitie a jucatorului
     m_player.setPosition
     (
         0-m_player.getWidth()/2, 
         playerTop
-    ); // Reset player to bottom of the screen
+    );
 
-    // Apply the offset to all sprites
+    // aplic offset-ul la toate sprite-urile
     for (auto& sprite : m_sprites)
     {
         sprite->setPosition
@@ -1221,7 +1259,7 @@ void GamePanel::moveScreenRight(float playerTop)
             );
         }
     }
-    //Apply offset to the background sprite
+    // aplic offset-ul la background
     m_backgroundSprite.setPosition
     (
         m_backgroundSprite.getPosX().getActual()-m_window.getSize().x, 
@@ -1229,17 +1267,12 @@ void GamePanel::moveScreenRight(float playerTop)
     );
 }
 
+// metoda care se ocupe de sleep
 void GamePanel::panelSleep(float seconds)
 {
     #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
-        Sleep(0); // Sleep for the specified number of seconds
+        Sleep(0); // Sleep 0 pentru windows
     #else
         std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
     #endif
-}
-
-GamePanel::~GamePanel()
-{
-    // Destructor implementation (needed)
-
 }
