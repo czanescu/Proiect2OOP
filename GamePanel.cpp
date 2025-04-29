@@ -891,8 +891,9 @@ void GamePanel::loadAnimatedSpritesFromFile(const std::string& filePath)
            >> textureCount >> frameDuration >> collision
     )
     {
-
-        // cpmvertesc coordonatele din grid in coordonate pixel
+        // modific frameduration-ul in functie de frame rate
+        frameDuration = static_cast<int>(frameDuration * m_frameRate / 60.0f);
+        // convertesc coordonatele din grid in coordonate pixel
         float pixelX = x * 120.0f * spriteScaleX;
         float pixelY = windowSize.y - (y + 1) * 120.0f * spriteScaleY;
 
