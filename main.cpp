@@ -70,7 +70,7 @@
 // constructorul clasei MovableSprite de ex apelează constructorul
 // clasei Sprite.
 
-// Clasacu atribut de tip pointer la o clasa de baza cu derivate:
+// Clasă cu atribut de tip pointer la o clasă de bază cu derivate:
 // clasa GamePanel are un atribut de tip pointer la clasa I_Sprite,
 // care poate fi un pointer la orice clasă derivată din I_Sprite.
 
@@ -85,6 +85,22 @@
 // STL
 // folosesc STL pentru vectorul de sprite-uri de exemplu.
 
+
+// INSTRUCȚIUNI DE COMPILARE
+// Requirements:
+// - SFML 2.5.0 64 biti (pentru windows) sau libsfml-dev (pentru linux)
+// - MinGW g++ 64 de biti (pentru windows) sau g++ (pentru linux)
+// - CMake 3.10+
+// Adaugati MinGW/bin in PATH si asigurat-va ca in CMakeLists.txt locatia
+// librariei SFML corespunde locației de pe pc-ul dumneavoastră
+// rulați din fișierul de build comanda aferentă tipului de compilare
+// (găsiți în CMakeLists.txt exact care sunt)
+// apoi rulați cmake --build . pe windows sau make pe linux.
+
+// INSTRUCTIUNI DE RULARE (nu necesită compilare)
+// rulați ./gravity.exe pe windows sau ./gravity pe linux (pe windows nu aveți
+// nevoie de SFML pentru rulare deoarece am inclus dll-urile necesare, pe linux
+// este necesar package-ul libsmfl-dev)
 
 typedef std::chrono::high_resolution_clock              HiResClock;
 typedef std::chrono::high_resolution_clock::duration    HiResDuration;
