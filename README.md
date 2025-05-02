@@ -19,3 +19,24 @@ Requirement-uri tema 2 proiect (explicații mai detaliate în main):
 - Excepții ✔
 - Funcții și atribute statice ✔
 - STL ✔
+
+Instrucțiuni de compilare WINDOWS:
+- Requirements:
+  - SFML 2.5.0 pentru mingw pe 64 de biți
+  - mingw g++ pe 64 de biți
+  - CMAKE 3.10+
+- Adăugați MinGW/bin la path
+- setați locația directorului SFML în CMakeLists.txt
+- rulați din fișierul de build comanda "cmake -G "MinGW Makefiles" ..", apoi "cmake --build ."
+- dacă directorul de build este nou adăugați din directorul build-windows: directorul assets, fișierul .config și dll-urile.
+
+Instrucțiuni de compilare LINUX:
+- Requirements:
+  - g++
+  - libsfml-dev
+  - cmake
+- rulați din fișierul de build comanda "cmake ..", apoi "make"
+- dacă directorul de build este nou adăugați din directorul build: directorul assets și fișierul .config.
+
+Instrucțiuni de rulare:
+rulați ./gravity.exe pe windows sau ./gravity pe linux (pe windows nu aveți nevoie de SFML pentru rulare deoarece am inclus dll-urile necesare, pe linux este necesar package-ul libsmfl-dev)
