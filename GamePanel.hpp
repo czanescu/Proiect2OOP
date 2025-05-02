@@ -87,9 +87,6 @@ public:
     void checkPlayerCollision(float dt, float scaleY);
     void moveSprites(float dt);
 
-    static void raiseSpriteCount();
-    static void raiseSpriteProgress();
-
     // metoda care afiseaza un loading screen
     void renderProgressBar();
 
@@ -112,8 +109,6 @@ private:
     float m_frameRate;
     float m_verticalOffset = 0.0f;
     float m_horizontalOffset = 0.0f;
-    static int m_spriteCount;
-    static int m_spriteProgress;
 };
 
 #endif

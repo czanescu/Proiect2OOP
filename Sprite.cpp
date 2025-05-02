@@ -1,5 +1,10 @@
 #include "Sprite.hpp"
 
+// Initialize static variables
+int Sprite::m_spriteCount = -1;
+int Sprite::m_spriteProgress = 0;
+
+
 Sprite::Sprite() // Constructor gol
     : m_sprite(),
       m_pozX(0, 0),
@@ -77,6 +82,27 @@ Sprite::Sprite(const Sprite& other) // Constructor de copiere
         m_hitBoxY / m_textura.getSize().y
     );
     m_sprite.setPosition(m_pozX.getActual(), m_pozY.getActual());
+}
+
+
+int Sprite::getSpriteCount()
+{
+    return m_spriteCount;
+}
+
+int Sprite::getSpriteProgress()
+{
+    return m_spriteProgress;
+}
+
+void Sprite::raiseSpriteCount(int count)
+{
+    m_spriteCount += count;
+}
+
+void Sprite::raiseSpriteProgress(int count)
+{
+    m_spriteProgress += count;
 }
 
 sf::Sprite Sprite::getSprite() const

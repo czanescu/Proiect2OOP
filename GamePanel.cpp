@@ -1,9 +1,5 @@
 #include "GamePanel.hpp"
 
-// initializare variabile statice folosite la incarcarea sprite-urilor
-int GamePanel::m_spriteCount = -1;
-int GamePanel::m_spriteProgress = 0;
-
 GamePanel::GamePanel() // Constructor gol
     : m_window(sf::VideoMode(1920,1080), "Game Panel"),
       m_backgroundColor(sf::Color::Black),
@@ -69,10 +65,10 @@ void GamePanel::addSprite // metoda care adauga un sprite
 {
     // cod pentru debugging
     std::cout << "Sprite-ul (" << m_sprites.size() << "/";
-    std::cout << m_spriteCount << ") a fost incarcat" << std::endl;
+    std::cout << m_player.getSpriteCount() << ") a fost incarcat" << std::endl;
     // lungesc bara de progres (add sprite se intampla doar atunci cand se
     // incarca sprite-uri din fisier)
-    raiseSpriteProgress();
+    m_player.raiseSpriteProgress(1);
     renderProgressBar();
     m_sprites.push_back(std::move(sprite));
     m_sprites[m_sprites.size() - 1]->setCollision(collision);
@@ -302,7 +298,10 @@ void GamePanel::renderProgressBar()
     }
     float barWidth = 640.f * (m_window.getSize().x / 1920.f);
     float barHeight = 20.f * (m_window.getSize().y / 1080.f);
-    float progress = static_cast<float>(m_spriteProgress) / m_spriteCount;
+    float progress = static_cast<float>
+    (
+        m_player.getSpriteProgress() / m_player.getSpriteCount()
+    );
     sf::RectangleShape outline(sf::Vector2f(barWidth+10.f, barHeight+10.f));
     sf::RectangleShape progressBar(sf::Vector2f(barWidth, barHeight));
     sf::Text progressText;
@@ -442,18 +441,18 @@ const void GamePanel::calculateSpriteCount(const std::string& filePath) const
     ani>>line;
     while (spr >> line >> number >> number >> number2 >> number)
     {
-        m_spriteCount+= abs(number2);
+        m_player.raiseSpriteCount(abs(number2));
     }
     while 
     (
         mov >> line >> number >> number >> number >> number >> number >> number
     )
     {
-        m_spriteCount++;
+        m_player.raiseSpriteCount(1);
     }
     while (ani >> line >> number >> number >> number >> number >> number)
     {
-        m_spriteCount++;
+        m_player.raiseSpriteCount(1);
     }
     spr.close();
     mov.close();
@@ -461,7 +460,7 @@ const void GamePanel::calculateSpriteCount(const std::string& filePath) const
 }
 const int GamePanel::getSpriteCount() const
 {
-    return m_spriteCount;
+    return m_player.getSpriteCount();
 }
 
 //metoda care descopera coliziunile dintre player si sprite-uri
@@ -692,15 +691,6 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
     return windowSize;
 }
 
-void GamePanel::raiseSpriteCount()
-{
-    m_spriteCount++;
-};
-
-void GamePanel::raiseSpriteProgress()
-{
-    m_spriteProgress++;
-}
 
 // metoda care incarca sprite-urile simple,
 // background-ul si pozitia jucatorului din fisier

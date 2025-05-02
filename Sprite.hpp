@@ -42,6 +42,11 @@ public:
     void updatePosition(Delta& deltaX, Delta& deltaY) override;
     void changeDrawStatus() override;
 
+    static int getSpriteCount();
+    static int getSpriteProgress();
+    static void raiseSpriteCount(int count);
+    static void raiseSpriteProgress(int count);
+
     // Metodele MovableSprite trebuie sa fie mentionate,
     // implementarea este insa goala
     void updateXSpeed(float newXSpeed) override;
@@ -76,6 +81,8 @@ protected:
     bool m_isDrawn;
     bool m_collision;
     sf::Texture m_textura;
+    static int m_spriteCount;
+    static int m_spriteProgress;
 };
 
 #endif
