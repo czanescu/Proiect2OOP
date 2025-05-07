@@ -298,10 +298,8 @@ void GamePanel::renderProgressBar()
     }
     float barWidth = 640.f * (m_window.getSize().x / 1920.f);
     float barHeight = 20.f * (m_window.getSize().y / 1080.f);
-    float progress = static_cast<float>
-    (
-        m_player.getSpriteProgress() / m_player.getSpriteCount()
-    );
+    float progress = static_cast<float>(m_player.getSpriteProgress()) 
+                     / m_player.getSpriteCount();
     sf::RectangleShape outline(sf::Vector2f(barWidth+10.f, barHeight+10.f));
     sf::RectangleShape progressBar(sf::Vector2f(barWidth, barHeight));
     sf::Text progressText;
