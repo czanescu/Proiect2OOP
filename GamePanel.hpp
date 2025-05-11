@@ -6,7 +6,6 @@
 #include "Sprite.hpp"
 #include "MovableSprite.hpp"
 #include "AnimatedSprite.hpp"
-#include "Platform.hpp"
 #include <vector>
 #include <memory>
 #include <iomanip>
@@ -16,7 +15,13 @@
 #include <string>
 #include <cmath>
 #include <chrono>
-#include <type_traits>
+
+// librariile care difera intre platforme
+#if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
+#include <windows.h>
+#else
+#include <thread>
+#endif
 
 class GamePanel {
 public:

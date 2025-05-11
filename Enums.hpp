@@ -17,12 +17,6 @@ enum class DirectieY
     NONE
 };
 
-enum class OS
-{
-    WINDOWS,
-    LINUX
-};
-
 enum MenuSelection
 {
     EXIT,

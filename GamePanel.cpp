@@ -1291,9 +1291,9 @@ void GamePanel::moveScreenRight(float playerTop)
 // metoda care se ocupe de sleep
 void GamePanel::panelSleep(float seconds)
 {
-    Platform& platform = Platform::getInstance();
-    if (platform.getPlatform() == OS::LINUX)
+    #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
         Sleep(0); // Sleep 0 pentru windows
-    else
+    #else
         std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
+    #endif
 }
