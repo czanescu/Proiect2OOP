@@ -18,6 +18,15 @@ GamePanel::GamePanel() // Constructor gol
     m_frameCounter.setCharacterSize(24);
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
+    try
+    {
+        FileException checker("assets/Loading.png");
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    m_loadingScreenBackground.updateTexture("assets/Loading.png");
 }
 GamePanel::GamePanel // Constructor
 (
@@ -55,6 +64,15 @@ GamePanel::GamePanel // Constructor
     m_frameCounter.setCharacterSize(24);
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
+    try
+    {
+        FileException checker("assets/Loading.png");
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    m_loadingScreenBackground.updateTexture("assets/Loading.png");
 }
 void GamePanel::addSprite // metoda care adauga un sprite
 (
@@ -195,6 +213,7 @@ void GamePanel::pauseMenu()
         windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
     );
     MenuSelection menuSelection = CONTINUE;
+    auto startTime = std::chrono::high_resolution_clock::now();
     while (1)
     {
         if (menuSelection == EXIT)
@@ -251,20 +270,32 @@ void GamePanel::pauseMenu()
                 m_window.close();
                 std::exit(0);
             }
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyPressed 
+                || sf::Joystick::isConnected(0))
             {
-                if (event.key.code == sf::Keyboard::Escape) return;
-                if (event.key.code == sf::Keyboard::Up)
+                if (event.key.code == sf::Keyboard::Escape ||
+                    sf::Joystick::isButtonPressed(0, 9)) 
+                    return;
+                if (event.key.code == sf::Keyboard::Up ||
+                    sf::Joystick::getAxisPosition
+                    (0, static_cast<sf::Joystick::Axis>(7)) < -20)
                 {
                     --menuSelection;
                 }
-                if (event.key.code == sf::Keyboard::Down)
+                if (event.key.code == sf::Keyboard::Down ||
+                    sf::Joystick::getAxisPosition
+                    (0, static_cast<sf::Joystick::Axis>(7)) > 20)
                 {
                     ++menuSelection;
                 }
-                if (event.key.code == sf::Keyboard::Enter)
+                if (event.key.code == sf::Keyboard::Enter ||
+                    sf::Joystick::isButtonPressed(0, 0))
                 {
-                    if (menuSelection == MenuSelection::EXIT)
+                    auto now = std::chrono::high_resolution_clock::now();
+                    auto elapsedTime = std::chrono::duration_cast
+                        <std::chrono::milliseconds>(now - startTime);
+                    if (menuSelection == MenuSelection::EXIT &&
+                        elapsedTime.count() > 200)
                     {
                         m_window.close();
                         std::exit(0);
@@ -315,24 +346,25 @@ void GamePanel::renderProgressBar()
     progressBar.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2, 
-        m_window.getSize().y / 2 - barHeight
+        m_window.getSize().y / 3 * 2 - barHeight
             - 10.f * (m_window.getSize().y / 1080.f)
     );
     outline.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 - 5.f, 
-        m_window.getSize().y / 2 - barHeight 
+        m_window.getSize().y / 3 * 2 - barHeight 
             - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressText.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
-        m_window.getSize().y / 2 - barHeight * 3 
+        m_window.getSize().y / 3 * 2 - barHeight * 3 
             - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressBar.setScale(progress, 1.f);
     outline.setScale(1.f, 1.f);
     m_window.clear(m_backgroundColor);
+    m_window.draw(m_loadingScreenBackground.getSprite());
     m_window.draw(outline);
     m_window.draw(progressBar);
     m_window.draw(progressText);
