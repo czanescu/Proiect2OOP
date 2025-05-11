@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <chrono>
 
 // librariile care difera intre platforme
 #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
