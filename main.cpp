@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <iostream>
 
+// Proiect realizat de : Zănescu Cristian, grupa 133
+
 // Proiect 2+3 OOP (actual doar proiect 2)
 // Aplicația reprezintă un joc 2D, în care un jucător
 // (poate fi orice sprite patrat, dar actual este mario) se poate mișca stânga
