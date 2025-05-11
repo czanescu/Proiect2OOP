@@ -101,6 +101,7 @@ public:
 private:
     std::vector<std::unique_ptr<I_Sprite>> m_sprites;
     Sprite m_backgroundSprite;
+    Sprite m_loadingScreenBackground;
     Player m_player;
     sf::Color m_backgroundColor;
     sf::RenderWindow m_window;

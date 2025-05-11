@@ -18,6 +18,15 @@ GamePanel::GamePanel() // Constructor gol
     m_frameCounter.setCharacterSize(24);
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
+    try
+    {
+        FileException checker("assets/Loading.png");
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    m_loadingScreenBackground.updateTexture("assets/Loading.png");
 }
 GamePanel::GamePanel // Constructor
 (
@@ -55,6 +64,15 @@ GamePanel::GamePanel // Constructor
     m_frameCounter.setCharacterSize(24);
     m_frameCounter.setFillColor(sf::Color::White);
     m_frameCounter.setPosition(m_window.getSize().x - 150.0, 10.0);
+    try
+    {
+        FileException checker("assets/Loading.png");
+    }
+    catch(const FileException& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+    m_loadingScreenBackground.updateTexture("assets/Loading.png");
 }
 void GamePanel::addSprite // metoda care adauga un sprite
 (
@@ -315,24 +333,25 @@ void GamePanel::renderProgressBar()
     progressBar.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2, 
-        m_window.getSize().y / 2 - barHeight
+        m_window.getSize().y / 3 * 2 - barHeight
             - 10.f * (m_window.getSize().y / 1080.f)
     );
     outline.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 - 5.f, 
-        m_window.getSize().y / 2 - barHeight 
+        m_window.getSize().y / 3 * 2 - barHeight 
             - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressText.setPosition
     (
         m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
-        m_window.getSize().y / 2 - barHeight * 3 
+        m_window.getSize().y / 3 * 2 - barHeight * 3 
             - 10.f * (m_window.getSize().y / 1080.f) - 5.f
     );
     progressBar.setScale(progress, 1.f);
     outline.setScale(1.f, 1.f);
     m_window.clear(m_backgroundColor);
+    m_window.draw(m_loadingScreenBackground.getSprite());
     m_window.draw(outline);
     m_window.draw(progressBar);
     m_window.draw(progressText);
