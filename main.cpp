@@ -202,6 +202,7 @@ int main()
         //suficient de precisa pentru a putea face sleep mai puțin de un frame.
         //din acest motiv pe windows face Sleep(0), pentru a elibera măcar
         //threadul pentru alte task-uri. (busy wait)
+        if (accumulator > 1.0) accumulator = fixedTimeStep+0.0001;
         if 
         (
             fixedTimeStep > accumulator && 
