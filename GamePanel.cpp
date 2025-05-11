@@ -213,6 +213,7 @@ void GamePanel::pauseMenu()
         windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
     );
     MenuSelection menuSelection = CONTINUE;
+    auto startTime = std::chrono::high_resolution_clock::now();
     while (1)
     {
         if (menuSelection == EXIT)
@@ -269,20 +270,32 @@ void GamePanel::pauseMenu()
                 m_window.close();
                 std::exit(0);
             }
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyPressed 
+                || sf::Joystick::isConnected(0))
             {
-                if (event.key.code == sf::Keyboard::Escape) return;
-                if (event.key.code == sf::Keyboard::Up)
+                if (event.key.code == sf::Keyboard::Escape ||
+                    sf::Joystick::isButtonPressed(0, 9)) 
+                    return;
+                if (event.key.code == sf::Keyboard::Up ||
+                    sf::Joystick::getAxisPosition
+                    (0, static_cast<sf::Joystick::Axis>(7)) < -20)
                 {
                     --menuSelection;
                 }
-                if (event.key.code == sf::Keyboard::Down)
+                if (event.key.code == sf::Keyboard::Down ||
+                    sf::Joystick::getAxisPosition
+                    (0, static_cast<sf::Joystick::Axis>(7)) > 20)
                 {
                     ++menuSelection;
                 }
-                if (event.key.code == sf::Keyboard::Enter)
+                if (event.key.code == sf::Keyboard::Enter ||
+                    sf::Joystick::isButtonPressed(0, 0))
                 {
-                    if (menuSelection == MenuSelection::EXIT)
+                    auto now = std::chrono::high_resolution_clock::now();
+                    auto elapsedTime = std::chrono::duration_cast
+                        <std::chrono::milliseconds>(now - startTime);
+                    if (menuSelection == MenuSelection::EXIT &&
+                        elapsedTime.count() > 200)
                     {
                         m_window.close();
                         std::exit(0);

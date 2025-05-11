@@ -123,20 +123,31 @@ void calcule(double dt, float scaleX, float scaleY)
     // schimb pozitia sprite-urilor care se misca
     Panel.moveSprites(dt);
     // iau input de la tastatura
-    if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::A)) &&
         (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
+        sf::Keyboard::isKeyPressed(sf::Keyboard::D))) &&
+        (sf::Joystick::isConnected(0) &&
+        (sf::Joystick::getAxisPosition(0, sf::Joystick::X) > -20 ||
+        sf::Joystick::getAxisPosition(0, sf::Joystick::X) < 20 ||
+        (sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) > -20 &&
+        sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) < 20))))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+             sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
+            (sf::Joystick::isConnected(0) &&
+             sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -20 ||
+             sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) < -20))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::LEFT, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
-             sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+             sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
+            (sf::Joystick::isConnected(0) &&
+             sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 20 ||
+             sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) > 20))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::RIGHT, dt, scaleX);
     }
@@ -146,13 +157,69 @@ void calcule(double dt, float scaleX, float scaleY)
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
-        sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Space) ||
+       (sf::Joystick::isConnected(0) &&
+       (sf::Joystick::isButtonPressed(0, 0) ||
+        sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(7)) < -20)))
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::UP, dt, scaleY);
     }
     else
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt, scaleY);
+    }
+    std::cout <<sf::Joystick::getButtonCount(0) << "Buttons:"<<std::endl;
+    if (sf::Joystick::isButtonPressed(0, 1))
+    {
+        std::cout << "Joystick button 1 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 2))
+    {
+        std::cout << "Joystick button 2 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 3))
+    {
+        std::cout << "Joystick button 3 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 4))
+    {
+        std::cout << "Joystick button 4 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 5))
+    {
+        std::cout << "Joystick button 5 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 6))
+    {
+        std::cout << "Joystick button 6 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 7))
+    {
+        std::cout << "Joystick button 7 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 8))
+    {
+        std::cout << "Joystick button 8 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 9))
+    {
+        std::cout << "Joystick button 9 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 10))
+    {
+        std::cout << "Joystick button 10 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 11))
+    {
+        std::cout << "Joystick button 11 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 12))
+    {
+        std::cout << "Joystick button 12 pressed" << std::endl;
+    }
+    if (sf::Joystick::isButtonPressed(0, 13))
+    {
+        std::cout << "Joystick button 13 pressed" << std::endl;
     }
     // verific daca apare coliziune intre player si sprite-uri
     Panel.checkPlayerCollision(dt, scaleY);
@@ -248,6 +315,23 @@ int main()
                         (ChrDurationDouble(pauseTime));
                     }
                 }
+                if (sf::Joystick::isConnected(0))
+                {
+                    if (sf::Joystick::isButtonPressed(0, 9))
+                    {
+                        auto beforePause = HiResClock::now();
+                        Panel.pauseMenu();
+                        auto afterPause = HiResClock::now();
+                        pauseTime = ChrDurationDouble(afterPause
+                             - beforePause).count();
+                        oldTime += std::chrono::duration_cast<HiResDuration>
+                        //adaug timpul de pauza la timpul de inceput pentru ca
+                        //programul sa nu incerce sa prinda din urma frame-urile
+                        //nedesenate în timpul pauzei
+                        (ChrDurationDouble(pauseTime));
+                    }
+                }
+                // sf::Event::Resized e un eveniment cu care pot face resize-ul
             }
             frameTimeForFrameRate = accumulator;
             accumulator -= fixedTimeStep;
