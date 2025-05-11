@@ -270,11 +270,16 @@ void GamePanel::pauseMenu()
                 m_window.close();
                 std::exit(0);
             }
-            if (event.type == sf::Event::KeyPressed 
-                || sf::Joystick::isConnected(0))
+            if (event.type == sf::Event::KeyPressed ||
+                event.type == sf::Event::JoystickMoved ||
+                event.type == sf::Event::JoystickButtonPressed)
             {
-                if (event.key.code == sf::Keyboard::Escape ||
-                    sf::Joystick::isButtonPressed(0, 9)) 
+                auto now = std::chrono::high_resolution_clock::now();
+                auto elapsedTime = std::chrono::duration_cast
+                    <std::chrono::milliseconds>(now - startTime);
+                if ((event.key.code == sf::Keyboard::Escape ||
+                    sf::Joystick::isButtonPressed(0, 9)) &&
+                    elapsedTime.count() > 1000)
                     return;
                 if (event.key.code == sf::Keyboard::Up ||
                     sf::Joystick::getAxisPosition
@@ -291,11 +296,7 @@ void GamePanel::pauseMenu()
                 if (event.key.code == sf::Keyboard::Enter ||
                     sf::Joystick::isButtonPressed(0, 0))
                 {
-                    auto now = std::chrono::high_resolution_clock::now();
-                    auto elapsedTime = std::chrono::duration_cast
-                        <std::chrono::milliseconds>(now - startTime);
-                    if (menuSelection == MenuSelection::EXIT &&
-                        elapsedTime.count() > 200)
+                    if (menuSelection == MenuSelection::EXIT)
                     {
                         m_window.close();
                         std::exit(0);
@@ -1292,8 +1293,9 @@ void GamePanel::moveScreenRight(float playerTop)
 void GamePanel::panelSleep(float seconds)
 {
     #if defined(Win32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64)
-        Sleep(0); // Sleep 0 pentru windows
-    #else
+        Sleep(0);
+    #else // as fi folosit clasa Platforma, dar numai asa pot scrie functii pe
+    // linux fara eroare de compilare
         std::this_thread::sleep_for(std::chrono::duration<double>(seconds));
     #endif
 }

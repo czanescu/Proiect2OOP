@@ -117,37 +117,57 @@ GamePanel Panel
     sf::Color(37, 37, 164, 0.7),
     "assets/arial.ttf"
 );
+
+Platform& platforma = Platform::getInstance();
+
 // functie calcule care ruleaza in fiecare frame
 void calcule(double dt, float scaleX, float scaleY)
 {
     // schimb pozitia sprite-urilor care se misca
     Panel.moveSprites(dt);
     // iau input de la tastatura
+    float XAxis = 0, YAxis = 0, dpadHAxis = 0, dpadVAxis = 0, jumpButton = 0;
+    if (sf::Joystick::isConnected(0))
+    {
+        XAxis = sf::Joystick::getAxisPosition(0, sf::Joystick::X);
+        YAxis = sf::Joystick::getAxisPosition(0, sf::Joystick::Y);
+        dpadHAxis = sf::Joystick::getAxisPosition
+        (
+            0,
+            static_cast<sf::Joystick::Axis>(6)
+        );
+        dpadVAxis = sf::Joystick::getAxisPosition
+        (
+            0,
+            static_cast<sf::Joystick::Axis>(7)
+        );
+        if (platforma.getPlatform() == OS::LINUX)
+        {
+            jumpButton = sf::Joystick::isButtonPressed(0, 0);
+        }
+        else
+        {
+            jumpButton = sf::Joystick::isButtonPressed(0, 1);
+            dpadVAxis = -dpadVAxis;
+        }
+    }
     if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::A)) &&
         (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::D))) &&
-        (sf::Joystick::isConnected(0) &&
-        (sf::Joystick::getAxisPosition(0, sf::Joystick::X) > -20 ||
-        sf::Joystick::getAxisPosition(0, sf::Joystick::X) < 20 ||
-        (sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) > -20 &&
-        sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) < 20))))
+        (XAxis > -20 && XAxis < 20 || dpadHAxis > -20 && dpadHAxis < 20))
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::NONE, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
              sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
-            (sf::Joystick::isConnected(0) &&
-             sf::Joystick::getAxisPosition(0, sf::Joystick::X) < -20 ||
-             sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) < -20))
+             XAxis < -20 || dpadHAxis < -20)
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::LEFT, dt, scaleX);
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
              sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
-            (sf::Joystick::isConnected(0) &&
-             sf::Joystick::getAxisPosition(0, sf::Joystick::X) > 20 ||
-             sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(6)) > 20))
+             XAxis > 20 || dpadHAxis > 20)
     {
         Panel.getPlayer().updateCalculationsX(DirectieX::RIGHT, dt, scaleX);
     }
@@ -158,9 +178,7 @@ void calcule(double dt, float scaleX, float scaleY)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
         sf::Keyboard::isKeyPressed(sf::Keyboard::Space) ||
-       (sf::Joystick::isConnected(0) &&
-       (sf::Joystick::isButtonPressed(0, 0) ||
-        sf::Joystick::getAxisPosition(0, static_cast<sf::Joystick::Axis>(7)) < -20)))
+        jumpButton || dpadVAxis < -20)
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::UP, dt, scaleY);
     }

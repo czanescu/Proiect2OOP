@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <type_traits>
+
 // clase cu rol in simplificarea comunicarii intre metode
 
 enum class DirectieX
@@ -15,6 +17,12 @@ enum class DirectieY
     UP,
     DOWN,
     NONE
+};
+
+enum class OS
+{
+    WINDOWS,
+    LINUX
 };
 
 enum MenuSelection
