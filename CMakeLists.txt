@@ -4,7 +4,10 @@ cmake_minimum_required(VERSION 3.10)
 project(gravity)
 
 # lista de fisiere sursa si executabilul
-add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp Exceptii.cpp)
+add_executable(gravity main.cpp Delta.cpp Sprite.cpp GamePanel.cpp Player.cpp MovableSprite.cpp AnimatedSprite.cpp Exceptii.cpp Platform.cpp)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (CMAKE_CROSSCOMPILING)
     # Cross-compiling de pe linux pentru windows
