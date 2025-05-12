@@ -276,6 +276,13 @@ int main()
     double sleepTime = 0.0;
     double pauseTime = 0.0;
 
+    bool optionsLatching = false;
+    bool optionsButton = false;
+    if (sf::Joystick::isConnected(0))
+    {
+        optionsLatching = sf::Joystick::isButtonPressed(0, 9);
+    }
+
     while (Panel.isOpen())
     {
         auto currentTime = HiResClock::now();
@@ -324,6 +331,10 @@ int main()
                     {
                         auto beforePause = HiResClock::now();
                         Panel.pauseMenu();
+                        if (sf::Joystick::isConnected(0))
+                        {
+                            optionsLatching = sf::Joystick::isButtonPressed(0, 9);
+                        }
                         auto afterPause = HiResClock::now();
                         pauseTime = ChrDurationDouble(afterPause
                              - beforePause).count();
@@ -336,10 +347,27 @@ int main()
                 }
                 if (sf::Joystick::isConnected(0))
                 {
-                    if (sf::Joystick::isButtonPressed(0, 9))
+                    if (sf::Joystick::isButtonPressed(0, 9) && !optionsLatching)
+                    {
+                        optionsButton = true;
+                        optionsLatching = true;
+                    }
+                    else if (!sf::Joystick::isButtonPressed(0, 9))
+                    {
+                        optionsLatching = false;
+                        optionsButton = false;
+                        std::cout << "Options button released" << std::endl;
+                    }
+                    if (optionsButton)
                     {
                         auto beforePause = HiResClock::now();
+                        std::cout << "Entering pause menu" << std::endl;
+                        optionsButton = false;
                         Panel.pauseMenu();
+                        if (sf::Joystick::isConnected(0))
+                        {
+                            optionsLatching = sf::Joystick::isButtonPressed(0, 9);
+                        }
                         auto afterPause = HiResClock::now();
                         pauseTime = ChrDurationDouble(afterPause
                              - beforePause).count();

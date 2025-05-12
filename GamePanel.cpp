@@ -182,6 +182,10 @@ void GamePanel::pauseMenu()
     float spriteHeight = windowHeight / 10;
     float largeSpriteWidth = spriteWidth * 1.1f;
     float largeSpriteHeight = spriteHeight * 1.1f;
+
+    Platform& platforma = Platform::getInstance();
+    bool butonA = false;
+
     Sprite pauseMenuBackground;
     pauseMenuBackground.updateTexture("assets/pauseMenu.png");
     pauseMenuBackground.setScale
@@ -189,6 +193,7 @@ void GamePanel::pauseMenu()
         windowWidth / pauseMenuBackground.getTexture().getSize().x, 
         windowHeight / pauseMenuBackground.getTexture().getSize().y
     );
+
     Sprite Exit, Continue;
     Exit.updateTexture("assets/exit.png");
     Continue.updateTexture("assets/continue.png");
@@ -212,10 +217,70 @@ void GamePanel::pauseMenu()
         windowWidth / 2 - spriteWidth / 2, 
         windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
     );
+
+    bool button9Latching, optionPressed = false, dpadUpLatching, dpadDownLatching;
+    bool dpadUpPressed, dpadDownPressed, dpadUp = false, dpadDown = false;
+    if (sf::Joystick::isConnected(0))
+    {
+        button9Latching = sf::Joystick::isButtonPressed(0, 9);
+        dpadUpLatching = sf::Joystick::getAxisPosition
+        (
+            0, 
+            static_cast<sf::Joystick::Axis>(7)
+        ) < -20;
+        dpadDownLatching = sf::Joystick::getAxisPosition
+        (
+            0, 
+            static_cast<sf::Joystick::Axis>(7)
+        ) > 20;
+        if (platforma.getPlatform() == OS::WINDOWS)
+        {
+            bool swap = dpadUpLatching;
+            dpadUpLatching = dpadDownLatching;
+            dpadDownLatching = swap;
+        }
+    }
+
     MenuSelection menuSelection = CONTINUE;
-    auto startTime = std::chrono::high_resolution_clock::now();
     while (1)
     {
+        if (sf::Joystick::isConnected(0))
+        {
+            if (sf::Joystick::isButtonPressed(0, 9) == 0)
+            {
+                button9Latching = false;
+            }
+            dpadDownPressed = sf::Joystick::getAxisPosition
+            (
+                0, 
+                static_cast<sf::Joystick::Axis>(7)
+            ) > 20;
+            dpadUpPressed = sf::Joystick::getAxisPosition
+            (
+                0, 
+                static_cast<sf::Joystick::Axis>(7)
+            ) < -20;
+            if (platforma.getPlatform() == OS::WINDOWS)
+            {
+                bool swap = dpadUpPressed;
+                dpadUpPressed = dpadDownPressed;
+                dpadDownPressed = swap;
+            }
+            if (dpadUpPressed && !dpadUpLatching)
+            {
+                dpadUp = true;
+                dpadDown = false;
+                dpadUpLatching = true;
+            }
+            else if (dpadDownPressed && !dpadDownLatching)
+            {
+                dpadDown = true;
+                dpadUp = false;
+                dpadDownLatching = true;
+            }
+            if (!dpadUpPressed) dpadUpLatching = false;
+            if (!dpadDownPressed) dpadDownLatching = false;
+        }
         if (menuSelection == EXIT)
         {
             Exit.setScale
@@ -272,29 +337,32 @@ void GamePanel::pauseMenu()
             }
             if (event.type == sf::Event::KeyPressed ||
                 event.type == sf::Event::JoystickMoved ||
-                event.type == sf::Event::JoystickButtonPressed)
+                event.type == sf::Event::JoystickButtonPressed ||
+                dpadUp || dpadDown)
             {
-                auto now = std::chrono::high_resolution_clock::now();
-                auto elapsedTime = std::chrono::duration_cast
-                    <std::chrono::milliseconds>(now - startTime);
-                if ((event.key.code == sf::Keyboard::Escape ||
-                    sf::Joystick::isButtonPressed(0, 9)) &&
-                    elapsedTime.count() > 1000)
+                if (button9Latching == 0 && 
+                    sf::Joystick::isButtonPressed(0, 9))
+                {
+                    button9Latching = true;
+                    optionPressed = true;
+                }
+                if (event.key.code == sf::Keyboard::Escape || optionPressed)
                     return;
-                if (event.key.code == sf::Keyboard::Up ||
-                    sf::Joystick::getAxisPosition
-                    (0, static_cast<sf::Joystick::Axis>(7)) < -20)
+                if (event.key.code == sf::Keyboard::Up || dpadUp)
                 {
                     --menuSelection;
+                    dpadUp = false;
                 }
-                if (event.key.code == sf::Keyboard::Down ||
-                    sf::Joystick::getAxisPosition
-                    (0, static_cast<sf::Joystick::Axis>(7)) > 20)
+                if (event.key.code == sf::Keyboard::Down || dpadDown)
                 {
                     ++menuSelection;
+                    dpadDown = false;
                 }
-                if (event.key.code == sf::Keyboard::Enter ||
-                    sf::Joystick::isButtonPressed(0, 0))
+                if (platforma.getPlatform() == OS::LINUX)
+                    butonA = sf::Joystick::isButtonPressed(0, 0);
+                else
+                    butonA = sf::Joystick::isButtonPressed(0, 1);
+                if (event.key.code == sf::Keyboard::Enter || butonA)
                 {
                     if (menuSelection == MenuSelection::EXIT)
                     {
