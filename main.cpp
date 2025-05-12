@@ -121,7 +121,7 @@ GamePanel Panel
 Platform& platforma = Platform::getInstance();
 
 // functie calcule care ruleaza in fiecare frame
-void calcule(double dt, float scaleX, float scaleY)
+void calcule(double dt, float scaleX, float scaleY, bool aButtonPressed)
 {
     // schimb pozitia sprite-urilor care se misca
     Panel.moveSprites(dt);
@@ -141,14 +141,18 @@ void calcule(double dt, float scaleX, float scaleY)
             0,
             static_cast<sf::Joystick::Axis>(7)
         );
-        if (platforma.getPlatform() == OS::LINUX)
+        if (platforma.getPlatform() == OS::LINUX && !aButtonPressed)
         {
             jumpButton = sf::Joystick::isButtonPressed(0, 0);
         }
-        else
+        else if (platforma.getPlatform() == OS::WINDOWS && !aButtonPressed)
         {
             jumpButton = sf::Joystick::isButtonPressed(0, 1);
             dpadVAxis = -dpadVAxis;
+        }
+        else
+        {
+            jumpButton = 0;
         }
     }
     if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
@@ -185,59 +189,6 @@ void calcule(double dt, float scaleX, float scaleY)
     else
     {
         Panel.getPlayer().updateCalculationsY(DirectieY::NONE, dt, scaleY);
-    }
-    std::cout <<sf::Joystick::getButtonCount(0) << "Buttons:"<<std::endl;
-    if (sf::Joystick::isButtonPressed(0, 1))
-    {
-        std::cout << "Joystick button 1 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 2))
-    {
-        std::cout << "Joystick button 2 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 3))
-    {
-        std::cout << "Joystick button 3 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 4))
-    {
-        std::cout << "Joystick button 4 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 5))
-    {
-        std::cout << "Joystick button 5 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 6))
-    {
-        std::cout << "Joystick button 6 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 7))
-    {
-        std::cout << "Joystick button 7 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 8))
-    {
-        std::cout << "Joystick button 8 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 9))
-    {
-        std::cout << "Joystick button 9 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 10))
-    {
-        std::cout << "Joystick button 10 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 11))
-    {
-        std::cout << "Joystick button 11 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 12))
-    {
-        std::cout << "Joystick button 12 pressed" << std::endl;
-    }
-    if (sf::Joystick::isButtonPressed(0, 13))
-    {
-        std::cout << "Joystick button 13 pressed" << std::endl;
     }
     // verific daca apare coliziune intre player si sprite-uri
     Panel.checkPlayerCollision(dt, scaleY);
@@ -278,6 +229,8 @@ int main()
 
     bool optionsLatching = false;
     bool optionsButton = false;
+    bool aButtonPressedAfterPause = false;
+
     if (sf::Joystick::isConnected(0))
     {
         optionsLatching = sf::Joystick::isButtonPressed(0, 9);
@@ -330,9 +283,25 @@ int main()
                     if (event.key.code == sf::Keyboard::Escape)
                     {
                         auto beforePause = HiResClock::now();
+                        bool playerOnGround = Panel.isPlayerOnGround();
                         Panel.pauseMenu();
                         if (sf::Joystick::isConnected(0))
                         {
+                            if (playerOnGround)
+                            {
+                                if (platforma.getPlatform() == OS::WINDOWS)
+                                {
+                                    aButtonPressedAfterPause =
+                                        sf::Joystick::isButtonPressed(0, 1);
+                                }
+                                else
+                                {
+                                    aButtonPressedAfterPause =
+                                        sf::Joystick::isButtonPressed(0, 0);
+                                }
+                                std::cout << "Player is on ground" << std::endl;
+                            }
+                            else std::cout << "Player is not on ground" << std::endl;
                             optionsLatching = sf::Joystick::isButtonPressed(0, 9);
                         }
                         auto afterPause = HiResClock::now();
@@ -363,9 +332,25 @@ int main()
                         auto beforePause = HiResClock::now();
                         std::cout << "Entering pause menu" << std::endl;
                         optionsButton = false;
+                        bool playerOnGround = Panel.isPlayerOnGround();
                         Panel.pauseMenu();
                         if (sf::Joystick::isConnected(0))
                         {
+                            if (playerOnGround)
+                            {
+                                if (platforma.getPlatform() == OS::WINDOWS)
+                                {
+                                    aButtonPressedAfterPause =
+                                        sf::Joystick::isButtonPressed(0, 1);
+                                }
+                                else
+                                {
+                                    aButtonPressedAfterPause =
+                                        sf::Joystick::isButtonPressed(0, 0);
+                                }
+                                std::cout << "Player is on ground" << std::endl;
+                            }
+                            else std::cout << "Player is not on ground" << std::endl;
                             optionsLatching = sf::Joystick::isButtonPressed(0, 9);
                         }
                         auto afterPause = HiResClock::now();
@@ -380,11 +365,30 @@ int main()
                 }
                 // sf::Event::Resized e un eveniment cu care pot face resize-ul
             }
+
+            if (sf::Joystick::isConnected(0))
+            {
+                if (platforma.getPlatform() == OS::WINDOWS)
+                {
+                    if (!sf::Joystick::isButtonPressed(0, 1))
+                    {
+                        aButtonPressedAfterPause = false;
+                    }
+                }
+                else
+                {
+                    if (!sf::Joystick::isButtonPressed(0, 0))
+                    {
+                        aButtonPressedAfterPause = false;
+                    }
+                }
+            }
+
             frameTimeForFrameRate = accumulator;
             accumulator -= fixedTimeStep;
 
             // apelez functia care calculeaza pozitia a tuturor sprite-urilor
-            calcule(fixedTimeStep, SCALE_X, SCALE_Y);
+            calcule(fixedTimeStep, SCALE_X, SCALE_Y, aButtonPressedAfterPause);
 
             // Cod pentru frame counter
             if (frameTimeAccumulator >= 1.0)

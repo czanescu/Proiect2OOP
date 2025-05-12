@@ -88,6 +88,8 @@ public:
     // metoda care afiseaza un meniu de pauza
     void pauseMenu();
 
+    bool isPlayerOnGround();
+
     // metoda care inchide programul
     void endProgram();
 

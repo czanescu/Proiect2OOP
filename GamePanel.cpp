@@ -173,9 +173,27 @@ void GamePanel::endProgram()
     std::exit(0);
 }
 
+bool GamePanel::isPlayerOnGround()
+{
+    Delta savedSpeedY = m_player.getSpeedY();
+    std::cout<<savedSpeedY.getActual()<<' '<<savedSpeedY.getPrecedent()<<std::endl;
+    if (m_player.getSpeedY().getActual() != 0 
+     || (m_player.getSpeedY().getPrecedent() != 0
+     && abs(m_player.getSpeedY().getPrecedent() - m_player.getSpeedY().getActual()) < 20))
+    {
+        return false;
+        std::cout << "Player is not on ground" << std::endl;
+    }
+    std::cout<<m_player.getYSpeed().getActual()<<' '<<m_player.getYSpeed().getPrecedent()<<std::endl;
+    return true;
+}
+
 // meniul de pauza
 void GamePanel::pauseMenu()
 {
+    Delta savedSpeedY = m_player.getSpeedY();
+    std::cout<<savedSpeedY.getActual()<<' '<<savedSpeedY.getPrecedent()<<std::endl;
+
     float windowHeight = m_window.getSize().y;
     float windowWidth = m_window.getSize().x;
     float spriteWidth = windowWidth / 4;
