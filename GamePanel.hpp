@@ -19,14 +19,21 @@
 
 class GamePanel {
 public:
-    GamePanel(); // Constructor gol
-    GamePanel // Constructor
+    GamePanel(const GamePanel&) = delete;
+    GamePanel& operator=(const GamePanel&) = delete;
+
+    void InitializeGamePanel
     (
         Player& player,
         const std::string& title,
         const sf::Color& backgroundColor,
         const std::string& fontPath
     );
+
+    static GamePanel& getInstance() {
+        static GamePanel instance;
+        return instance;
+    }
 
     // adaug sprite-uri de orice fel
     void addSprite
@@ -93,9 +100,11 @@ public:
     // metoda care inchide programul
     void endProgram();
 
+private:
+
+    GamePanel(); // Constructor gol
     ~GamePanel() = default;
 
-private:
     std::vector<std::unique_ptr<I_Sprite>> m_sprites;
     Sprite m_backgroundSprite;
     Sprite m_loadingScreenBackground;

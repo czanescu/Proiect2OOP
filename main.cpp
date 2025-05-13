@@ -110,13 +110,7 @@ typedef std::chrono::duration<double>                   ChrDurationDouble;
 
 Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
-GamePanel Panel
-(
-    player,
-    "Sprite Gravity", 
-    sf::Color(37, 37, 164, 0.7),
-    "assets/arial.ttf"
-);
+GamePanel& Panel = GamePanel::getInstance();
 
 Platform& platforma = Platform::getInstance();
 
@@ -213,6 +207,13 @@ void sceneSetup()
 int main()
 {
     // apelez incarcarea scenei
+    Panel.InitializeGamePanel
+    (
+        player,
+        "Sprite Gravity", 
+        sf::Color(37, 37, 164, 0.7),
+        "assets/arial.ttf"
+    );
     sceneSetup();
     //setez variabilele pentru scale si framerate
     const float SCALE_X = Panel.getWindow().getSize().x / 1920.f;

@@ -28,17 +28,17 @@ GamePanel::GamePanel() // Constructor gol
     }
     m_loadingScreenBackground.updateTexture("assets/Loading.png");
 }
-GamePanel::GamePanel // Constructor
+void GamePanel::InitializeGamePanel // Constructor
 (
     Player& player,
     const std::string& title,
     const sf::Color& backgroundColor,
     const std::string& fontPath
 )
-    : m_player(player),
-      m_backgroundColor(backgroundColor),
-      m_sprites()
 {
+    m_player = player;
+    m_backgroundColor = backgroundColor;
+    m_sprites.clear();
     sf::Vector2i windowSize = loadConfigFromFile(".config");
     // Create context settings
     sf::ContextSettings settings;
