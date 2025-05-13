@@ -30,8 +30,8 @@ public:
         bool noColiziuneJos = 0
     );
     // Getteri
-    const Delta getSpeedX() const;
-    const Delta getSpeedY() const;
+    const Delta getSpeedX() const override;
+    const Delta getSpeedY() const override;
     const Delta getXPlatformSpeed() const;
     const Delta getYPlatformSpeed() const;
     // Coliziuni

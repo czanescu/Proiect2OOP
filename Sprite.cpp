@@ -256,12 +256,12 @@ void Sprite::setYEndPoz(float newYEndPoz)
 {
     // gol
 }
-Delta Sprite::getXSpeed() const
+const Delta Sprite::getSpeedX() const
 {
     // gol
     return Delta(0, 0);
 }
-Delta Sprite::getYSpeed() const
+const Delta Sprite::getSpeedY() const
 {
     // gol
     return Delta(0, 0);

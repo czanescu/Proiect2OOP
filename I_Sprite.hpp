@@ -51,8 +51,8 @@ public:
     virtual void setXEndPoz(float newXEndPoz) = 0;
     virtual void setYEndPoz(float newYEndPoz) = 0;
 
-    virtual Delta getXSpeed() const = 0;
-    virtual Delta getYSpeed() const = 0;
+    virtual const Delta getSpeedX() const = 0;
+    virtual const Delta getSpeedY() const = 0;
     virtual float getXStartPoz() const = 0;
     virtual float getYStartPoz() const = 0;
     virtual float getXEndPoz() const = 0;

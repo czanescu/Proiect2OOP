@@ -45,11 +45,11 @@ MovableSprite::MovableSprite(const MovableSprite& other)
 {;}
 
 // getteri
-Delta MovableSprite::getXSpeed() const
+const Delta MovableSprite::getSpeedX() const
 {
     return m_xSpeed;
 }
-Delta MovableSprite::getYSpeed() const
+const Delta MovableSprite::getSpeedY() const
 {
     return m_ySpeed;
 }

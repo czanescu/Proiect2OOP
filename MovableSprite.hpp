@@ -31,8 +31,8 @@ class MovableSprite : public Sprite
         void setYEndPoz(float newYEndPoz) override;
 
         // Getteri
-        Delta getXSpeed() const override;
-        Delta getYSpeed() const override;
+        const Delta getSpeedX() const override;
+        const Delta getSpeedY() const override;
         float getXStartPoz() const override;
         float getYStartPoz() const override;
         float getXEndPoz() const override;

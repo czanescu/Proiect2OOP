@@ -175,25 +175,20 @@ void GamePanel::endProgram()
 
 bool GamePanel::isPlayerOnGround()
 {
-    Delta savedSpeedY = m_player.getSpeedY();
-    std::cout<<savedSpeedY.getActual()<<' '<<savedSpeedY.getPrecedent()<<std::endl;
     if (m_player.getSpeedY().getActual() != 0 
      || (m_player.getSpeedY().getPrecedent() != 0
-     && abs(m_player.getSpeedY().getPrecedent() - m_player.getSpeedY().getActual()) < 20))
+     && abs(m_player.getSpeedY().getPrecedent() 
+     - m_player.getSpeedY().getActual()) < 20))
     {
         return false;
         std::cout << "Player is not on ground" << std::endl;
     }
-    std::cout<<m_player.getYSpeed().getActual()<<' '<<m_player.getYSpeed().getPrecedent()<<std::endl;
     return true;
 }
 
 // meniul de pauza
 void GamePanel::pauseMenu()
 {
-    Delta savedSpeedY = m_player.getSpeedY();
-    std::cout<<savedSpeedY.getActual()<<' '<<savedSpeedY.getPrecedent()<<std::endl;
-
     float windowHeight = m_window.getSize().y;
     float windowWidth = m_window.getSize().x;
     float spriteWidth = windowWidth / 4;
@@ -624,8 +619,8 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             {
                 m_player.setPlatformSpeed
                 (
-                    sprite->getXSpeed(), 
-                    sprite->getYSpeed()
+                    sprite->getSpeedX(), 
+                    sprite->getSpeedY()
                 );
                 std::cout << "Player is on a movable sprite." << std::endl;
                 m_player.setPosition
@@ -1067,8 +1062,8 @@ void GamePanel::moveSprites(float dt)
         //calcule pentru X si Y
         if 
         (
-            sprite->getXSpeed().getActual() == 0 && 
-            sprite->getYSpeed().getActual() == 0
+            sprite->getSpeedX().getActual() == 0 && 
+            sprite->getSpeedY().getActual() == 0
         )
         {
             if (sprite->getXStartPoz() < sprite->getXEndPoz())
@@ -1097,7 +1092,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateXSpeed
                         (
-                            sprite->getXSpeed().getAverage() + 
+                            sprite->getSpeedX().getAverage() + 
                             acceleratieX * dt
                         );
                     }
@@ -1109,7 +1104,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateXSpeed
                         (
-                            sprite->getXSpeed().getAverage() - 
+                            sprite->getSpeedX().getAverage() - 
                             acceleratieX * dt
                         );
                     }
@@ -1124,7 +1119,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateXSpeed
                         (
-                            sprite->getXSpeed().getAverage() - 
+                            sprite->getSpeedX().getAverage() - 
                             acceleratieX * dt
                         );
                     }
@@ -1136,7 +1131,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateXSpeed
                         (
-                            sprite->getXSpeed().getAverage() + 
+                            sprite->getSpeedX().getAverage() + 
                             acceleratieX * dt
                         );
                     }
@@ -1155,7 +1150,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateYSpeed
                         (
-                            sprite->getYSpeed().getAverage() + 
+                            sprite->getSpeedY().getAverage() + 
                             acceleratieY * dt
                         );
                     }
@@ -1167,7 +1162,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateYSpeed
                         (
-                            sprite->getYSpeed().getAverage() - 
+                            sprite->getSpeedY().getAverage() - 
                             acceleratieY * dt
                         );
                     }
@@ -1182,7 +1177,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateYSpeed
                         (
-                            sprite->getYSpeed().getAverage() - 
+                            sprite->getSpeedY().getAverage() - 
                             acceleratieY * dt
                         );
                     }
@@ -1194,7 +1189,7 @@ void GamePanel::moveSprites(float dt)
                     {
                         sprite->updateYSpeed
                         (
-                            sprite->getYSpeed().getAverage() + 
+                            sprite->getSpeedY().getAverage() + 
                             acceleratieY * dt
                         );
                     }
@@ -1203,8 +1198,8 @@ void GamePanel::moveSprites(float dt)
         }
         float pozX=sprite->getPosX().getActual();
         float pozY = sprite->getPosY().getActual();
-        float newPosX = pozX + sprite->getXSpeed().getActual() * dt;
-        float newPosY = pozY + sprite->getYSpeed().getActual() * dt;
+        float newPosX = pozX + sprite->getSpeedX().getActual() * dt;
+        float newPosY = pozY + sprite->getSpeedY().getActual() * dt;
         Delta newPosXDelta(pozX, newPosX);
         Delta newPosYDelta(pozY, newPosY);
         sprite->updatePosition(newPosXDelta, newPosYDelta);

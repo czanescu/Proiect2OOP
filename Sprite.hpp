@@ -55,8 +55,8 @@ public:
     void setYStartPoz(float newYStartPoz) override;
     void setXEndPoz(float newXEndPoz) override;
     void setYEndPoz(float newYEndPoz) override;
-    Delta getXSpeed() const override;
-    Delta getYSpeed() const override;
+    const Delta getSpeedX() const override;
+    const Delta getSpeedY() const override;
     float getXStartPoz() const override;
     float getYStartPoz() const override;
     float getXEndPoz() const override;
