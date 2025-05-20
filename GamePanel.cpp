@@ -632,7 +632,7 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
             // altfel setez viteza platformei la 0
             else
             {
-                Delta zero(0,0);
+                Delta<float> zero(0,0);
                 m_player.setPlatformSpeed(zero,zero);
             }
             isOnGround = true; // Player is considered on the ground
@@ -726,7 +726,7 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
         // aplic gravitatia
         m_player.updateCalculationsY(DirectieY::NONE, dt, scaleY, 1);
         // setez viteza platformei la 0
-        Delta zero(0, 0);
+        Delta<float> zero(0, 0);
         m_player.setPlatformSpeed(m_player.getXPlatformSpeed(), zero);
     }
     // verific daca jucatorul este deasupra ecranului

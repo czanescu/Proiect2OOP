@@ -30,22 +30,22 @@ public:
         bool noColiziuneJos = 0
     );
     // Getteri
-    const Delta getSpeedX() const override;
-    const Delta getSpeedY() const override;
-    const Delta getXPlatformSpeed() const;
-    const Delta getYPlatformSpeed() const;
+    const Delta<float> getSpeedX() const override;
+    const Delta<float> getSpeedY() const override;
+    const Delta<float> getXPlatformSpeed() const;
+    const Delta<float> getYPlatformSpeed() const;
     // Coliziuni
     void hitGround(float height);
     void hitCeiling(float height);
     void hitLeft(float width);
     void hitRight(float width);
     // Setter pentru viteza platformei
-    void setPlatformSpeed(Delta speedX, Delta speedY);
+    void setPlatformSpeed(Delta<float> speedX, Delta<float> speedY);
 private:
-    Delta m_speedX;
-    Delta m_speedY;
-    Delta m_platformXSpeed;
-    Delta m_platformYSpeed;
+    Delta<float> m_speedX;
+    Delta<float> m_speedY;
+    Delta<float> m_platformXSpeed;
+    Delta<float> m_platformYSpeed;
     float m_jumpForce;
     float m_maxSpeedX;
     float m_accelX;

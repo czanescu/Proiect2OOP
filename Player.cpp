@@ -153,7 +153,7 @@ void Player::updateCalculationsY
                     (actualJumpForce / m_mass * 0.01667)
                         + m_platformYSpeed.getActual()
                 );
-                m_platformYSpeed = Delta(0, 0);
+                m_platformYSpeed = Delta();
             }
         }
         else
@@ -179,11 +179,11 @@ void Player::updateCalculationsY
     move(0, newY);
 }
 // getteri
-const Delta Player::getSpeedX() const
+const Delta<float> Player::getSpeedX() const
 {
     return m_speedX;
 }
-const Delta Player::getSpeedY() const
+const Delta<float> Player::getSpeedY() const
 {
     return m_speedY;
 }
@@ -233,18 +233,18 @@ void Player::hitRight(float width)
 }
 
 // setter pentru viteza platformei (ca sa stiu cu cat misc player-ul)
-void Player::setPlatformSpeed(Delta speedX, Delta speedY)
+void Player::setPlatformSpeed(Delta<float> speedX, Delta<float> speedY)
 {
     m_platformXSpeed = speedX;
     m_platformYSpeed = speedY;
 }
 
 // getteri pentru viteza platformei
-const Delta Player::getXPlatformSpeed() const
+const Delta<float> Player::getXPlatformSpeed() const
 {
     return m_platformXSpeed;
 }
-const Delta Player::getYPlatformSpeed() const
+const Delta<float> Player::getYPlatformSpeed() const
 {
     return m_platformYSpeed;
 }

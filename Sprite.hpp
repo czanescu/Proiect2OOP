@@ -2,6 +2,7 @@
 #define SPRITE_H
 
 #include "I_Sprite.hpp"
+#include "Delta.hpp"
 
 class Sprite : public I_Sprite {
 public:
@@ -31,15 +32,15 @@ public:
     sf::Texture getTexture() const override;
     float getWidth() const override;
     float getHeight() const override;
-    Delta getPosX() const override;
-    Delta getPosY() const override;
+    Delta<float> getPosX() const override;
+    Delta<float> getPosY() const override;
     float getScaleX() const override;
     float getScaleY() const override;
     bool getDrawStatus() const override;
     bool getCollision() const override;
 
     void updateTexture(const std::string& texturePath) override;
-    void updatePosition(Delta& deltaX, Delta& deltaY) override;
+    void updatePosition(Delta<float>& deltaX, Delta<float>& deltaY) override;
     void changeDrawStatus() override;
 
     static int getSpriteCount();
@@ -55,8 +56,8 @@ public:
     void setYStartPoz(float newYStartPoz) override;
     void setXEndPoz(float newXEndPoz) override;
     void setYEndPoz(float newYEndPoz) override;
-    const Delta getSpeedX() const override;
-    const Delta getSpeedY() const override;
+    const Delta<float> getSpeedX() const override;
+    const Delta<float> getSpeedY() const override;
     float getXStartPoz() const override;
     float getYStartPoz() const override;
     float getXEndPoz() const override;
@@ -74,8 +75,8 @@ public:
 
 protected:
     sf::Sprite m_sprite;
-    Delta m_pozX;
-    Delta m_pozY;
+    Delta<float> m_pozX;
+    Delta<float> m_pozY;
     float m_hitBoxX;
     float m_hitBoxY;
     bool m_isDrawn;

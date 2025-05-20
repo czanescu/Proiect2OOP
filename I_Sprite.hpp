@@ -30,8 +30,8 @@ public:
     virtual sf::Texture getTexture() const = 0;
     virtual float getWidth() const = 0;
     virtual float getHeight() const = 0;
-    virtual Delta getPosX() const = 0;
-    virtual Delta getPosY() const = 0;
+    virtual Delta<float> getPosX() const = 0;
+    virtual Delta<float> getPosY() const = 0;
     virtual float getScaleX() const = 0;
     virtual float getScaleY() const = 0;
     virtual bool getDrawStatus() const = 0;
@@ -39,7 +39,7 @@ public:
 
     virtual void updateTexture(const std::string& texturePath) = 0;
     //diferit de setPosition pt ca primeste delta
-    virtual void updatePosition(Delta& deltaX, Delta& deltaY) = 0;
+    virtual void updatePosition(Delta<float>& deltaX, Delta<float>& deltaY) = 0;
     virtual void changeDrawStatus() = 0;
 
     // metode MovableSprite
@@ -51,8 +51,8 @@ public:
     virtual void setXEndPoz(float newXEndPoz) = 0;
     virtual void setYEndPoz(float newYEndPoz) = 0;
 
-    virtual const Delta getSpeedX() const = 0;
-    virtual const Delta getSpeedY() const = 0;
+    virtual const Delta<float> getSpeedX() const = 0;
+    virtual const Delta<float> getSpeedY() const = 0;
     virtual float getXStartPoz() const = 0;
     virtual float getYStartPoz() const = 0;
     virtual float getXEndPoz() const = 0;

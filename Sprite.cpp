@@ -180,7 +180,7 @@ sf::Texture Sprite::getTexture() const
     return m_textura;
 }
 
-void Sprite::updatePosition(Delta& deltaX, Delta& deltaY)
+void Sprite::updatePosition(Delta<float>& deltaX, Delta<float>& deltaY)
 {
     m_pozX.update(deltaX.getActual());
     m_pozY.update(deltaY.getActual());
@@ -207,11 +207,11 @@ bool Sprite::getCollision() const
 {
     return m_collision;
 }
-Delta Sprite::getPosX() const
+Delta<float> Sprite::getPosX() const
 {
     return m_pozX;
 }
-Delta Sprite::getPosY() const
+Delta<float> Sprite::getPosY() const
 {
     return m_pozY;
 }
@@ -256,15 +256,15 @@ void Sprite::setYEndPoz(float newYEndPoz)
 {
     // gol
 }
-const Delta Sprite::getSpeedX() const
+const Delta<float> Sprite::getSpeedX() const
 {
     // gol
-    return Delta(0, 0);
+    return Delta();
 }
-const Delta Sprite::getSpeedY() const
+const Delta<float> Sprite::getSpeedY() const
 {
     // gol
-    return Delta(0, 0);
+    return Delta();
 }
 float Sprite::getXStartPoz() const
 {

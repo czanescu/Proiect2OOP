@@ -28,8 +28,8 @@ MovableSprite::MovableSprite
       m_yStartPoz(yStartPoz),
       m_xEndPoz(xEndPoz),
       m_yEndPoz(yEndPoz),
-      m_xSpeed(0, 0),
-      m_ySpeed(0, 0),
+      m_xSpeed(),
+      m_ySpeed(),
       m_Acceleration(Acceleration)
 {;}
 // Constructor de copiere MovableSprite
@@ -45,11 +45,11 @@ MovableSprite::MovableSprite(const MovableSprite& other)
 {;}
 
 // getteri
-const Delta MovableSprite::getSpeedX() const
+const Delta<float> MovableSprite::getSpeedX() const
 {
     return m_xSpeed;
 }
-const Delta MovableSprite::getSpeedY() const
+const Delta<float> MovableSprite::getSpeedY() const
 {
     return m_ySpeed;
 }

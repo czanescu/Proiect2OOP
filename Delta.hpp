@@ -1,35 +1,38 @@
 #ifndef DELTA_H
 #define DELTA_H
 
+template <typename T = float>
 class Delta
 {
 public:
     Delta(); // Constructor gol
-    Delta(float precedent, float actual); // Constructor
+    Delta(T precedent, T actual); // Constructor
     Delta(const Delta& other); // Constructor de copiere
 
     // getteri
-    float getPrecedent() const;
-    float getActual() const;
-    float getAverage() const;
+    T getPrecedent() const;
+    T getActual() const;
+    T getAverage() const;
 
     // setteri
-    void setPrecedent(float value);
-    void setActual(float value);
-    void setDelta(float precedent, float actual);
+    void setPrecedent(T value);
+    void setActual(T value);
+    void setDelta(T precedent, T actual);
 
     // getter pentru diferenta dintre cele doua valori
-    float value() const;
+    T value() const;
 
     // metoda pentru a actualiza precedentul si actualul
-    void update(float other);
+    void update(T other);
 
     // destructor
     ~Delta() = default;
 
 private:
-    float m_precedent;
-    float m_actual;
+    T m_precedent;
+    T m_actual;
 };
+
+#include "Delta.tpp"
 
 #endif
