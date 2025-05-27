@@ -6,7 +6,7 @@ const float GRAVITY = 981.0f; // constanta folosita pentru gravitate
 
 // Constructor gol Player
 Player::Player()
-    : Sprite("sprite.png", 0, 0, 100, 100),
+    : Sprite("mers-dr1.png", 0, 0, 100, 100),
       m_speedX(0, 0),
       m_speedY(0, 0),
       m_jumpForce(10),
@@ -53,6 +53,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     // if-uri care se ocupa cu miscarea stanga, dreapta si oprire
     if (direction == DirectieX::RIGHT && m_speedY.getActual() == 0)
     {
+        updateTexture("assets/mers-dr1.png");
         if (m_speedX.getActual() > 0 || m_speedX.getActual() < m_maxSpeedX)
         {
             m_speedX.update(m_speedX.getActual() + m_accelX * dt);
@@ -68,6 +69,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     }
     else if (direction == DirectieX::LEFT && m_speedY.getActual() == 0)
     {
+        updateTexture("assets/mers-st1.png");
         if (m_speedX.getActual() < 0 || m_speedX.getActual() > -m_maxSpeedX)
         {
             m_speedX.update(m_speedX.getActual() - m_accelX * dt);
@@ -84,6 +86,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     {
         if (m_speedX.getActual() > 0)
         {
+            updateTexture("assets/mers-dr1.png");
             if (m_speedX.getActual() - m_decelerationX * dt < 0)
                 m_speedX.update(0);
             else
@@ -91,6 +94,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
         }
         else if (m_speedX.getActual() < 0)
         {
+            updateTexture("assets/mers-st1.png");
             if (m_speedX.getActual() + m_decelerationX * dt > 0)
                 m_speedX.update(0);
             else
@@ -146,7 +150,8 @@ void Player::updateCalculationsY
             // verific daca player-ul trebuie sa sara
             if (direction == DirectieY::UP)
             {
-                
+                //setHitBox(100,100);
+                updateTexture("assets/salt.png");
                 float actualJumpForce=-m_jumpForce+gravityF;
                 m_speedY.update
                 (

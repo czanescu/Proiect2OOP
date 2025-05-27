@@ -3,6 +3,7 @@
 
 #include "Sprite.hpp"
 #include "Enums.hpp"
+#include <cmath>
 
 class Player : public Sprite
 {
@@ -41,6 +42,7 @@ public:
     void hitRight(float width);
     // Setter pentru viteza platformei
     void setPlatformSpeed(Delta<float> speedX, Delta<float> speedY);
+
 private:
     Delta<float> m_speedX;
     Delta<float> m_speedY;

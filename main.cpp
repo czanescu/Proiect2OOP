@@ -108,7 +108,7 @@ typedef std::chrono::high_resolution_clock              HiResClock;
 typedef std::chrono::high_resolution_clock::duration    HiResDuration;
 typedef std::chrono::duration<double>                   ChrDurationDouble;                    
 
-Player player("assets/sprite.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
+Player player("assets/mers-dr1.png", 1000, 500, 0, 0, 10, 600000, 100, 100);
 
 GamePanel& Panel = GamePanel::getInstance();
 
