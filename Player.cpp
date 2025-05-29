@@ -137,6 +137,7 @@ void Player::updateCalculationsY
     bool noColiziuneJos
 )
 {
+    JumpSoundManager::getInstance().loadJumpSound("assets/jump_sound_effect.wav");
     const float gravityF = GRAVITY * m_mass;
     // daca nu exista vreun sprite sub player, acesta va cadea
     if (noColiziuneJos == 1)
@@ -151,6 +152,7 @@ void Player::updateCalculationsY
             if (direction == DirectieY::UP)
             {
                 //setHitBox(100,100);
+                JumpSoundManager::getInstance().playJumpSound();
                 updateTexture("assets/salt.png");
                 float actualJumpForce=-m_jumpForce+gravityF;
                 m_speedY.update

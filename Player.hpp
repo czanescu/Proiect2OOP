@@ -3,6 +3,7 @@
 
 #include "Sprite.hpp"
 #include "Enums.hpp"
+#include "JumpSoundManager.hpp"
 #include <cmath>
 
 class Player : public Sprite
