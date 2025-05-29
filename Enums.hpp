@@ -27,8 +27,9 @@ enum class OS
 
 enum MenuSelection
 {
-    EXIT,
-    CONTINUE
+    CONTINUE,
+    SOUNDONOFF,
+    EXIT
 };
 
 // Overload ++ pentru MenuSelection
@@ -37,9 +38,9 @@ inline MenuSelection& operator++(MenuSelection& selection)
     using UnderlyingType = std::underlying_type_t<MenuSelection>;
     selection = 
         static_cast<MenuSelection>(static_cast<UnderlyingType>(selection) + 1);
-    if (static_cast<int>(selection) > 1)
+    if (static_cast<int>(selection) > 2)
     {
-        selection = EXIT;
+        selection = CONTINUE;
     }
     return selection;
 }
@@ -52,7 +53,7 @@ inline MenuSelection& operator--(MenuSelection& selection)
         static_cast<MenuSelection>(static_cast<UnderlyingType>(selection) - 1);
     if (static_cast<int>(selection) < 0)
     {
-        selection = CONTINUE;
+        selection = EXIT;
     }
     return selection;
 }

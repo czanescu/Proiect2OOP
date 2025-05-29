@@ -212,9 +212,19 @@ void GamePanel::pauseMenu()
         windowHeight / pauseMenuBackground.getTexture().getSize().y
     );
 
-    Sprite Exit, Continue;
+    Sprite Exit, Continue, SoundOnOff;
     Exit.updateTexture("assets/exit.png");
     Continue.updateTexture("assets/continue.png");
+    Config& config = Config::getInstance();
+    bool sunet = config.isSoundEnabled();
+    if (sunet)
+    {
+        SoundOnOff.updateTexture("assets/soundOn.png");
+    }
+    else
+    {
+        SoundOnOff.updateTexture("assets/soundOff.png");
+    }
     Exit.setScale
     (
         spriteWidth / Exit.getTexture().getSize().x, 
@@ -224,6 +234,11 @@ void GamePanel::pauseMenu()
     (
         spriteWidth / Continue.getTexture().getSize().x, 
         spriteHeight / Continue.getTexture().getSize().y
+    );
+    SoundOnOff.setScale
+    (
+        spriteWidth / SoundOnOff.getTexture().getSize().x, 
+        spriteHeight / SoundOnOff.getTexture().getSize().y
     );
     Exit.setPosition
     (
@@ -235,6 +250,11 @@ void GamePanel::pauseMenu()
         windowWidth / 2 - spriteWidth / 2, 
         windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5
     );
+    SoundOnOff.setPosition
+    (
+        windowWidth / 2 - spriteWidth / 2, 
+        windowHeight / 2 - spriteHeight / 2 + spriteHeight * 3.0f
+    );
 
     bool button9Latching, optionPressed = false, dpadUpLatching, dpadDownLatching;
     bool dpadUpPressed, dpadDownPressed, dpadUp = false, dpadDown = false;
@@ -245,12 +265,12 @@ void GamePanel::pauseMenu()
         (
             0, 
             static_cast<sf::Joystick::Axis>(7)
-        ) < -20;
+        ) < -20; // 0 dacă este mai mare de -20, 1 dacă este mai mic de -20
         dpadDownLatching = sf::Joystick::getAxisPosition
         (
             0, 
             static_cast<sf::Joystick::Axis>(7)
-        ) > 20;
+        ) > 20; // analog ca mai sus
         if (platforma.getPlatform() == OS::WINDOWS)
         {
             bool swap = dpadUpLatching;
@@ -262,6 +282,18 @@ void GamePanel::pauseMenu()
     MenuSelection menuSelection = CONTINUE;
     while (1)
     {
+        if (sunet != config.isSoundEnabled())
+        {
+            if (config.isSoundEnabled())
+            {
+                SoundOnOff.updateTexture("assets/soundOn.png");
+            }
+            else
+            {
+                SoundOnOff.updateTexture("assets/soundOff.png");
+            }
+            sunet = config.isSoundEnabled();
+        }
         if (sf::Joystick::isConnected(0))
         {
             if (sf::Joystick::isButtonPressed(0, 9) == 0)
@@ -301,16 +333,6 @@ void GamePanel::pauseMenu()
         }
         if (menuSelection == EXIT)
         {
-            Exit.setScale
-            (
-                spriteWidth / Exit.getTexture().getSize().x * 1.1f, 
-                spriteHeight / Exit.getTexture().getSize().y * 1.1f
-            );
-            Exit.setPosition
-            (
-                windowWidth / 2 - largeSpriteWidth / 2, 
-                windowHeight / 2 - largeSpriteHeight / 2 + spriteHeight * 1.5f
-            );
             Continue.setScale
             (
                 spriteWidth / Continue.getTexture().getSize().x, 
@@ -321,8 +343,28 @@ void GamePanel::pauseMenu()
                 windowWidth / 2 - spriteWidth / 2, 
                 windowHeight / 2 - spriteHeight / 2
             );
+            SoundOnOff.setScale
+            (
+                spriteWidth / SoundOnOff.getTexture().getSize().x, 
+                spriteHeight / SoundOnOff.getTexture().getSize().y
+            );
+            SoundOnOff.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5f
+            );
+            Exit.setScale
+            (
+                spriteWidth / Exit.getTexture().getSize().x * 1.1f, 
+                spriteHeight / Exit.getTexture().getSize().y * 1.1f
+            );
+            Exit.setPosition
+            (
+                windowWidth / 2 - largeSpriteWidth / 2, 
+                windowHeight / 2 - largeSpriteHeight / 2 + spriteHeight * 3.0f
+            );
         }
-        else
+        else if (menuSelection == CONTINUE)
         {
             Continue.setScale
             (
@@ -342,7 +384,51 @@ void GamePanel::pauseMenu()
             Exit.setPosition
             (
                 windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2 + spriteHeight * 3.0f
+            );
+            SoundOnOff.setScale
+            (
+                spriteWidth / SoundOnOff.getTexture().getSize().x, 
+                spriteHeight / SoundOnOff.getTexture().getSize().y
+            );
+            SoundOnOff.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
                 windowHeight / 2 - spriteHeight / 2 + spriteHeight * 1.5f
+            );
+        }
+        else
+        {
+            SoundOnOff.setScale
+            (
+                spriteWidth / SoundOnOff.getTexture().getSize().x * 1.1f, 
+                spriteHeight / SoundOnOff.getTexture().getSize().y * 1.1f
+            );
+            SoundOnOff.setPosition
+            (
+                
+                windowWidth / 2 - largeSpriteWidth / 2, 
+                windowHeight / 2 - largeSpriteHeight / 2 + spriteHeight * 1.5f
+            );
+            Exit.setScale
+            (
+                spriteWidth / Exit.getTexture().getSize().x, 
+                spriteHeight / Exit.getTexture().getSize().y
+            );
+            Exit.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2 + spriteHeight * 3.0f
+            );
+            Continue.setScale
+            (
+                spriteWidth / Continue.getTexture().getSize().x, 
+                spriteHeight / Continue.getTexture().getSize().y
+            );
+            Continue.setPosition
+            (
+                windowWidth / 2 - spriteWidth / 2, 
+                windowHeight / 2 - spriteHeight / 2
             );
         }
         sf::Event event;
@@ -387,9 +473,18 @@ void GamePanel::pauseMenu()
                         m_window.close();
                         std::exit(0);
                     }
-                    else
+                    else if (menuSelection == MenuSelection::CONTINUE)
                     {
                         return;
+                    }
+                    else
+                    {
+                        Config& config = Config::getInstance();
+                        if (config.isSoundEnabled())
+                        {
+                            config.setSoundEnabled(false);
+                        }
+                        else config.setSoundEnabled(true);
                     }
                 }
             }
@@ -399,6 +494,7 @@ void GamePanel::pauseMenu()
         pauseMenuBackground.draw(m_window);
         Exit.draw(m_window);
         Continue.draw(m_window);
+        SoundOnOff.draw(m_window);
         m_window.display();
     }
 }
@@ -764,52 +860,11 @@ void GamePanel::checkPlayerCollision(float dt, float scaleY)
 // metoda care incarca configuratia programului din fisier
 sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
 {
-    try
-    {
-        FileException checker(filePath);
-    }
-    catch(const BaseException& e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-    }
 
-    std::ifstream in (filePath);
-    std::string line;
-    sf::Vector2i windowSize; 
-    while (std::getline(in, line))
-    {
-        if (line.empty() || line.find('=') == std::string::npos)
-            continue;
-
-        std::istringstream lineStream(line);
-        std::string key, value;
-        if 
-        (
-            std::getline(lineStream, key, '=') && 
-            std::getline(lineStream, value)
-        )
-        {
-            key.erase(key.find_last_not_of(" \t") + 1);
-            key.erase(0, key.find_first_not_of(" \t"));
-            value.erase(value.find_last_not_of(" \t") + 1);
-            value.erase(0, value.find_first_not_of(" \t"));
-
-            if (key == "FRAME_RATE")
-            {
-                m_frameRate = std::stof(value);
-            }
-            else if (key == "X_RESOLUTION")
-            {
-                windowSize = sf::Vector2i(std::stof(value), windowSize.y);
-            }
-            else if (key == "Y_RESOLUTION")
-            {
-                windowSize = sf::Vector2i(windowSize.x, std::stof(value));
-            }
-        }
-    }
-
-    in.close();
+    Config& config = Config::getInstance();
+    m_frameRate = config.getFrameRate();
+    sf::Vector2i windowSize(config.getWindowWidth(), 
+                            config.getWindowHeight());
     return windowSize;
 }
 
