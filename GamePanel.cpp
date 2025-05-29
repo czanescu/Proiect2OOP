@@ -27,6 +27,11 @@ GamePanel::GamePanel() // Constructor gol
         std::cerr << "Error: " << e.what() << std::endl;
     }
     m_loadingScreenBackground.updateTexture("assets/Loading.png");
+    m_loadingScreenBackground.setScale
+    (
+        m_window.getSize().x / m_loadingScreenBackground.getTexture().getSize().x, 
+        m_window.getSize().y / m_loadingScreenBackground.getTexture().getSize().y
+    );
 }
 void GamePanel::InitializeGamePanel // Constructor
 (
@@ -442,6 +447,11 @@ void GamePanel::renderProgressBar()
         m_window.getSize().x / 2 - barWidth / 2 + barWidth / 2 - 20.f, 
         m_window.getSize().y / 3 * 2 - barHeight * 3 
             - 10.f * (m_window.getSize().y / 1080.f) - 5.f
+    );
+    m_loadingScreenBackground.setScale
+    (
+        m_window.getSize().x / 1920.f, 
+        m_window.getSize().y / 1080.f
     );
     progressBar.setScale(progress, 1.f);
     outline.setScale(1.f, 1.f);
