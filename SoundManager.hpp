@@ -18,4 +18,20 @@ private:
     sf::SoundBuffer buffer;
     sf::Sound sound;
 };
+
+class CollisionSoundManager {
+public:
+    static CollisionSoundManager& getInstance();
+
+    void loadCollisionSound(const std::string& filename);
+    void playCollisionSound();
+
+    // Delete copy/move constructors and assignment operators
+    CollisionSoundManager(const CollisionSoundManager&) = delete;
+    CollisionSoundManager& operator=(const CollisionSoundManager&) = delete;
+private:
+    CollisionSoundManager() = default;
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
+};
 #endif

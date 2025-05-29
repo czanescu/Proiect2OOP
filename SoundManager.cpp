@@ -14,3 +14,16 @@ void JumpSoundManager::playJumpSound() {
     sound.stop();
     sound.play();
 }
+
+CollisionSoundManager& CollisionSoundManager::getInstance() {
+    static CollisionSoundManager instance;
+    return instance;
+}
+void CollisionSoundManager::loadCollisionSound(const std::string& filename) {
+    buffer.loadFromFile(filename);
+    sound.setBuffer(buffer);
+}
+void CollisionSoundManager::playCollisionSound() {
+    sound.stop();
+    sound.play();
+}

@@ -216,7 +216,14 @@ int main()
         "assets/arial.ttf"
     );
     sceneSetup();
-    JumpSoundManager::getInstance().loadJumpSound("assets/jump_sound_effect.ogg");
+    JumpSoundManager::getInstance().loadJumpSound
+    (
+        "assets/jump_sound_effect.ogg"
+    );
+    CollisionSoundManager::getInstance().loadCollisionSound
+    (
+        "assets/collision.ogg"
+    );
     //setez variabilele pentru scale si framerate
     const float SCALE_X = Panel.getWindow().getSize().x / 1920.f;
     const float SCALE_Y = Panel.getWindow().getSize().y / 1080.f;

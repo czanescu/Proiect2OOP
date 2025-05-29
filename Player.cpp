@@ -200,6 +200,7 @@ void Player::hitGround(float height)
     m_pozY.update(height - getHeight()); // Snap to the ground
     m_sprite.setPosition(m_sprite.getPosition().x, height - getHeight());
     m_speedY.update(0); // Stop vertical movement
+    CollisionSoundManager::getInstance().playCollisionSound();
 }
 
 void Player::hitCeiling(float height)
@@ -208,6 +209,7 @@ void Player::hitCeiling(float height)
     m_sprite.setPosition(m_sprite.getPosition().x, height);
     m_speedY.update(-m_speedY.getActual()/2); // ricochet
     m_speedY.update(m_speedY.getActual());
+    CollisionSoundManager::getInstance().playCollisionSound();
 }
 
 void Player::hitLeft(float width)
@@ -222,6 +224,7 @@ void Player::hitLeft(float width)
         m_speedX.update(-m_speedX.getActual()/4);
         m_speedX.update(m_speedX.getActual());
     }
+    CollisionSoundManager::getInstance().playCollisionSound();
 }
 
 void Player::hitRight(float width)
@@ -236,6 +239,7 @@ void Player::hitRight(float width)
         m_speedX.update(-m_speedX.getActual()/4);
         m_speedX.update(m_speedX.getActual());
     }
+    CollisionSoundManager::getInstance().playCollisionSound();
 }
 
 // setter pentru viteza platformei (ca sa stiu cu cat misc player-ul)
