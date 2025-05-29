@@ -7,7 +7,7 @@
 #include "MovableSprite.hpp"
 #include "AnimatedSprite.hpp"
 #include "Platform.hpp"
-#include "JumpSoundManager.hpp"
+#include "SoundManager.hpp"
 #include <vector>
 #include <memory>
 #include <iomanip>

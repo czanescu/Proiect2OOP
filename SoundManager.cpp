@@ -1,4 +1,4 @@
-#include "JumpSoundManager.hpp"
+#include "SoundManager.hpp"
 
 JumpSoundManager& JumpSoundManager::getInstance() {
     static JumpSoundManager instance;

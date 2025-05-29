@@ -2,6 +2,7 @@
 #include "Sprite.hpp"
 #include "GamePanel.hpp"
 #include "Player.hpp"
+#include "SoundManager.hpp"
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <thread>
@@ -215,6 +216,7 @@ int main()
         "assets/arial.ttf"
     );
     sceneSetup();
+    JumpSoundManager::getInstance().loadJumpSound("assets/jump_sound_effect.ogg");
     //setez variabilele pentru scale si framerate
     const float SCALE_X = Panel.getWindow().getSize().x / 1920.f;
     const float SCALE_Y = Panel.getWindow().getSize().y / 1080.f;
