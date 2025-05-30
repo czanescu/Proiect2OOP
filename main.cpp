@@ -12,9 +12,9 @@
 
 // Proiect realizat de : Zănescu Cristian, grupa 133
 
-// Proiect 2+3 OOP (actual doar proiect 2)
+// Proiect 2+3 OOP
 // Aplicația reprezintă un joc 2D, în care un jucător
-// (poate fi orice sprite patrat, dar actual este mario) se poate mișca stânga
+// (poate fi orice sprite pătrat, dar am ales o broască) se poate mișca stânga
 // și dreapta atâta timp cât se află pe o platformă. Odată ce jucătorul sare,
 // viteza laterală a acestuia rămâne constantă până când acesta aterizează pe
 // o platformă, unde se aplică un algoritm de frânare dacă nu se apasă tasta
@@ -23,7 +23,7 @@
 // inițială de săritură, iar apoi atâta timp cât jucătorul nu se află pe o
 // platformă, acesta va continua să cadă cu o accelerație constantă).
 
-// Harta este formată din sprite-uri, care sunt încărcate dintr 3 fișiere
+// Harta este formată din sprite-uri, care sunt încărcate din 3 fișiere
 // separate (numele hărții + .sprites, .movable, .animated), sprite-urile
 // trebuie să corespundă path-ului relativ din fișierul de hartă (dacă sunt
 // toate sprite-urile dintr-un fișier hartă dintr-un director comun, path-ul
@@ -37,15 +37,26 @@
 // deoarece sunt mereu 9 sprite-uri pe inaltime si 16 sprite-uri pe latime).
 
 // La fiecare rulare, încărcarea sprite-urilor poate lua (în funcție de 
-// platformă) între 3 (linux) și 10 secunde (windows), probabil din cauza
-// implementării librăriei SFML. Din acest motiv, am inclus un loading screen
-// care se va afișa până când toate sprite-urile sunt încărcate. De asemenea,
-// am inclus un meniu de pauză care poate fi accesat apăsând tasta Escape.
+// platformă) între 1 (linux) și 3 secunde (windows) (atunci când foloseam
+// sprite-uri placeholder încărcarea lua 3 respectiv 10 secunde, dar deoarece
+// am micșorat semnificativ rezoluția lor, acum încărcarea nu ia mult prea mult
+// timp din timpul limitat al jucătorului). Din acest motiv, am inclus un
+// loading screen care se va afișa până când toate sprite-urile sunt încărcate.
+// De asemenea, am inclus un meniu de pauză care poate fi accesat apăsând tasta
+// Escape, acest meniu oferă opțiunea de revenire la joc, de pornire/oprire a
+// sunetului și de ieșire din joc. În momentul în care jucătorul se întoarce în
+// joc, acesta se va întoarce fix în poziția în care se afla înainte de pauză,
+// iar momentul său va rămâne neschimbat.
 
 // Jocul utilizează sleep pentru a nu consuma CPU tot timpul, însă pe windows
 // implementarea de sleep nu este suficient de precisă pentru a putea face
 // sleep mai puțin de un frame. Din acest motiv, pe windows face Sleep(0),
 // pentru a elibera măcar threadul pentru alte task-uri.
+
+// Implementarea sunetului lasă de dorit, deoarece chiar dacă pe linux
+// funcționează perfect (poate cu un delay minuscul prin căști bluetooth),
+// pe windows prin căști are un delay de aproximativ 0.5 secunde (motivul
+// pentru care am adăugat opționea de oprire a sunetului oricând)
 
 // Framerate-ul și rezoluția jocului pot fi setate din fișierul .config
 // (înainte de rulare). Framerate-ul poate fi oricât de mare sau mic, însă
@@ -53,13 +64,23 @@
 // De adăugat că rezoluția poate fi si ea setata la aproximativ orice numar,
 // insa, daca pe linux orice rezolutie mai mare decat rezolutia monitorului
 // se comporta ca rezolutia monitorului, pe windows jocul va incerca sa
-// deseneze la rezolutia setata, insa nu va reusi sa o faca, iar jocul va
+// deseneze la rezoluția setata, însa nu va reuși să o facă, iar jocul va
 // avea un comportament anormal la trecerea de la un "tablou de joc" la altul.
 // De asemenea, jocul este gândit să ruleze la un aspect ratio de 16:9, deci
 // dacă rezoluția nu este 16:9, jocul va fi streched.
 
+// Am adăugat și opțiunea ca jucătorul să poată folosi un controller (am testat
+// atât pe Windows cât și pe Linux un controller de PlayStation 4), ocazie cu
+// care am descoperit că aceleași butoane au nume diferite pe Windows respectiv
+// Linux, de aceea am adăugat o clasă singleton Platform care se ocupă cu
+// detectarea OS-ului la rulare și apoi funcționează ca un boolean global
+// (chiar dacă este un enum) care poate fi folosit pentru a verifica ce OS este
+// folosit, și deci pentru a folosi butoanele corecte pentru controller.
+
 
 /// DESCRIERE CERINTE COD
+
+// PARTEA 2:
 
 // moșteniri:
 // clasele AnimatedSprite, MovableSprite și Player sunt derivate ale clasei
@@ -88,6 +109,22 @@
 // STL
 // folosesc STL pentru vectorul de sprite-uri de exemplu.
 
+// PARTEA 3:
+
+// elemente șablon:
+// Am o clasă șablon, și anume am transformat clasa Delta(înainte folosea float)
+// Am metode șablon în clasa Delta ce sunt folosite pentru a calcula viteza și
+// poziția jucătorului, precum și pentru a calcula viteza platformei.
+// Am o funcție șablon în Functions.hpp care este folosită pentru a menține
+// viteza în parametrii setați
+
+// design patterns:
+// Am încercat să implementez mai multe design patterns înafară de singleton,
+// însă de fiecare dată m-am lovit de faptul că ar fi trebuit să schimb complet
+// arhitectura. Din acest motiv am decis să implementez singleton-uri în
+// clasele GamePanel, Platform, Config, JumpSoundManager și
+// CollisionSoundManager, deoarece nu dorim să avem mai multe instanțe a
+// nici-uneia dintre aceste clase.
 
 // INSTRUCȚIUNI DE COMPILARE
 // Requirements:
