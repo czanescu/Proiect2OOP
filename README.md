@@ -1,5 +1,9 @@
 Proiect 2+3 OOP în stadiul în care va fi / a fost prezentat la laborator
 
+<p align="center">
+  <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnI3MjM3dThzaGc5ZjB0eW01bmNnMWtuMGI2bXc4dmMxanl1bWp4NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/VAOyQTIvIWfMybbKUF/giphy.gif" alt="Game">
+</p>
+
 Aplicația reprezintă un joc 2D, în care un jucător (poate fi orice sprite patrat, dar am ales o broască) se poate mișca stânga și dreapta atâta timp cât se află pe o platformă. Odată ce jucătorul sare, viteza laterală a acestuia rămâne constantă până când acesta aterizează pe o platformă, unde se aplică un algoritm de frânare dacă nu se apasă tasta aferentă mișcării actuale (simulez forța de frecare). Calculul săriturii jucătorului este bazat pe o simulare a săriturii (se simulează o viteză inițială de săritură, iar apoi atâta timp cât jucătorul nu se află pe o platformă, acesta va continua să cadă cu o accelerație constantă).
 
 Harta este formată din sprite-uri, care sunt încărcate dintr 3 fișiere separate (numele hărții + .sprites, .movable, .animated), sprite-urile trebuie să corespundă path-ului relativ din fișierul de hartă (dacă sunt toate sprite-urile dintr-un fișier hartă dintr-un director comun, path-ul relativ al directorului comun se pune la începutul fișierului). Sprite-urile animate din fisierul .animated se află într-un director cu numele fișierului și sunt numite 0.png, 1.png, 2.png etc. (numărul de sprite-uri animate trebuie să fie cel puțin egal cu numărul de frame-uri de animație din fișierul .animated). Coordonatele sprite-urilor din fișiere sunt relative la un sprite de început la coordonatele (0, 0), iar un sprite are inaltimea si latimea de o unitate (la rezoluția 1920x1080 asta inseamna 120x120px, deoarece sunt mereu 9 sprite-uri pe inaltime si 16 sprite-uri pe latime).
