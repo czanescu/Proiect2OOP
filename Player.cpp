@@ -106,10 +106,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
         }
     }
     // limitarea vitezei maxime
-    if (m_speedX.getActual() > m_maxSpeedX)
-        m_speedX.setActual(m_maxSpeedX);
-    else if (m_speedX.getActual() < -m_maxSpeedX)
-        m_speedX.setActual(-m_maxSpeedX);
+    m_speedX.setActual(clamp(m_speedX.getActual(), -m_maxSpeedX, m_maxSpeedX));
 
     // calculul noii pozitii
     float newX = ((m_speedX.getActual() + m_speedX.getPrecedent()) / 2

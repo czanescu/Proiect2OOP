@@ -5,6 +5,7 @@
 #include "Enums.hpp"
 #include "SoundManager.hpp"
 #include "Config.hpp"
+#include "Functions.hpp"
 #include <cmath>
 
 class Player : public Sprite
