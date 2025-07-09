@@ -869,6 +869,42 @@ sf::Vector2i GamePanel::loadConfigFromFile(const std::string& filePath)
 }
 
 
+void GamePanel::loadPlayerFromFile(const std::string& filePath)
+{
+    try {
+        FileException checker(filePath);
+    } catch (const BaseException& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return;
+    }
+
+    std::ifstream in(filePath);
+    if (!in.is_open())
+    {
+        std::cerr << "Could not open player file: " << filePath << std::endl;
+        return;
+    }
+
+    int nrSpites, spriteDuration;
+    in >> nrSpites >> spriteDuration;
+    m_player.setTextureCount(nrSpites);
+    m_player.setSpriteDuration(spriteDuration);
+    for (int i = 0; i < nrSpites; ++i)
+    {
+        std::string texturePath;
+        in >> texturePath;
+        m_player.addDrTexture(texturePath);
+    }
+    for (int i = 0; i < nrSpites; ++i)
+    {
+        std::string texturePath;
+        in >> texturePath;
+        m_player.addStTexture(texturePath);
+    }
+    
+    in.close();
+}
+
 // metoda care incarca sprite-urile simple,
 // background-ul si pozitia jucatorului din fisier
 void GamePanel::loadSpritesFromFile(const std::string& filePath)
@@ -906,7 +942,7 @@ void GamePanel::loadSpritesFromFile(const std::string& filePath)
     );
     std::cout << "Background loaded" << std::endl;
 
-    // calculez factoii de scala pentru sprite-uri si jucator
+    // calculez factorii de scala pentru sprite-uri si jucator
     const float referenceWidth = 1920.0f;
     const float referenceHeight = 1080.0f;
     float spriteScaleX = static_cast<float>(windowSize.x) / referenceWidth;

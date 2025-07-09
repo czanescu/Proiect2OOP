@@ -68,6 +68,7 @@ public:
 
     // metode care incarca sprite-uri din fisiere
     sf::Vector2i loadConfigFromFile(const std::string& filePath);
+    void loadPlayerFromFile(const std::string& filePath);
     void loadSpritesFromFile(const std::string& filePath);
     void loadMovableSpritesFromFile(const std::string& filePath);
     void loadAnimatedSpritesFromFile(const std::string& filePath);

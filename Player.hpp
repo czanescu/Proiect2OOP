@@ -22,7 +22,9 @@ public:
         float mass, 
         float jumpForce, 
         float height, 
-        float width
+        float width,
+        int textureCount = 1,
+        int frameDuration = 50
     );
     // Calcule
     void updateCalculationsX(DirectieX direction, double dt, float scaleX);
@@ -46,6 +48,19 @@ public:
     // Setter pentru viteza platformei
     void setPlatformSpeed(Delta<float> speedX, Delta<float> speedY);
 
+    // animatie
+    void draw(sf::RenderWindow& window) override;
+    void updateTextures(const std::string& texturePath) override;
+
+    const sf::Texture& getCurrentTexture() const override;
+
+    void addStTexture(const std::string& texturePath)
+    void addDrTexture(const std::string& texturePath)
+
+    setTextureCount(int count) { m_textureCount = count; }
+    setFrameDuration(int duration) { m_frameDuration = duration; }
+
+
 private:
     Delta<float> m_speedX;
     Delta<float> m_speedY;
@@ -56,6 +71,13 @@ private:
     float m_accelX;
     float m_decelerationX;
     float m_mass;
+    
+    std::vector<sf::Texture> m_texturesDr;
+    std::vector<sf::Texture> m_texturesSt;
+    int m_currentTexture;
+    int m_textureCount;
+    int m_framesUntilNext;
+    int m_frameDuration;
 };
 
 #endif

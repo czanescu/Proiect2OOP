@@ -15,7 +15,9 @@ Player::Player()
       m_decelerationX(1000),
       m_mass(10),
       m_platformXSpeed(0, 0),
-      m_platformYSpeed(0, 0)
+      m_platformYSpeed(0, 0),
+      m_textureCount(1),
+      m_frameDuration(50)
 {;}
 // Constructor Player
 Player::Player
@@ -28,7 +30,9 @@ Player::Player
     float mass, 
     float jumpForce, 
     float height, 
-    float width
+    float width,
+    int textureCount = 1,
+    int frameDuration = 50
 )
   : Sprite(texturePath, x, y, height, width),
     m_speedX(speedX, speedX),
@@ -39,7 +43,9 @@ Player::Player
     m_decelerationX(2000),
     m_mass(mass),
     m_platformXSpeed(0, 0),
-    m_platformYSpeed(0, 0)
+    m_platformYSpeed(0, 0),
+    m_textureCount(1),
+    m_frameDuration(50)
 {;}
 
 // functia care se ocupa cu calculele pe axa X
@@ -84,7 +90,7 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
     }
     else if (direction == DirectieX::NONE && m_speedY.getActual() == 0)
     {
-        if (m_speedX.getActual() > 0)
+        if (m_speedX.getActual() > 0 && m_speedX.getPrecedent() <= 0)
         {
             updateTexture("assets/mers-dr1.png");
             if (m_speedX.getActual() - m_decelerationX * dt < 0)
@@ -92,13 +98,43 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
             else
                 m_speedX.update(m_speedX.getActual() - m_decelerationX * dt);
         }
-        else if (m_speedX.getActual() < 0)
+        else if (m_speedX.getActual() < 0 && m_speedX.getPrecedent() >= 0)
         {
             updateTexture("assets/mers-st1.png");
             if (m_speedX.getActual() + m_decelerationX * dt > 0)
                 m_speedX.update(0);
             else
                 m_speedX.update(m_speedX.getActual() + m_decelerationX * dt);
+        }
+        else if (m_speedX.getActual() > 0)
+        {
+            m_framesUntilNext -= m_speedX.getActual() * dt;
+            m_sprite.setTexture(m_texturesDr[m_currentTexture]);
+            if (m_framesUntilNext <= 0)
+            {
+                m_currentTexture = (m_currentTexture + 1) % m_textureCount;
+                m_framesUntilNext = m_frameDuration + m_framesUntilNext; // Reset the frame counter
+                m_sprite.setScale
+                (
+                    m_hitBoxX / m_textures[m_currentTexture].getSize().x,
+                    m_hitBoxY / m_textures[m_currentTexture].getSize().y
+                );
+            }
+        }
+        else if (m_speedX.getActual() < 0)
+        {
+            m_framesUntilNext -= m_speedX.getActual() * dt;
+            m_sprite.setTexture(m_texturesSt[m_currentTexture]);
+            if (m_framesUntilNext <= 0)
+            {
+                m_currentTexture = (m_currentTexture + 1) % m_textureCount;
+                m_framesUntilNext = m_frameDuration + m_framesUntilNext; // Reset the frame counter
+                m_sprite.setScale
+                (
+                    m_hitBoxX / m_textures[m_currentTexture].getSize().x,
+                    m_hitBoxY / m_textures[m_currentTexture].getSize().y
+                );
+            }
         }
         if (m_speedX.getActual() < 20 and m_speedX.getActual() > -20)
         {
@@ -115,7 +151,6 @@ void Player::updateCalculationsX(DirectieX direction, double dt, float scaleX)
 
     // setez pozitia sprite-ului
     move(newX,0);
-    m_pozX.update(m_sprite.getPosition().x);
     // cod pentru debugging
     std::cout << std::fixed << std::setprecision(6) 
           << "newX: " << newX
@@ -274,4 +309,32 @@ const Delta<float> Player::getXPlatformSpeed() const
 const Delta<float> Player::getYPlatformSpeed() const
 {
     return m_platformYSpeed;
+}
+
+// animatii
+
+void Player::draw(sf::RenderWindow& window)
+{
+    if (m_isDrawn)
+    {
+        window.draw(m_sprite);
+    }
+}
+
+void Player::addStTexture(const std::string& texturePath)
+{
+    sf::Texture texture;
+    if (texture.loadFromFile(texturePath))
+    {
+        m_texturesSt.push_back(texture);
+    }
+}
+
+void Player::addDrTexture(const std::string& texturePath)
+{
+    sf::Texture texture;
+    if (texture.loadFromFile(texturePath))
+    {
+        m_texturesDr.push_back(texture);
+    }
 }
